@@ -1,0 +1,6 @@
+{
+  "name": "Ouest Dynamics",
+  "description": "Ouest Dynamics - Digital Engineering & Growth Partner. Agence d'ingénierie numérique de luxe et de croissance pour entreprises exigeantes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
