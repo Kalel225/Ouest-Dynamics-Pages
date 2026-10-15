@@ -29,6 +29,7 @@ export const Hero3DBackground: React.FC = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
+    renderer.domElement.className = 'w-full h-full block pointer-events-none';
     container.appendChild(renderer.domElement);
 
     // 3. Central Luxury Tech Kinetic Group

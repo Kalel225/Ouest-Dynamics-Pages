@@ -1,0 +1,22 @@
+{
+  "submissions": [
+    {
+      "id": "sub_1792073301575_x5svu2",
+      "reference": "OD-2026-58047",
+      "fullName": "Jean Dupont",
+      "companyName": "Nexus Tech",
+      "email": "jean@nexustech.ci",
+      "service": "web",
+      "budget": "7k-15k",
+      "currency": "XOF",
+      "description": "Création dune plateforme e-commerce moderne et rapide pour vente directe.",
+      "createdAt": "2026-10-15T14:08:21.575Z",
+      "status": "received",
+      "userAgent": "curl/7.88.1"
+    }
+  ],
+  "analytics": {
+    "totalRequests": 1,
+    "lastRequestAt": "2026-10-15T14:08:21.575Z"
+  }
+}

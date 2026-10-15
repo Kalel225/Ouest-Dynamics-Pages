@@ -1,244 +1,177 @@
 # GUIDE PRATIQUE DE MODIFICATION DU CODE — OUEST DYNAMICS
 
-Ce guide vous accompagne pas-à-pas pour personnaliser, mettre à jour et faire évoluer facilement les éléments clés de la plateforme web **Ouest Dynamics**.
+Ce guide pratique est conçu pour permettre à **n'importe quel collaborateur ou développeur (même débutant)** de modifier les textes, les monnaies, la base de données, les réseaux sociaux et le pop-up de confidentialité.
 
 ---
 
 ## SOMMAIRE
-1. [Gestion du Système Bilingue & Textes (Anglais / Français)](#1-gestion-du-système-bilingue--textes-anglais--français)
-2. [Modifier la Palette de Couleurs (Design System)](#2-modifier-la-palette-de-couleurs)
-3. [Gérer les Domaines d'Expertise (Ajouter / Modifier un Service)](#3-gérer-les-domaines-dexpertise)
-4. [Modifier les Jalons de la Méthodologie](#4-modifier-les-jalons-de-la-méthodologie)
-5. [Ajuster ou Personnaliser l'Arrière-Plan 3D du Hero (Desktop & Mobile)](#5-ajuster-ou-personnaliser-larrière-plan-3d-du-hero-desktop--mobile)
-6. [Personnaliser la Barre d'Action Mobile (Thumb Zone)](#6-personnaliser-la-barre-daction-mobile-thumb-zone)
-7. [Configurer le Bandeau de Détection de Langue de l'Appareil](#7-configurer-le-bandeau-de-détection-de-langue-de-lappareil)
-8. [Connecter le Formulaire de Contact à un Vrai E-mail ou API](#8-connecter-le-formulaire-de-contact-à-un-vrai-e-mail-ou-api)
-9. [Modifier les Villes et Coordonnées du Footer](#9-modifier-les-villes-et-coordonnées-du-footer)
-10. [Commandes de Compilation et Déploiement](#10-commandes-de-compilation-et-déploiement)
+1. [Comment modifier le Slogan et les Textes](#1-comment-modifier-le-slogan-et-les-textes)
+2. [Comment gérer et consulter la Base de Données](#2-comment-gérer-et-consulter-la-base-de-données)
+3. [Comment fonctionnent les Devises Automatiques](#3-comment-fonctionnent-les-devises-automatiques)
+4. [Comment modifier les Liens des Réseaux Sociaux (TikTok, Facebook, Instagram)](#4-comment-modifier-les-liens-des-réseaux-sociaux)
+5. [Comment personnaliser la Politique de Confidentialité](#5-comment-personnaliser-la-politique-de-confidentialité)
+6. [Comment tester et déployer l'application](#6-comment-tester-et-déployer-lapplication)
 
 ---
 
-## 1. GESTION DU SYSTÈME BILINGUE & TEXTES (ANGLAIS / FRANÇAIS)
+## 1. COMMENT MODIFIER LE SLOGAN ET LES TEXTES
 
-Le site applique par défaut le **standard américain (page en anglais)** tout en intégrant une version française complète et un système de bascule automatique selon la langue du terminal.
+Tous les textes affichés sur le site se trouvent dans un fichier unique :
+📂 **`src/translations.ts`**
 
-- **Fichier central des textes** : `src/translations.ts`
+Ce fichier contient deux blocs : `en` (Anglais, version principale) et `fr` (Français).
 
-Tous les textes sont centralisés dans deux blocs `en` et `fr` :
+### Modifier le Slogan du Hero :
+Ouvrez `src/translations.ts` et recherchez la clé `hero.title` :
+
 ```typescript
-export const translations: Record<Language, Translations> = {
-  en: {
-    hero: {
-      title: 'Digital Excellence Engineered for Your Growth.',
-      subtitle: 'We architect high-performance custom web and mobile platforms...',
-      // ...
-    },
-    // ...
+// Pour la version anglaise (vers la ligne 165) :
+hero: {
+  surtitle: 'DIGITAL ENGINEERING & GROWTH PARTNER',
+  title: 'Digital Excellence Engineered for Your Growth.', // <-- MODIFIER ICI
+  subtitle: 'We design and build bespoke high-performance websites...',
+  ...
+}
+
+// Pour la version française (vers la ligne 430) :
+hero: {
+  surtitle: 'INGÉNIERIE DIGITALE & PARTENAIRE DE CROISSANCE',
+  title: "L'Excellence Numérique au Service de Votre Croissance.", // <-- MODIFIER ICI
+  subtitle: "Nous concevons et développons des sites web d'exception...",
+  ...
+}
+```
+
+*Astuce* : Modifiez toujours les deux versions (anglaise et française) pour garantir la parfaite cohérence du site bilingue.
+
+---
+
+## 2. COMMENT GÉRER ET CONSULTER LA BASE DE DONNÉES
+
+Le site intègre une vraie base de données persistante fonctionnelle dans :
+📂 **`server.ts`** et 📂 **`data/database.json`**
+
+### A. Consulter les demandes reçues
+Dès qu'un visiteur remplit le formulaire sur le site, ses coordonnées sont automatiquement enregistrées dans le fichier `data/database.json`.
+
+Vous pouvez consulter toutes les demandes à tout moment de deux façons simples :
+
+1. **Directement dans le fichier JSON** :
+   Ouvrez le fichier `./data/database.json`. Vous y trouverez la liste de toutes les soumissions avec leur date, nom, email, budget et référence unique :
+   ```json
+   {
+     "submissions": [
+       {
+         "id": "sub_1741234567_a8f9",
+         "reference": "OD-2026-48210",
+         "fullName": "Sarah Lawson",
+         "companyName": "Aura Luxury",
+         "email": "sarah@auraluxury.com",
+         "service": "web",
+         "budget": "7k-15k",
+         "currency": "USD",
+         "description": "Nous souhaitons concevoir une boutique de cosmétiques haut de gamme...",
+         "createdAt": "2026-10-15T10:30:00.000Z",
+         "status": "received"
+       }
+     ]
+   }
+   ```
+
+2. **Via l'API REST dans votre navigateur ou via Curl** :
+   - Ouvrez dans votre navigateur l'URL : `http://localhost:3000/api/submissions`
+   - Pour vérifier l'état de la base de données : `http://localhost:3000/api/health`
+
+### B. Modifier les champs enregistrés en base de données
+Si vous souhaitez ajouter un nouveau champ (par exemple un numéro de téléphone) :
+1. Dans `server.ts`, ajoutez le champ dans l'interface `SubmissionRecord` et dans la route `app.post('/api/submissions')`.
+2. Dans `src/components/ContactForm.tsx`, ajoutez le champ `input` dans le formulaire et intégrez sa valeur dans le payload `fetch('/api/submissions')`.
+
+---
+
+## 3. COMMENT FONCTIONNENT LES DEVISES AUTOMATIQUES
+
+Les devises s'adaptent automatiquement selon la région de connexion du visiteur, sans bouton superflu.
+
+Fichier responsable : 📂 **`src/context/CurrencyContext.tsx`**
+
+### Monnaies prises en charge :
+- **USD ($)** : États-Unis, Canada, international par défaut.
+- **EUR (€)** : Europe / Union Européenne (France, Belgique, Allemagne, etc.).
+- **XOF (F CFA)** : Afrique de l'Ouest et zone Franc CFA (Côte d'Ivoire, Sénégal, etc.).
+- **GBP (£)** : Royaume-Uni.
+
+### Modifier les tranches budgétaires d'une monnaie :
+Ouvrez `src/context/CurrencyContext.tsx` et modifiez les objets dans `CURRENCIES` :
+
+```typescript
+export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
+  EUR: {
+    code: 'EUR',
+    symbol: '€',
+    budgets: [
+      { id: '3k-7k', label: '3 000 € – 7 000 €' },
+      { id: '7k-15k', label: '7 000 € – 15 000 €' },
+      { id: '15k-35k', label: '15 000 € – 35 000 €' },
+      { id: '35k+', label: '35 000 € +' },
+    ],
+    ...
   },
-  fr: {
-    hero: {
-      title: "L'Excellence Numérique au Service de votre Croissance.",
-      subtitle: "Nous concevons des plateformes web et mobiles sur-mesure...",
-      // ...
-    },
-    // ...
-  }
-};
-```
-
-> **Pour modifier un texte** : Ouvrez `src/translations.ts` et modifiez simultanément la clé sous `en` et sous `fr`. Le site mettra instantanément à jour l'affichage selon la langue active sélectionnée par l'utilisateur.
-
----
-
-## 2. MODIFIER LA PALETTE DE COULEURS
-
-Toutes les variables fondamentales de couleur sont déclarées dans `src/index.css`.
-
-- **Fichier** : `src/index.css`
-```css
-@layer base {
-  :root {
-    --color-obsidian: #0B0B0B;   /* Fond principal - True Dark Mode */
-    --color-pearl: #F4F4F6;      /* Couleur de texte des paragraphes */
-    --color-gold: #D4AF37;       /* Or Champagne signature */
-    --color-gold-hover: #E2C255; /* Couleur de survol des boutons dorés */
-    --color-tech-gray: #262626;  /* Gris technique pour bordures subtiles */
-  }
-}
-```
-
----
-
-## 3. GÉRER LES DOMAINES D'EXPERTISE
-
-Les 4 pôles d'excellence sont déclarés dans le tableau `services.items` de `src/translations.ts`.
-
-- **Fichier** : `src/translations.ts`
-
-### Exemple : Modifier un service existant
-```typescript
-{
-  id: 'web',
-  number: '01',
-  title: 'Web & E-Commerce Infrastructure',
-  subtitle: 'High-Performance Architectures & Hybrid Global Payments',
-  description: 'Your custom description...',
-  deliverables: [
-    'Deliverable 1',
-    'Deliverable 2',
-    'Deliverable 3'
-  ],
-  keyMetric: '< 650ms',
-  metricLabel: 'Global Average Page Load Time',
-  techStack: ['Next.js', 'TypeScript', 'Node.js', 'PostgreSQL', 'Stripe API']
-}
-```
-*Pensez à mettre à jour la traduction équivalente dans la section `fr`.*
-
----
-
-## 4. MODIFIER LES JALONS DE LA MÉTHODOLOGIE
-
-- **Fichier** : `src/translations.ts`
-- **Clé** : `methodology.steps` et `methodology.pillars`
-
-Chaque jalon contient :
-- `number` : Numéro d'étape (`'01'`, `'02'`, `'03'`).
-- `title` : Intitulé du jalon.
-- `tagline` : Résumé exécutif.
-- `description` : Explication du processus.
-- `checkpoints` : Tableau contenant les vérifications de conformité.
-- `deliverable` : Livrable remis au client.
-- `delay` : Délai contractuel estimé.
-
----
-
-## 5. AJUSTER OU PERSONNALISER L'ARRIÈRE-PLAN 3D DU HERO (DESKTOP & MOBILE)
-
-Le composant WebGL Three.js est situé dans `src/components/Hero3DBackground.tsx`.
-
-### A. Distance de caméra selon l'écran (Mobile vs Desktop)
-Vers la ligne 18 :
-```typescript
-const isMobile = width < 640;
-const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-// z: 10.8 sur smartphone pour reculer l'objet et dégager le texte
-// z: 8.2 sur grand écran
-camera.position.set(0, 0, isMobile ? 10.8 : 8.2);
-```
-
-### B. Vitesse de rotation autonome
-Dans la fonction `animate()` (vers la ligne 140) :
-```typescript
-mainMesh.rotation.y = elapsedTime * 0.12; // Vitesse de rotation horizontale
-mainMesh.rotation.x = elapsedTime * 0.08; // Vitesse de rotation verticale
-```
-
-### C. Sensibilité au mouvement du curseur / doigt
-Dans `handleMouseMove` (vers la ligne 105) :
-```typescript
-targetRotationY = mouseX * 0.45; // Axe horizontal
-targetRotationX = mouseY * 0.35; // Axe vertical
-```
-
----
-
-## 6. PERSONNALISER LA BARRE D'ACTION MOBILE (THUMB ZONE)
-
-Pour offrir une ergonomie optimale sur smartphone, la barre basse flottante est isolée dans `src/components/MobileBottomBar.tsx`.
-
-- **Affichage** : Visible uniquement sur smartphone (`sm:hidden`).
-- **Composants** :
-  - Toggle rapide de langue `[EN | FR]`.
-  - Bouton icône pour sauter immédiatement au formulaire de contact.
-  - Bouton large doré pour lancer le formulaire de cadrage d'un geste du pouce.
-
----
-
-## 7. CONFIGURER LE BANDEAU DE DÉTECTION DE LANGUE DE L'APPAREIL
-
-- **Fichier** : `src/context/LanguageContext.tsx` et `src/components/LanguagePromptBanner.tsx`
-
-La détection repose sur `navigator.language` :
-- Si l'appareil d'un visiteur est configuré en français, le site s'ouvre par défaut en anglais (standard américain) et affiche immédiatement un élégant bandeau flottant :
-  *"Langue détectée : Votre appareil est en français. Souhaitez-vous basculer le site en français ?"*
-- En cliquant sur "Passer en Français", la préférence est mémorisée dans le navigateur (`localStorage.getItem('od_lang')`).
-
----
-
-## 8. CONNECTER LE FORMULAIRE DE CONTACT À UN VRAI E-MAIL OU API
-
-Le formulaire actuel simule la réception d'un dossier avec génération d'une référence sécurisée (`OD-2026-XXXX`).
-
-- **Fichier** : `src/components/ContactForm.tsx`
-- **Fonction** : `handleSubmit` (vers la ligne 45)
-
-### Exemple de branchement API REST / Webhook
-```typescript
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!validate()) return;
-
-  setLoading(true);
-
-  try {
-    const response = await fetch('https://api.votre-domaine.com/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, companyName, email, service, budget, description })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setDossierRef(data.referenceId || `OD-${new Date().getFullYear()}-001`);
-      setSubmitted(true);
-    }
-  } catch (err) {
-    console.error('Erreur lors de la transmission', err);
-  } finally {
-    setLoading(false);
-  }
+  ...
 };
 ```
 
 ---
 
-## 9. MODIFIER LES VILLES ET COORDONNÉES DU FOOTER
+## 4. COMMENT MODIFIER LES LIENS DES RÉSEAUX SOCIAUX
 
-Conformément aux directives, les mentions de Dakar et Paris ont été retirées du site pour ne conserver qu'**Abidjan**.
+Les liens officiels vers **TikTok**, **Facebook** et **Instagram** sont situés à trois endroits stratégiques :
+1. **Dans le pied de page** : 📂 `src/components/Footer.tsx` (vers la ligne 40)
+2. **Dans le menu tiroir mobile** : 📂 `src/components/Navbar.tsx` (vers la ligne 185)
+3. **Dans le pop-up de confidentialité** : 📂 `src/components/PrivacyPolicyModal.tsx` (vers la ligne 155)
 
-- **Fichier** : `src/components/Footer.tsx` (vers la ligne 30) et `src/translations.ts` sous `footer.location`.
-
-Pour modifier la localisation :
-```typescript
-// Dans src/translations.ts :
-footer: {
-  // ...
-  location: 'Abidjan', // Modifiez ici si vous souhaitez changer le siège
-}
+Pour remplacer les URL des comptes officiels, remplacez simplement les liens :
+```html
+<a href="https://www.tiktok.com/@votre_compte_officiel" ...>
+<a href="https://www.facebook.com/votre_page_officielle" ...>
+<a href="https://www.instagram.com/votre_compte_officiel" ...>
 ```
 
 ---
 
-## 10. COMMANDES DE COMPILATION ET DÉPLOIEMENT
+## 5. COMMENT PERSONNALISER LA POLITIQUE DE CONFIDENTIALITÉ
 
-### Développement Local
+Le pop-up de politique de confidentialité thématique s'affiche automatiquement après chaque soumission de projet réussie, et peut également être ouvert depuis le lien en bas de page.
+
+Fichier responsable : 📂 **`src/components/PrivacyPolicyModal.tsx`**
+
+Il contient 5 piliers rédigés en langage clair pour les débutants :
+1. **Accord de Non-Divulgation Immédiat (NDA Automatique)**
+2. **Zéro Revente de Données & Zéro Spam**
+3. **Base de Données Sécurisée & Chiffrée**
+4. **Vous Êtes 100% Propriétaire de Vos Réalisations**
+5. **Droit d'Accès & Suppression Définitive (RGPD & CCPA)**
+
+Pour ajuster le texte d'un pilier ou changer l'adresse de contact pour la suppression des données (actuellement `privacy@ouestdynamics.com`), modifiez directement le texte dans ce fichier.
+
+---
+
+## 6. COMMENT TESTER ET DÉPLOYER L'APPLICATION
+
+### Lancer le serveur de développement :
 ```bash
 npm run dev
-# Démarre le serveur local sur http://localhost:3000
 ```
+Le serveur full-stack démarre sur le port `3000` avec Express et le rechargement à chaud Vite.
 
-### Contrôle de Type TypeScript
+### Vérifier la compilation et le typage TypeScript :
 ```bash
 npm run lint
-# Exécute tsc --noEmit
 ```
+Cette commande exécute `tsc --noEmit` et garantit l'absence d'erreurs de syntaxe ou de typage.
 
-### Compilation pour la Production
+### Construire pour la production :
 ```bash
 npm run build
-# Génère les fichiers optimisés dans /dist
 ```
-
-### Hébergement
-Le dossier `/dist` est 100% statique et peut être déployé immédiatement sur **Vercel**, **Netlify**, **Cloud Run**, ou un serveur Nginx/Apache.
+Cette commande génère les fichiers optimisés dans le dossier `./dist`. Le serveur `server.ts` servira automatiquement ces fichiers statiques en mode production.

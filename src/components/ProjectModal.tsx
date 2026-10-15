@@ -46,7 +46,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           <h3 className="font-display text-xl sm:text-2xl font-bold text-white mt-1">
             {t.projectModal.title}
           </h3>
-          <p className="text-xs sm:text-sm text-[#F4F4F6]/70 mt-1 font-body">
+          <p className="text-xs sm:text-sm text-[#F4F4F6]/75 mt-1 font-body">
             {t.projectModal.subtitle}
           </p>
         </div>
@@ -70,7 +70,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <span className="block text-xs sm:text-sm font-bold text-white">
                   {srv.title}
                 </span>
-                <span className="block text-[11px] text-[#F4F4F6]/60 line-clamp-1 font-body">
+                <span className="block text-[11px] text-[#F4F4F6]/65 line-clamp-1 font-body">
                   {srv.subtitle}
                 </span>
               </div>
@@ -91,7 +91,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs text-[#F4F4F6]/60 font-body hidden sm:flex">
             <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>Strict NDA Protocol</span>
+            <span>Devis gratuit & réponse sous 4h</span>
           </div>
 
           <button

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
@@ -10,9 +11,11 @@ import { ProjectModal } from './components/ProjectModal';
 import { LoadingScreen } from './components/LoadingScreen';
 import { LanguagePromptBanner } from './components/LanguagePromptBanner';
 import { MobileBottomBar } from './components/MobileBottomBar';
+import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
 
 function MainApp() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState('web');
   const [showLoading, setShowLoading] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -53,50 +56,56 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-[#F4F4F6] selection:bg-[#D4AF37] selection:text-[#0B0B0B] font-body relative overflow-x-hidden pb-16 sm:pb-0">
-      {/* Luxury Loading Screen with Animated Logo & Transition */}
+    <div className="min-h-screen bg-[#0B0B0B] text-[#F4F4F6] selection:bg-[#D4AF37] selection:text-[#0B0B0B] font-body relative overflow-x-hidden w-full pb-20 sm:pb-0">
+      {/* Loading Screen */}
       {showLoading && (
         <LoadingScreen onComplete={handleLoadingComplete} />
       )}
 
-      {/* Automatic Device Language Translation Prompt */}
+      {/* Device Language Translation Banner */}
       <LanguagePromptBanner />
 
-      {/* Executive Top Bar Navigation (with EN/FR Language Switcher) */}
+      {/* Top Navbar */}
       <Navbar
         onOpenProjectModal={() => handleOpenProjectModal()}
       />
 
       <main className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        {/* Section 1 : Le Hero (Impact Visuel) */}
+        {/* Section 1 : Hero */}
         <Hero
           onOpenProjectModal={() => handleOpenProjectModal()}
           onExploreServices={handleExploreServices}
           isLoaded={isLoaded}
         />
 
-        {/* Section 2 : Le Triptyque des Expertises (Core Services) */}
+        {/* Section 2 : 4 Main Services */}
         <Services onSelectService={handleSelectServiceFromCard} />
 
-        {/* Section 3 : La Gouvernance & Méthodologie (Preuve de Sécurité) */}
+        {/* Section 3 : 3-Step Simple Methodology & Guarantees */}
         <Methodology />
 
-        {/* Section 4 : Le Formulaire de Contact Exécutif */}
+        {/* Section 4 : Simple & Reassuring Contact Form */}
         <ContactForm preselectedService={selectedService} />
       </main>
 
-      {/* Luxury Footer (Without Paris/Dakar, Only Abidjan, Without Replay Intro) */}
-      <Footer />
+      {/* Footer with Social Links & Privacy Policy */}
+      <Footer onOpenPrivacyPolicy={() => setPrivacyModalOpen(true)} />
 
-      {/* Ergonomic Smartphone Bottom Action Bar */}
+      {/* Mobile Ergonomic Bottom Action Bar */}
       <MobileBottomBar onOpenProjectModal={() => handleOpenProjectModal()} />
 
-      {/* Project Initiation Scoping Modal */}
+      {/* Project Scoping Modal */}
       <ProjectModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onNavigateToForm={handleNavigateFromModal}
         initialService={selectedService}
+      />
+
+      {/* On-Demand Privacy Policy Modal */}
+      <PrivacyPolicyModal
+        isOpen={privacyModalOpen}
+        onClose={() => setPrivacyModalOpen(false)}
       />
     </div>
   );
@@ -105,7 +114,9 @@ function MainApp() {
 export default function App() {
   return (
     <LanguageProvider>
-      <MainApp />
+      <CurrencyProvider>
+        <MainApp />
+      </CurrencyProvider>
     </LanguageProvider>
   );
 }
