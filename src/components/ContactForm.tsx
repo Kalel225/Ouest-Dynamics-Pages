@@ -1,29 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUpRight, CheckCircle, ShieldCheck, Mail, Building, User, Layers, MessageSquare, Loader2, FileText } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  ArrowUpRight,
+  CheckCircle,
+  ShieldCheck,
+  Loader2,
+  FileText,
+  Lock,
+} from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface ContactFormProps {
   preselectedService?: string;
-  onOpenPrivacyPolicy?: () => void;
+  onOpenPrivacyPage?: () => void;
+  onOpenTermsPage?: () => void;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ preselectedService }) => {
-  const { t } = useLanguage();
-  const { currencyConfig } = useCurrency();
+export const ContactForm: React.FC<ContactFormProps> = ({
+  preselectedService,
+  onOpenPrivacyPage,
+  onOpenTermsPage,
+}) => {
+  const { t, language } = useLanguage();
+  const { currency, currencyConfig } = useCurrency();
+  const isFr = language === 'fr';
+
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
-  const [service, setService] = useState('web');
-  const [budget, setBudget] = useState('7k-15k');
+  const [service, setService] = useState(preselectedService || 'web');
+  const [budget, setBudget] = useState(currencyConfig.budgets[1]?.id || '7k-15k');
   const [description, setDescription] = useState('');
 
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [dossierRef, setDossierRef] = useState('');
+  // Anti-spam fields
+  const [honeypotWebsite, setHoneypotWebsite] = useState('');
+  const [formLoadedAt] = useState<number>(() => Date.now());
+  const mathChallenge = useMemo(() => {
+    const a = 3 + Math.floor(Math.random() * 5);
+    const b = 2 + Math.floor(Math.random() * 4);
+    return { a, b, sum: a + b };
+  }, []);
+  const [humanAnswer, setHumanAnswer] = useState('');
+
+  // Validation & Touched states
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showPrivacyPopup, setShowPrivacyPopup] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedRef, setSubmittedRef] = useState<string | null>(null);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   useEffect(() => {
     if (preselectedService) {
@@ -31,72 +56,129 @@ export const ContactForm: React.FC<ContactFormProps> = ({ preselectedService }) 
     }
   }, [preselectedService]);
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!fullName.trim()) errs.fullName = t.contact.errors.fullName;
-    if (!companyName.trim()) errs.companyName = t.contact.errors.company;
-    if (!email.trim()) {
-      errs.email = t.contact.errors.email;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errs.email = t.contact.errors.emailInvalid;
+  const validateField = (field: string, value: string): string => {
+    const trimmed = value.trim();
+    switch (field) {
+      case 'fullName':
+        if (!trimmed || trimmed.length < 2) return t.contact.errors.fullName;
+        return '';
+      case 'company':
+        if (!trimmed || trimmed.length < 2) return t.contact.errors.company;
+        return '';
+      case 'email':
+        if (!trimmed) return t.contact.errors.email;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmed)) {
+          return t.contact.errors.emailInvalid;
+        }
+        return '';
+      case 'description':
+        if (!trimmed || trimmed.length < 15) return t.contact.errors.description;
+        return '';
+      case 'humanAnswer':
+        if (parseInt(trimmed, 10) !== mathChallenge.sum) {
+          return isFr
+            ? `Veuillez indiquer le résultat exact (${mathChallenge.a} + ${mathChallenge.b})`
+            : `Please enter the correct sum (${mathChallenge.a} + ${mathChallenge.b})`;
+        }
+        return '';
+      default:
+        return '';
     }
-    if (!description.trim()) {
-      errs.description = t.contact.errors.description;
-    }
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+  };
+
+  const handleBlur = (field: string, value: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const err = validateField(field, value);
+    setErrors((prev) => ({ ...prev, [field]: err }));
+  };
+
+  const validateAll = () => {
+    const newErrors: Record<string, string> = {};
+    const fNameErr = validateField('fullName', fullName);
+    const compErr = validateField('company', companyName);
+    const emailErr = validateField('email', email);
+    const descErr = validateField('description', description);
+    const humanErr = validateField('humanAnswer', humanAnswer);
+
+    if (fNameErr) newErrors.fullName = fNameErr;
+    if (compErr) newErrors.company = compErr;
+    if (emailErr) newErrors.email = emailErr;
+    if (descErr) newErrors.description = descErr;
+    if (humanErr) newErrors.humanAnswer = humanErr;
+
+    setErrors(newErrors);
+    setTouched({
+      fullName: true,
+      company: true,
+      email: true,
+      description: true,
+      humanAnswer: true,
+    });
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
 
-    setLoading(true);
+    // 1. Honeypot trap check (bots fill hidden fields)
+    if (honeypotWebsite.trim() !== '') {
+      return;
+    }
 
-    const submissionPayload = {
-      fullName: fullName.trim(),
-      companyName: companyName.trim(),
-      email: email.trim().toLowerCase(),
-      service,
-      budget,
-      currency: currencyConfig.code,
-      description: description.trim(),
-    };
+    // 2. Submission velocity guard (<1.2s is automated bot behavior)
+    if (Date.now() - formLoadedAt < 1200) {
+      setErrors({
+        form: isFr
+          ? 'Envoi trop rapide détecté. Veuillez patienter une seconde.'
+          : 'Submission too fast. Please wait a moment and try again.',
+      });
+      return;
+    }
 
+    if (!validateAll()) return;
+
+    setIsSubmitting(true);
     try {
-      // 1. Persist directly into the solid backend database API
-      const res = await fetch('/api/submissions', {
+      const response = await fetch('/api/submissions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionPayload),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: fullName.trim(),
+          companyName: companyName.trim(),
+          email: email.trim(),
+          service,
+          budget,
+          currency,
+          description: description.trim(),
+          _honeypot: honeypotWebsite,
+          _elapsedMs: Date.now() - formLoadedAt,
+        }),
       });
 
-      let generatedRef = `OD-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.reference) {
-          generatedRef = data.reference;
-        }
-      } else {
-        console.warn('[Database] Fallback to local reference generation due to status:', res.status);
+      const data = await response.json();
+      if (!response.ok) {
+        setErrors({
+          form:
+            data?.error ||
+            (isFr ? 'Une erreur est survenue.' : 'An error occurred.'),
+        });
+        return;
       }
 
-      setDossierRef(generatedRef);
-      setSubmitted(true);
-      // Requirement: Once form validated and processed, popup with privacy policy in site theme is shown!
-      setShowPrivacyPopup(true);
-    } catch (err) {
-      console.error('[Database Submission Error]', err);
-      // Fallback resilience
-      const fallbackRef = `OD-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
-      setDossierRef(fallbackRef);
-      setSubmitted(true);
-      setShowPrivacyPopup(true);
+      const refCode =
+        data?.submission?.reference ||
+        `OD-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+
+      setSubmittedRef(refCode);
+      setShowPrivacyModal(true);
+    } catch {
+      const fallbackRef = `OD-${new Date().getFullYear()}-${Math.floor(
+        10000 + Math.random() * 90000
+      )}`;
+      setSubmittedRef(fallbackRef);
+      setShowPrivacyModal(true);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -105,277 +187,499 @@ export const ContactForm: React.FC<ContactFormProps> = ({ preselectedService }) 
     setCompanyName('');
     setEmail('');
     setDescription('');
-    setSubmitted(false);
+    setHumanAnswer('');
     setErrors({});
+    setTouched({});
+    setSubmittedRef(null);
   };
 
+  const isFieldValid = (field: string, value: string) =>
+    touched[field] && !errors[field] && validateField(field, value) === '';
+
   return (
-    <section id="contact" className="relative py-16 sm:py-24 lg:py-28 px-3.5 sm:px-6 lg:px-8 bg-[#0B0B0B] border-t border-white/[0.06]">
-      {/* Background Subtle Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[650px] h-[280px] sm:h-[450px] bg-[radial-gradient(circle,_rgba(212,175,55,0.05)_0%,_transparent_70%)] pointer-events-none" />
-
-      <div className="max-w-4xl mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 mb-3">
-            <span className="h-[1px] w-4 sm:w-6 bg-[#D4AF37]/60" />
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#D4AF37] uppercase font-mono">
-              {t.contact.surtitle}
-            </span>
-            <span className="h-[1px] w-4 sm:w-6 bg-[#D4AF37]/60" />
-          </div>
-
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-[-0.03em] leading-tight mb-3">
-            {t.contact.title}
-          </h2>
-
-          <p className="text-[#F4F4F6]/85 text-xs sm:text-sm md:text-base leading-relaxed font-body px-1">
-            {t.contact.subtitle}
-          </p>
-        </div>
-
-        {/* Contact Form Card (Glassmorphic & Rounded - Preserved per brief) */}
-        <div className="rounded-3xl bg-[#141414]/70 backdrop-blur-2xl border border-white/[0.08] p-4.5 sm:p-7 md:p-10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),_0_20px_50px_rgba(0,0,0,0.6)]">
-          {submitted ? (
-            <div className="py-6 sm:py-10 text-center animate-in fade-in duration-300">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/[0.04] border border-[#D4AF37] flex items-center justify-center mx-auto mb-4 text-[#D4AF37] shadow-[0_0_25px_rgba(212,175,55,0.25)]">
-                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8" />
-              </div>
-
-              <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest block mb-1.5 font-semibold">
-                {t.contact.successTitle}
-              </span>
-
-              <h3 className="font-display text-lg sm:text-2xl font-bold text-white mb-2">
-                {t.contact.successRef} : <span className="text-[#D4AF37]">{dossierRef}</span>
-              </h3>
-
-              <p className="text-xs sm:text-sm text-[#F4F4F6]/85 max-w-md mx-auto mb-5 leading-relaxed font-body">
-                {t.contact.successMsg}
+    <section
+      id="contact"
+      className="py-20 sm:py-28 px-4 sm:px-8 bg-[#EFECE6] border-b border-[#E2DDD5]"
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Left Column (5 cols): Consultation Desk & Direct Guarantees */}
+          <div className="lg:col-span-5 space-y-8">
+            <div>
+              <p className="text-xs sm:text-sm font-semibold text-[#A64B2A] mb-3">
+                {isFr
+                  ? 'Chapitre 04 · Consultation & Devis Sur-Mesure'
+                  : 'Chapter 04 · Private Consultation & Estimate'}
               </p>
+              <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#161412] tracking-tight leading-[1.12] mb-4 [text-wrap:balance]">
+                {t.contact.title}
+              </h2>
+              <p className="text-sm sm:text-base text-[#5C554E] leading-relaxed">
+                {t.contact.subtitle}
+              </p>
+            </div>
 
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] max-w-sm mx-auto mb-5 text-left text-xs space-y-1.5 font-mono">
-                <div className="text-[#F4F4F6]/60">Nom : <span className="text-white font-sans">{fullName}</span></div>
-                <div className="text-[#F4F4F6]/60">Projet : <span className="text-white font-sans">{companyName}</span></div>
-                <div className="text-[#F4F4F6]/60">E-mail : <span className="text-white font-sans">{email}</span></div>
-                <div className="text-[#F4F4F6]/60">Devise auto-adaptée : <span className="text-[#D4AF37]">{currencyConfig.flag} {currencyConfig.code} ({currencyConfig.symbol})</span></div>
+            <div className="pt-6 border-t border-[#D8D2C7] space-y-4 text-sm text-[#161412]">
+              <div>
+                <p className="font-semibold text-[#161412]">
+                  {isFr
+                    ? '01. Réponse sous 4 heures ouvrées'
+                    : '01. Response within 4 business hours'}
+                </p>
+                <p className="text-xs text-[#5C554E]">
+                  {isFr
+                    ? 'Analyse personnalisée par un directeur de projet senior.'
+                    : 'Tailored review prepared by a senior project director.'}
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowPrivacyPopup(true)}
-                  className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 text-xs font-mono rounded-full border border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <FileText className="w-4 h-4" />
-                  <span>Consulter la Politique de Confidentialité</span>
-                </button>
+              <div>
+                <p className="font-semibold text-[#161412]">
+                  {isFr
+                    ? '02. Devises adaptées automatiquement à votre région'
+                    : '02. Regional currency automatically calibrated'}
+                </p>
+                <p className="text-xs text-[#5C554E]">
+                  {isFr
+                    ? `Affichage actif : ${currencyConfig.name} (${currencyConfig.code})`
+                    : `Active regional display: ${currencyConfig.name} (${currencyConfig.code})`}
+                </p>
+              </div>
 
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#0B0B0B] bg-[#D4AF37] hover:bg-[#E2C255] rounded-full transition-all cursor-pointer shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
-                >
-                  {t.contact.resetBtn}
-                </button>
+              <div>
+                <p className="font-semibold text-[#161412]">
+                  {isFr
+                    ? '03. Accord de confidentialité immédiat (NDA)'
+                    : '03. Automatic Non-Disclosure Protection (NDA)'}
+                </p>
+                <p className="text-xs text-[#5C554E]">
+                  {t.contact.confidentiality}
+                </p>
               </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-              {/* Row 1: Nom & Entreprise (Responsive Stack) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                <div>
-                  <label className="block text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 mb-1.5 font-mono">
-                    {t.contact.fullName} <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
+          </div>
+
+          {/* Right Column (7 cols): Interactive Validated Form Card */}
+          <div className="lg:col-span-7 bg-white border border-[#E2DDD5] rounded-xl p-6 sm:p-10 shadow-xs">
+            {submittedRef ? (
+              <div className="py-8 text-center space-y-6">
+                <div className="w-14 h-14 rounded-full bg-[#F7F4EE] border border-[#A64B2A] text-[#A64B2A] flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-7 h-7" />
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-mono-tabular text-[#A64B2A] font-semibold">
+                    {t.contact.successRef} : {submittedRef}
+                  </p>
+                  <h3 className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412]">
+                    {t.contact.successTitle}
+                  </h3>
+                  <p className="text-sm text-[#5C554E] max-w-lg mx-auto leading-relaxed">
+                    {t.contact.successMsg}
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPrivacyModal(true)}
+                    className="min-h-[44px] px-5 py-2.5 rounded-lg border border-[#E2DDD5] bg-[#F7F4EE] text-xs font-semibold text-[#161412] hover:border-[#A64B2A] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4 text-[#A64B2A]" />
+                    <span>
+                      {isFr
+                        ? 'Consulter le Certificat de Confidentialité'
+                        : 'Review Privacy & NDA Certificate'}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#161412] hover:bg-[#A64B2A] text-[#F7F4EE] text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    {t.contact.resetBtn}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                {/* Invisible Honeypot Anti-Spam Trap */}
+                <div
+                  className="opacity-0 absolute -left-[9999px] -top-[9999px] h-0 w-0 overflow-hidden pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <label htmlFor="company_website_url">Website</label>
+                  <input
+                    id="company_website_url"
+                    name="company_website_url"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypotWebsite}
+                    onChange={(e) => setHoneypotWebsite(e.target.value)}
+                  />
+                </div>
+
+                {errors.form && (
+                  <div className="p-3.5 rounded-lg bg-red-50 border border-red-300 text-xs font-medium text-red-700">
+                    {errors.form}
+                  </div>
+                )}
+
+                {/* Row 1: Name & Company */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label
+                        htmlFor="fullName"
+                        className="block text-xs font-semibold text-[#161412]"
+                      >
+                        {t.contact.fullName} *
+                      </label>
+                      {isFieldValid('fullName', fullName) && (
+                        <span className="text-[11px] text-emerald-700 font-medium">✓</span>
+                      )}
+                    </div>
                     <input
+                      id="fullName"
                       type="text"
-                      placeholder={t.contact.fullNamePlaceholder}
                       value={fullName}
+                      onBlur={() => handleBlur('fullName', fullName)}
                       onChange={(e) => {
                         setFullName(e.target.value);
-                        if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }));
+                        if (errors.fullName) {
+                          setErrors({
+                            ...errors,
+                            fullName: validateField('fullName', e.target.value),
+                          });
+                        }
                       }}
-                      className={`w-full bg-[#0B0B0B]/80 border ${
-                        errors.fullName ? 'border-red-500/80' : 'border-white/[0.1] focus:border-[#D4AF37]'
-                      } rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-[#F4F4F6]/30 backdrop-blur-sm transition-all outline-none font-body`}
+                      placeholder={t.contact.fullNamePlaceholder}
+                      className={`w-full min-h-[46px] px-4 py-2.5 rounded-lg bg-[#F7F4EE] border text-base sm:text-sm text-[#161412] placeholder-[#8C847A] focus:outline-none transition-colors ${
+                        errors.fullName
+                          ? 'border-red-600 focus:border-red-600'
+                          : isFieldValid('fullName', fullName)
+                          ? 'border-emerald-600/60 focus:border-[#A64B2A]'
+                          : 'border-[#E2DDD5] focus:border-[#A64B2A]'
+                      }`}
                     />
-                    <User className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F4F4F6]/30 pointer-events-none" />
+                    {errors.fullName && (
+                      <p className="mt-1.5 text-xs text-red-600 font-medium">
+                        {errors.fullName}
+                      </p>
+                    )}
                   </div>
-                  {errors.fullName && (
-                    <span className="text-xs text-red-400 mt-1 block">{errors.fullName}</span>
-                  )}
-                </div>
 
-                <div>
-                  <label className="block text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 mb-1.5 font-mono">
-                    {t.contact.company} <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label
+                        htmlFor="companyName"
+                        className="block text-xs font-semibold text-[#161412]"
+                      >
+                        {t.contact.company} *
+                      </label>
+                      {isFieldValid('company', companyName) && (
+                        <span className="text-[11px] text-emerald-700 font-medium">✓</span>
+                      )}
+                    </div>
                     <input
+                      id="companyName"
                       type="text"
-                      placeholder={t.contact.companyPlaceholder}
                       value={companyName}
+                      onBlur={() => handleBlur('company', companyName)}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
-                        if (errors.companyName) setErrors((prev) => ({ ...prev, companyName: '' }));
+                        if (errors.company) {
+                          setErrors({
+                            ...errors,
+                            company: validateField('company', e.target.value),
+                          });
+                        }
                       }}
-                      className={`w-full bg-[#0B0B0B]/80 border ${
-                        errors.companyName ? 'border-red-500/80' : 'border-white/[0.1] focus:border-[#D4AF37]'
-                      } rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-[#F4F4F6]/30 backdrop-blur-sm transition-all outline-none font-body`}
+                      placeholder={t.contact.companyPlaceholder}
+                      className={`w-full min-h-[46px] px-4 py-2.5 rounded-lg bg-[#F7F4EE] border text-base sm:text-sm text-[#161412] placeholder-[#8C847A] focus:outline-none transition-colors ${
+                        errors.company
+                          ? 'border-red-600 focus:border-red-600'
+                          : isFieldValid('company', companyName)
+                          ? 'border-emerald-600/60 focus:border-[#A64B2A]'
+                          : 'border-[#E2DDD5] focus:border-[#A64B2A]'
+                      }`}
                     />
-                    <Building className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F4F4F6]/30 pointer-events-none" />
+                    {errors.company && (
+                      <p className="mt-1.5 text-xs text-red-600 font-medium">
+                        {errors.company}
+                      </p>
+                    )}
                   </div>
-                  {errors.companyName && (
-                    <span className="text-xs text-red-400 mt-1 block">{errors.companyName}</span>
-                  )}
                 </div>
-              </div>
 
-              {/* Row 2: Email & Service */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                {/* Row 2: Email */}
                 <div>
-                  <label className="block text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 mb-1.5 font-mono">
-                    {t.contact.email} <span className="text-[#D4AF37]">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      placeholder={t.contact.emailPlaceholder}
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
-                      }}
-                      className={`w-full bg-[#0B0B0B]/80 border ${
-                        errors.email ? 'border-red-500/80' : 'border-white/[0.1] focus:border-[#D4AF37]'
-                      } rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-[#F4F4F6]/30 backdrop-blur-sm transition-all outline-none font-body`}
-                    />
-                    <Mail className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F4F4F6]/30 pointer-events-none" />
+                  <div className="flex items-center justify-between mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold text-[#161412]"
+                    >
+                      {t.contact.email} *
+                    </label>
+                    {isFieldValid('email', email) && (
+                      <span className="text-[11px] text-emerald-700 font-medium">✓</span>
+                    )}
                   </div>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onBlur={() => handleBlur('email', email)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors.email) {
+                        setErrors({
+                          ...errors,
+                          email: validateField('email', e.target.value),
+                        });
+                      }
+                    }}
+                    placeholder={t.contact.emailPlaceholder}
+                    className={`w-full min-h-[46px] px-4 py-2.5 rounded-lg bg-[#F7F4EE] border text-base sm:text-sm text-[#161412] placeholder-[#8C847A] focus:outline-none transition-colors ${
+                      errors.email
+                        ? 'border-red-600 focus:border-red-600'
+                        : isFieldValid('email', email)
+                        ? 'border-emerald-600/60 focus:border-[#A64B2A]'
+                        : 'border-[#E2DDD5] focus:border-[#A64B2A]'
+                    }`}
+                  />
                   {errors.email && (
-                    <span className="text-xs text-red-400 mt-1 block">{errors.email}</span>
+                    <p className="mt-1.5 text-xs text-red-600 font-medium">
+                      {errors.email}
+                    </p>
                   )}
                 </div>
 
+                {/* Row 3: Service Selection */}
                 <div>
-                  <label className="block text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 mb-1.5 font-mono">
+                  <label className="block text-xs font-semibold text-[#161412] mb-2">
                     {t.contact.serviceLabel}
                   </label>
-                  <div className="relative">
-                    <select
-                      value={service}
-                      onChange={(e) => setService(e.target.value)}
-                      className="w-full bg-[#0B0B0B] border border-white/[0.1] focus:border-[#D4AF37] rounded-xl px-3.5 py-3 text-sm text-white backdrop-blur-sm transition-all outline-none appearance-none cursor-pointer font-body"
-                    >
-                      {t.services.items.map((srv) => (
-                        <option key={srv.id} value={srv.id} className="bg-[#141414] text-white">
-                          {srv.title}
-                        </option>
-                      ))}
-                    </select>
-                    <Layers className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F4F4F6]/30 pointer-events-none" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {t.services.items.map((item) => {
+                      const selected = service === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setService(item.id)}
+                          className={`min-h-[44px] px-4 py-2.5 rounded-lg border text-left text-xs font-semibold transition-colors cursor-pointer flex items-center justify-between ${
+                            selected
+                              ? 'bg-[#161412] text-[#F7F4EE] border-[#161412]'
+                              : 'bg-[#F7F4EE] text-[#161412] border-[#E2DDD5] hover:border-[#A64B2A]'
+                          }`}
+                        >
+                          <span className="truncate">{item.title}</span>
+                          <span
+                            className={`font-mono-tabular text-[11px] ml-2 shrink-0 ${
+                              selected ? 'text-[#D49B6A]' : 'text-[#5C554E]'
+                            }`}
+                          >
+                            {item.number}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-              </div>
 
-              {/* Budget Allocation Selector (Devises auto-adaptées à la région du visiteur - Onglet retiré selon consigne) */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 font-mono">
-                    {t.contact.budgetLabel}
-                  </label>
-                  {/* Badge d'indication de la monnaie locale sans onglet interactif */}
-                  <span className="text-[11px] font-mono text-[#D4AF37] flex items-center gap-1">
-                    <span>{currencyConfig.flag}</span>
-                    <span className="font-semibold">{currencyConfig.code}</span>
-                  </span>
+                {/* Row 4: Auto-Adapted Regional Budget Selection */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-semibold text-[#161412]">
+                      {t.contact.budgetLabel}
+                    </label>
+                    <span className="text-[11px] font-mono-tabular text-[#5C554E]">
+                      {currencyConfig.name} ({currencyConfig.symbol})
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {currencyConfig.budgets.map((b) => {
+                      const selected = budget === b.id;
+                      return (
+                        <button
+                          key={b.id}
+                          type="button"
+                          onClick={() => setBudget(b.id)}
+                          className={`min-h-[44px] px-3 py-2 rounded-lg border text-xs font-mono-tabular font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                            selected
+                              ? 'bg-[#A64B2A] text-[#F7F4EE] border-[#A64B2A]'
+                              : 'bg-[#F7F4EE] text-[#161412] border-[#E2DDD5] hover:border-[#A64B2A]'
+                          }`}
+                        >
+                          {b.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-                  {currencyConfig.budgets.map((b) => (
-                    <button
-                      type="button"
-                      key={b.id}
-                      onClick={() => setBudget(b.id)}
-                      className={`min-h-[44px] sm:min-h-[46px] py-2 px-2.5 text-xs font-mono rounded-xl border transition-all cursor-pointer flex items-center justify-center text-center ${
-                        budget === b.id
-                          ? 'bg-[#D4AF37]/20 border-[#D4AF37] text-white font-bold shadow-[0_2px_10px_rgba(212,175,55,0.2)]'
-                          : 'bg-[#0B0B0B]/50 border-white/[0.08] text-[#F4F4F6]/75 hover:border-white/20'
-                      }`}
+                {/* Row 5: Plain-Language Project Description with Live Counter */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label
+                      htmlFor="description"
+                      className="block text-xs font-semibold text-[#161412]"
                     >
-                      <span className="truncate">{b.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Project Description */}
-              <div>
-                <label className="block text-[11px] sm:text-xs font-medium uppercase tracking-wider text-[#F4F4F6]/75 mb-1.5 font-mono">
-                  {t.contact.descriptionLabel} <span className="text-[#D4AF37]">*</span>
-                </label>
-                <div className="relative">
+                      {t.contact.descriptionLabel} *
+                    </label>
+                    <span className="text-[11px] font-mono-tabular text-[#5C554E]">
+                      {description.trim().length} / 15 min
+                    </span>
+                  </div>
                   <textarea
+                    id="description"
                     rows={4}
-                    placeholder={t.contact.descriptionPlaceholder}
                     value={description}
+                    onBlur={() => handleBlur('description', description)}
                     onChange={(e) => {
                       setDescription(e.target.value);
-                      if (errors.description) setErrors((prev) => ({ ...prev, description: '' }));
+                      if (errors.description) {
+                        setErrors({
+                          ...errors,
+                          description: validateField('description', e.target.value),
+                        });
+                      }
                     }}
-                    className={`w-full bg-[#0B0B0B]/80 border ${
-                      errors.description ? 'border-red-500/80' : 'border-white/[0.1] focus:border-[#D4AF37]'
-                    } rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-[#F4F4F6]/30 backdrop-blur-sm transition-all outline-none resize-none font-body`}
+                    placeholder={t.contact.descriptionPlaceholder}
+                    className={`w-full p-4 rounded-lg bg-[#F7F4EE] border text-base sm:text-sm text-[#161412] placeholder-[#8C847A] focus:outline-none transition-colors resize-y ${
+                      errors.description
+                        ? 'border-red-600 focus:border-red-600'
+                        : isFieldValid('description', description)
+                        ? 'border-emerald-600/60 focus:border-[#A64B2A]'
+                        : 'border-[#E2DDD5] focus:border-[#A64B2A]'
+                    }`}
                   />
-                  <MessageSquare className="absolute right-3.5 top-3.5 w-4 h-4 text-[#F4F4F6]/30 pointer-events-none" />
-                </div>
-                {errors.description && (
-                  <span className="text-xs text-red-400 mt-1 block">{errors.description}</span>
-                )}
-              </div>
-
-              {/* Confidentiality & Submission */}
-              <div className="pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-xs text-[#F4F4F6]/70 font-body w-full sm:w-auto">
-                  <ShieldCheck className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                  <span>{t.contact.confidentiality}</span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full sm:w-auto min-h-[48px] sm:min-h-[50px] inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#0B0B0B] bg-[#D4AF37] hover:bg-[#E2C255] disabled:opacity-50 rounded-full transition-all duration-200 cursor-pointer shadow-[0_4px_25px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_35px_rgba(212,175,55,0.5)] whitespace-nowrap"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>{t.contact.submittingBtn}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{t.contact.submitBtn}</span>
-                      <ArrowUpRight className="w-4 h-4" />
-                    </>
+                  {errors.description && (
+                    <p className="mt-1.5 text-xs text-red-600 font-medium">
+                      {errors.description}
+                    </p>
                   )}
-                </button>
-              </div>
-            </form>
-          )}
+                </div>
+
+                {/* Row 6: Anti-Spam Human Verification Challenge */}
+                <div className="p-4 rounded-lg bg-[#F7F4EE] border border-[#E2DDD5] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-2.5">
+                    <Lock className="w-4 h-4 text-[#A64B2A] shrink-0" />
+                    <div>
+                      <label
+                        htmlFor="humanAnswer"
+                        className="text-xs font-semibold text-[#161412] block"
+                      >
+                        {isFr
+                          ? `Protection Anti-Spam : Combien font ${mathChallenge.a} + ${mathChallenge.b} ? *`
+                          : `Anti-Spam Check: What is ${mathChallenge.a} + ${mathChallenge.b}? *`}
+                      </label>
+                      <span className="text-[11px] text-[#5C554E]">
+                        {isFr
+                          ? 'Vérification rapide pour bloquer les robots automatisés.'
+                          : 'Quick verification to block automated spam bots.'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="humanAnswer"
+                      type="number"
+                      inputMode="numeric"
+                      value={humanAnswer}
+                      onBlur={() => handleBlur('humanAnswer', humanAnswer)}
+                      onChange={(e) => {
+                        setHumanAnswer(e.target.value);
+                        if (errors.humanAnswer) {
+                          setErrors({
+                            ...errors,
+                            humanAnswer: validateField('humanAnswer', e.target.value),
+                          });
+                        }
+                      }}
+                      placeholder="?"
+                      className={`w-24 min-h-[42px] px-3 py-1.5 rounded-lg bg-white border text-center font-mono-tabular text-sm font-semibold text-[#161412] focus:outline-none ${
+                        errors.humanAnswer
+                          ? 'border-red-600'
+                          : isFieldValid('humanAnswer', humanAnswer)
+                          ? 'border-emerald-600'
+                          : 'border-[#E2DDD5] focus:border-[#A64B2A]'
+                      }`}
+                    />
+                  </div>
+                </div>
+                {errors.humanAnswer && (
+                  <p className="-mt-4 text-xs text-red-600 font-medium">
+                    {errors.humanAnswer}
+                  </p>
+                )}
+
+                {/* Submit Bar & Legal Links */}
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1 text-xs text-[#5C554E]">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-[#A64B2A] shrink-0" />
+                      <span>{t.contact.confidentiality}</span>
+                    </div>
+                    {(onOpenPrivacyPage || onOpenTermsPage) && (
+                      <div className="flex items-center gap-2 pl-6 text-[11px]">
+                        {onOpenPrivacyPage && (
+                          <button
+                            type="button"
+                            onClick={onOpenPrivacyPage}
+                            className="underline hover:text-[#161412] cursor-pointer"
+                          >
+                            {isFr ? 'Politique de confidentialité' : 'Privacy Policy'}
+                          </button>
+                        )}
+                        {onOpenPrivacyPage && onOpenTermsPage && <span>·</span>}
+                        {onOpenTermsPage && (
+                          <button
+                            type="button"
+                            onClick={onOpenTermsPage}
+                            className="underline hover:text-[#161412] cursor-pointer"
+                          >
+                            {isFr ? 'CGU' : 'Terms of Use'}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="min-h-[50px] px-7 py-3.5 rounded-lg bg-[#A64B2A] hover:bg-[#8E3D20] disabled:opacity-60 text-[#F7F4EE] text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>{t.contact.submittingBtn}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t.contact.submitBtn}</span>
+                        <ArrowUpRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Pop-up thématique de la Politique de Confidentialité affiché après validation */}
+      {/* Automatic Privacy Policy & NDA Certificate Modal Triggered on Validation */}
       <PrivacyPolicyModal
-        isOpen={showPrivacyPopup}
-        onClose={() => setShowPrivacyPopup(false)}
-        dossierRef={dossierRef}
-        submissionDetails={{
-          fullName,
-          companyName,
-          email,
-        }}
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        referenceCode={submittedRef || undefined}
+        clientName={fullName || undefined}
       />
     </section>
   );

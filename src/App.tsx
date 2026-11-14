@@ -1,29 +1,115 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
+import { Portfolio } from './components/Portfolio';
 import { Methodology } from './components/Methodology';
+import { FAQ } from './components/FAQ';
+import { CTABanner } from './components/CTABanner';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { LoadingScreen } from './components/LoadingScreen';
+import { NotFoundPage } from './components/NotFoundPage';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import { TermsPage } from './components/TermsPage';
+import { CookieBanner } from './components/CookieBanner';
 import { LanguagePromptBanner } from './components/LanguagePromptBanner';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
+
+type ViewMode = 'home' | 'privacy' | 'terms' | '404';
+
+function resolveViewModeFromLocation(): ViewMode {
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+
+  if (
+    hash === '#privacy' ||
+    hash === '#/privacy' ||
+    hash === '#politique-de-confidentialite' ||
+    path === '/privacy' ||
+    path === '/politique-de-confidentialite'
+  ) {
+    return 'privacy';
+  }
+
+  if (
+    hash === '#terms' ||
+    hash === '#/terms' ||
+    hash === '#cgu' ||
+    hash === '#/cgu' ||
+    path === '/terms' ||
+    path === '/cgu'
+  ) {
+    return 'terms';
+  }
+
+  if (hash === '#404' || hash === '#/404') {
+    return '404';
+  }
+
+  if (path !== '/' && path !== '/index.html') {
+    return '404';
+  }
+
+  return 'home';
+}
 
 function MainApp() {
   const [modalOpen, setModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState('web');
-  const [showLoading, setShowLoading] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>(resolveViewModeFromLocation);
+  const [showLoading, setShowLoading] = useState<boolean>(
+    () => resolveViewModeFromLocation() === 'home'
+  );
+  const [hideNavLogo, setHideNavLogo] = useState<boolean>(
+    () => resolveViewModeFromLocation() === 'home'
+  );
 
-  const handleLoadingComplete = () => {
-    setShowLoading(false);
-    setIsLoaded(true);
-  };
+  useEffect(() => {
+    const syncRouteState = () => {
+      setViewMode(resolveViewModeFromLocation());
+    };
+    window.addEventListener('popstate', syncRouteState);
+    window.addEventListener('hashchange', syncRouteState);
+    return () => {
+      window.removeEventListener('popstate', syncRouteState);
+      window.removeEventListener('hashchange', syncRouteState);
+    };
+  }, []);
+
+  const handleReturnHome = useCallback(() => {
+    window.history.pushState({}, '', '/');
+    setViewMode('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleOpenPrivacyPage = useCallback(() => {
+    window.history.pushState({}, '', '/#politique-de-confidentialite');
+    setViewMode('privacy');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleOpenTermsPage = useCallback(() => {
+    window.history.pushState({}, '', '/#cgu');
+    setViewMode('terms');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleNavigateSectionFrom404 = useCallback((sectionId: string) => {
+    window.history.pushState({}, '', `/#${sectionId}`);
+    setViewMode('home');
+    setTimeout(() => {
+      const target = document.getElementById(sectionId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 80);
+  }, []);
 
   const handleOpenProjectModal = (serviceKey?: string) => {
     if (serviceKey) {
@@ -47,6 +133,13 @@ function MainApp() {
     }
   };
 
+  const handleScrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleNavigateFromModal = (serviceKey: string) => {
     setSelectedService(serviceKey);
     const contactSection = document.getElementById('contact');
@@ -56,43 +149,92 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-[#F4F4F6] selection:bg-[#D4AF37] selection:text-[#0B0B0B] font-body relative overflow-x-hidden w-full pb-20 sm:pb-0">
-      {/* Loading Screen */}
-      {showLoading && (
-        <LoadingScreen onComplete={handleLoadingComplete} />
+    <div className="min-h-screen bg-[#F7F4EE] text-[#161412] selection:bg-[#A64B2A] selection:text-[#F7F4EE] relative overflow-x-hidden w-full pb-16 sm:pb-0">
+      {/* Architectural Letter-by-Letter Logo Transition Loading Screen */}
+      {showLoading && viewMode === 'home' && (
+        <LoadingScreen
+          onHandoverLogo={() => setHideNavLogo(false)}
+          onComplete={() => {
+            setHideNavLogo(false);
+            setShowLoading(false);
+          }}
+        />
       )}
 
-      {/* Device Language Translation Banner */}
-      <LanguagePromptBanner />
-
-      {/* Top Navbar */}
-      <Navbar
-        onOpenProjectModal={() => handleOpenProjectModal()}
-      />
-
-      <main className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        {/* Section 1 : Hero */}
-        <Hero
+      {viewMode === '404' ? (
+        <NotFoundPage
+          onReturnHome={handleReturnHome}
+          onNavigateSection={handleNavigateSectionFrom404}
           onOpenProjectModal={() => handleOpenProjectModal()}
-          onExploreServices={handleExploreServices}
-          isLoaded={isLoaded}
         />
+      ) : viewMode === 'privacy' ? (
+        <PrivacyPolicyPage
+          onReturnHome={handleReturnHome}
+          onNavigateTerms={handleOpenTermsPage}
+        />
+      ) : viewMode === 'terms' ? (
+        <TermsPage
+          onReturnHome={handleReturnHome}
+          onNavigatePrivacy={handleOpenPrivacyPage}
+        />
+      ) : (
+        <>
+          {/* Device Language Translation Prompt (Delayed & Non-Intrusive) */}
+          <LanguagePromptBanner />
 
-        {/* Section 2 : 4 Main Services */}
-        <Services onSelectService={handleSelectServiceFromCard} />
+          {/* Top Bar Contract Navigation */}
+          <Navbar
+            onOpenProjectModal={() => handleOpenProjectModal()}
+            hideLogoDuringIntro={hideNavLogo}
+          />
 
-        {/* Section 3 : 3-Step Simple Methodology & Guarantees */}
-        <Methodology />
+          <main>
+            {/* Section 1 : Architectural Split Hero & 4-Column Quantitative Proof */}
+            <Hero
+              onOpenProjectModal={() => handleOpenProjectModal()}
+              onExploreServices={handleExploreServices}
+            />
 
-        {/* Section 4 : Simple & Reassuring Contact Form */}
-        <ContactForm preselectedService={selectedService} />
-      </main>
+            {/* Section 2 : Asymmetric Bento Grid — 4 Core Capabilities */}
+            <Services onSelectService={handleSelectServiceFromCard} />
 
-      {/* Footer with Social Links & Privacy Policy */}
-      <Footer onOpenPrivacyPolicy={() => setPrivacyModalOpen(true)} />
+            {/* Section 3 : Interactive Horizontal Scroll Portfolio Monograph */}
+            <Portfolio onSelectService={handleSelectServiceFromCard} />
 
-      {/* Mobile Ergonomic Bottom Action Bar */}
-      <MobileBottomBar onOpenProjectModal={() => handleOpenProjectModal()} />
+            {/* Section 4 : Simplified 3-Row Editorial Methodology & Guarantees */}
+            <Methodology />
+
+            {/* Section 5 : Plain-Language Accordion FAQ */}
+            <FAQ onScrollToContact={handleScrollToContact} />
+
+            {/* Section 6 : High-Impact Architectural Call To Action (CTA) */}
+            <CTABanner
+              onOpenProjectModal={() => handleOpenProjectModal()}
+              onScrollToContact={handleScrollToContact}
+            />
+
+            {/* Section 7 : Validated Consultation, Anti-Spam & Auto-Adapted Regional Currency Form */}
+            <ContactForm
+              preselectedService={selectedService}
+              onOpenPrivacyPage={handleOpenPrivacyPage}
+              onOpenTermsPage={handleOpenTermsPage}
+            />
+          </main>
+
+          {/* Footer with Official Social Channels, Privacy Policy Page & CGU Links */}
+          <Footer
+            onOpenPrivacyPolicy={() => setPrivacyModalOpen(true)}
+            onOpenPrivacyPage={handleOpenPrivacyPage}
+            onOpenTermsPage={handleOpenTermsPage}
+          />
+
+          {/* Compact Mobile Bottom Action Bar */}
+          <MobileBottomBar onOpenProjectModal={() => handleOpenProjectModal()} />
+        </>
+      )}
+
+      {/* Cookie Consent Banner (GDPR / CCPA) */}
+      <CookieBanner onOpenPrivacyPage={handleOpenPrivacyPage} />
 
       {/* Project Scoping Modal */}
       <ProjectModal
@@ -102,7 +244,7 @@ function MainApp() {
         initialService={selectedService}
       />
 
-      {/* On-Demand Privacy Policy Modal */}
+      {/* Global Privacy Policy & NDA Charter Modal */}
       <PrivacyPolicyModal
         isOpen={privacyModalOpen}
         onClose={() => setPrivacyModalOpen(false)}

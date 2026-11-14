@@ -52,26 +52,166 @@ const db = await JSONFilePreset<DatabaseSchema>(dbFilePath, defaultData);
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '64kb' }));
+app.use(express.urlencoded({ extended: true, limit: '64kb' }));
 
-// 1. API: Submit new project quote / contact request
+// Anti-Spam Rate Limiting Store (In-memory per IP: max 8 requests / 10 minutes)
+const rateLimitStore = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 8;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (rateLimitStore.get(ip) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    rateLimitStore.set(ip, timestamps);
+    return false;
+  }
+  timestamps.push(now);
+  rateLimitStore.set(ip, timestamps);
+  return true;
+}
+
+function resolveBaseUrl(req: express.Request): string {
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/+$/, '');
+  }
+  const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol || 'https';
+  const host = req.headers['x-forwarded-host'] || req.headers.host || `localhost:${PORT}`;
+  return `${proto}://${host}`;
+}
+
+// 0. SEO Endpoints: /robots.txt and /sitemap.xml
+app.get('/robots.txt', (req, res) => {
+  const baseUrl = resolveBaseUrl(req);
+  const robotsTxt = [
+    '# Ouest Dynamics — Search Engine Crawler Directives',
+    'User-agent: *',
+    'Allow: /',
+    'Disallow: /api/',
+    '',
+    `Sitemap: ${baseUrl}/sitemap.xml`,
+    '',
+  ].join('\n');
+
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.status(200).send(robotsTxt);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const baseUrl = resolveBaseUrl(req);
+  const lastMod = new Date().toISOString().split('T')[0];
+
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#expertises</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#portfolio</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#methodologie</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#contact</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#politique-de-confidentialite</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/#cgu</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>`;
+
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.status(200).send(sitemapXml);
+});
+
+// 1. API: Submit new project quote / contact request (with server-side validation & anti-spam)
 app.post('/api/submissions', async (req, res) => {
   try {
-    const { fullName, companyName, email, service, budget, currency, description } = req.body;
+    const clientIp =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+      req.socket.remoteAddress ||
+      'unknown';
 
-    // Server-side validation
-    if (!fullName || typeof fullName !== 'string' || !fullName.trim()) {
-      return res.status(400).json({ error: 'Full name is required' });
+    if (!checkRateLimit(clientIp)) {
+      return res.status(429).json({
+        error: 'Too many requests. Please wait a few minutes before submitting again.',
+      });
     }
-    if (!companyName || typeof companyName !== 'string' || !companyName.trim()) {
-      return res.status(400).json({ error: 'Company or project name is required' });
+
+    const {
+      fullName,
+      companyName,
+      email,
+      service,
+      budget,
+      currency,
+      description,
+      _honeypot,
+      _elapsedMs,
+    } = req.body;
+
+    // Anti-Spam Layer 1: Honeypot Trap
+    if (_honeypot && typeof _honeypot === 'string' && _honeypot.trim().length > 0) {
+      return res.status(400).json({ error: 'Automated spam submission rejected' });
     }
-    if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+
+    // Anti-Spam Layer 2: Submission Velocity Check (< 1000ms indicates bot automation)
+    if (typeof _elapsedMs === 'number' && _elapsedMs < 1000) {
+      return res.status(429).json({ error: 'Submission sent too quickly. Please try again.' });
+    }
+
+    // Server-side field validation
+    if (!fullName || typeof fullName !== 'string' || fullName.trim().length < 2) {
+      return res.status(400).json({ error: 'Full name is required (minimum 2 characters)' });
+    }
+    if (!companyName || typeof companyName !== 'string' || companyName.trim().length < 2) {
+      return res
+        .status(400)
+        .json({ error: 'Company or project name is required (minimum 2 characters)' });
+    }
+    if (
+      !email ||
+      typeof email !== 'string' ||
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.trim())
+    ) {
       return res.status(400).json({ error: 'A valid email address is required' });
     }
-    if (!description || typeof description !== 'string' || !description.trim()) {
-      return res.status(400).json({ error: 'Project description is required' });
+    if (!description || typeof description !== 'string' || description.trim().length < 15) {
+      return res
+        .status(400)
+        .json({ error: 'Project description is required (minimum 15 characters)' });
     }
 
     const year = new Date().getFullYear();
@@ -83,13 +223,13 @@ app.post('/api/submissions', async (req, res) => {
     const record: SubmissionRecord = {
       id,
       reference,
-      fullName: fullName.trim(),
-      companyName: companyName.trim(),
-      email: email.trim().toLowerCase(),
+      fullName: fullName.trim().slice(0, 120),
+      companyName: companyName.trim().slice(0, 120),
+      email: email.trim().toLowerCase().slice(0, 160),
       service: service || 'web',
       budget: budget || 'standard',
       currency: currency || 'USD',
-      description: description.trim(),
+      description: description.trim().slice(0, 3000),
       createdAt: now,
       status: 'received',
       userAgent: req.headers['user-agent'] || '',
@@ -163,7 +303,16 @@ app.get('/api/health', async (_req, res) => {
   });
 });
 
-// 5. Mount Vite in Development or serve static in Production
+// 5. Cache static image assets for fast repeat loading
+app.use(
+  '/src/assets/images',
+  express.static(path.join(__dirname, 'src/assets/images'), {
+    maxAge: '7d',
+    immutable: true,
+  })
+);
+
+// 6. Mount Vite in Development or serve static in Production
 const isProd = process.env.NODE_ENV === 'production';
 
 if (!isProd) {
@@ -179,7 +328,11 @@ if (!isProd) {
   app.use(vite.middlewares);
 } else {
   const distDir = path.join(__dirname, 'dist');
-  app.use(express.static(distDir));
+  app.use(
+    express.static(distDir, {
+      maxAge: '7d',
+    })
+  );
   app.get('*', (_req, res) => {
     res.sendFile(path.join(distDir, 'index.html'));
   });

@@ -4,6 +4,7 @@ export interface Translations {
   // Navigation
   nav: {
     expertises: string;
+    portfolio: string;
     methodology: string;
     governance: string;
     contact: string;
@@ -53,6 +54,67 @@ export interface Translations {
       keyBenefitLabel: string;
       whyChoose: string;
       turnaround: string;
+    }[];
+  };
+
+  // Portfolio Section (Horizontal Scroll Showcase)
+  portfolio: {
+    surtitle: string;
+    title: string;
+    subtitle: string;
+    filterAll: string;
+    categories: {
+      all: string;
+      web: string;
+      mobile: string;
+      fintech: string;
+      design: string;
+    };
+    visitLive: string;
+    caseStudy: string;
+    launchSimilar: string;
+    liveProduction: string;
+    scrollHint: string;
+    dragHint: string;
+    viewAllProjects: string;
+    modalTitle: string;
+    overviewTab: string;
+    impactTab: string;
+    testimonialTab: string;
+    clientLabel: string;
+    yearLabel: string;
+    servicesLabel: string;
+    challengeTitle: string;
+    solutionTitle: string;
+    outcomeTitle: string;
+    resultsTitle: string;
+    closeModal: string;
+    copyLinkSuccess: string;
+    shareProject: string;
+    items: {
+      id: string;
+      title: string;
+      client: string;
+      year: string;
+      category: 'web' | 'mobile' | 'fintech' | 'design';
+      categoryLabel: string;
+      tagline: string;
+      description: string;
+      metrics: { value: string; label: string }[];
+      tags: string[];
+      serviceId: string;
+      url: string;
+      domainDisplay: string;
+      accentColor: string;
+      challenge: string;
+      solution: string;
+      outcome: string;
+      testimonial: {
+        quote: string;
+        author: string;
+        role: string;
+        company: string;
+      };
     }[];
   };
 
@@ -156,6 +218,7 @@ export const translations: Record<Language, Translations> = {
   en: {
     nav: {
       expertises: 'What We Do',
+      portfolio: 'Portfolio',
       methodology: 'How It Works',
       governance: 'Guarantees',
       contact: 'Get a Quote',
@@ -268,6 +331,247 @@ export const translations: Record<Language, Translations> = {
           whyChoose:
             'You stay active and visible on social channels without having to spend hours writing posts or editing videos yourself.',
           turnaround: 'Ongoing monthly care',
+        },
+      ],
+    },
+    portfolio: {
+      surtitle: 'FEATURED CASE STUDIES & PRODUCTION WORK',
+      title: 'Real Projects Engineered for Measurable Growth.',
+      subtitle:
+        'Explore our recent bespoke web platforms, mobile apps, and digital flagship experiences. Tested in live production, trusted by market leaders.',
+      filterAll: 'All Works',
+      categories: {
+        all: 'All Projects',
+        web: 'Web & E-Commerce',
+        mobile: 'Mobile Apps',
+        fintech: 'Fintech & SaaS',
+        design: 'Brand & 3D',
+      },
+      visitLive: 'Visit Live Website',
+      caseStudy: 'View Case Study',
+      launchSimilar: 'Start Similar Project',
+      liveProduction: 'LIVE IN PRODUCTION',
+      scrollHint: 'Scroll or drag horizontally to discover all featured projects',
+      dragHint: 'Drag or use arrows to navigate',
+      viewAllProjects: 'Explore all 6 featured builds',
+      modalTitle: 'Project Deep Dive & Case Study',
+      overviewTab: 'Overview',
+      impactTab: 'Impact & Metrics',
+      testimonialTab: 'Client Review',
+      clientLabel: 'Client',
+      yearLabel: 'Year',
+      servicesLabel: 'Category',
+      challengeTitle: 'The Challenge',
+      solutionTitle: 'Our Engineering & Design Solution',
+      outcomeTitle: 'Key Outcomes & Value Created',
+      resultsTitle: 'Verified Performance',
+      closeModal: 'Close',
+      copyLinkSuccess: 'Direct project link copied to clipboard!',
+      shareProject: 'Share Project',
+      items: [
+        {
+          id: 'aura-living',
+          title: 'Aura Living',
+          client: 'Aura Atelier International',
+          year: '2024',
+          category: 'web',
+          categoryLabel: 'Bespoke E-Commerce & 3D',
+          tagline: 'High-end furniture flagship with real-time 3D customizer & global checkout.',
+          description:
+            'A luxury commerce flagship allowing clients across London, Paris, and Abidjan to customize bespoke furniture pieces in interactive 3D with instant checkout in EUR, USD, and XOF.',
+          metrics: [
+            { value: '+240%', label: 'Sales Conversion' },
+            { value: '0.6s', label: 'Average Page Load' },
+            { value: '$3.8M+', label: 'Online Revenue' },
+          ],
+          tags: ['Next.js 14', 'Three.js / WebGL', 'Stripe & Mobile Money', 'Tailwind CSS'],
+          serviceId: 'web',
+          url: 'https://aura-living.preview.ouestdynamics.com',
+          domainDisplay: 'aura-living.com',
+          accentColor: '#D4AF37',
+          challenge:
+            'The client’s legacy site was slow (4.2s load), cart abandonment exceeded 70%, and customers could not visualize custom fabric and marble variations online.',
+          solution:
+            'We engineered a headless Next.js architecture integrated with an interactive Three.js 3D configurator, localized multi-currency pricing, and streamlined 2-step checkout.',
+          outcome:
+            'Mobile checkout conversion surged by 240%, load speed improved by 85%, and international orders tripled within 90 days of rollout.',
+          testimonial: {
+            quote:
+              'Ouest Dynamics transformed our digital presence into an absolute luxury experience. Our online sales exceeded every projection.',
+            author: 'Alexandre Vance',
+            role: 'Managing Director',
+            company: 'Aura Atelier Ltd.',
+          },
+        },
+        {
+          id: 'kauri-pay',
+          title: 'Kauri Pay',
+          client: 'Kauri Financial Technologies',
+          year: '2024',
+          category: 'fintech',
+          categoryLabel: 'Fintech & Mobile Wallet',
+          tagline: 'Instant cross-border transfers and offline merchant QR code settlements.',
+          description:
+            'A banking-grade mobile wallet built for extreme reliability across West Africa, enabling instant transfers, utility bill payments, and biometric QR payments with zero lag.',
+          metrics: [
+            { value: '$42M+', label: 'Volume Transacted' },
+            { value: '120k+', label: 'Active Users' },
+            { value: '99.99%', label: 'System Uptime' },
+          ],
+          tags: ['React Native', 'TypeScript', 'Go Microservices', 'Biometrics / FaceID'],
+          serviceId: 'mobile',
+          url: 'https://kauripay.preview.ouestdynamics.com',
+          domainDisplay: 'kauri.finance',
+          accentColor: '#38BDF8',
+          challenge:
+            'Traditional mobile banking solutions failed frequently under slow 3G network conditions, causing high dropouts during merchant point-of-sale payments.',
+          solution:
+            'Engineered a native mobile application with offline transaction caching, instant QR code cryptographic signing, and sub-second payment settlement.',
+          outcome:
+            'Onboarded over 120,000 verified users in 6 months, processed over $42M in transactions, and achieved a 4.9-star rating on the App Store.',
+          testimonial: {
+            quote:
+              'The performance and security engineered by Ouest Dynamics gave us a massive unfair advantage against legacy financial institutions.',
+            author: 'Aminata Traoré',
+            role: 'VP of Product',
+            company: 'Kauri Financial Technologies',
+          },
+        },
+        {
+          id: 'zenith-health',
+          title: 'Zenith Health Logistics',
+          client: 'Zenith Medical Alliance',
+          year: '2023',
+          category: 'web',
+          categoryLabel: 'Cloud Logistics & IoT Tracker',
+          tagline: 'Real-time cold-chain tracker and automated clinic dispatch command center.',
+          description:
+            'Mission-critical healthcare operations dashboard connecting 1,400+ pharmacies, hospitals, and refrigerated courier fleets with automated dispatch and temperature monitoring.',
+          metrics: [
+            { value: '-45%', label: 'Dispatch Delays' },
+            { value: '1,400+', label: 'Clinics Connected' },
+            { value: '0%', label: 'Vaccine Spoilage' },
+          ],
+          tags: ['React 18', 'Node.js', 'Mapbox GL', 'WebSockets', 'PostgreSQL'],
+          serviceId: 'web',
+          url: 'https://zenith-health.preview.ouestdynamics.com',
+          domainDisplay: 'zenith-logistics.io',
+          accentColor: '#34D399',
+          challenge:
+            'Critical medications and vaccines were vulnerable to delays and temperature spikes due to manual paper logging across dispersed regional centers.',
+          solution:
+            'Architected a cloud command center with live GPS fleet routing, IoT temperature alert webhooks, and automated SMS notifications to clinical staff.',
+          outcome:
+            'Reduced average delivery delays by 45%, eliminated vaccine spoilage, and expanded to national healthcare networks with zero service downtime.',
+          testimonial: {
+            quote:
+              'A masterclass in dependable engineering. The software Ouest Dynamics built literally protects vital medicines and saves patient lives every single day.',
+            author: 'Dr. Marc Desjardins',
+            role: 'Director of Operations',
+            company: 'Zenith Medical Alliance',
+          },
+        },
+        {
+          id: 'sovereign-capital',
+          title: 'Sovereign Capital Partners',
+          client: 'Sovereign Capital Group',
+          year: '2024',
+          category: 'design',
+          categoryLabel: 'Brand Identity & Investor Portal',
+          tagline: 'Institutional private equity branding, editorial typography & encrypted data room.',
+          description:
+            'Comprehensive digital brand elevation and private client portal for an institutional investment firm managing sovereign wealth and private equity portfolios.',
+          metrics: [
+            { value: '$650M', label: 'AUM Monitored' },
+            { value: '100%', label: 'Security Audit' },
+            { value: 'SOC2', label: 'Compliance Level' },
+          ],
+          tags: ['Bespoke Identity', 'Next.js', 'AES-256 Vault', 'Figma Design System'],
+          serviceId: 'design',
+          url: 'https://sovereign-capital.preview.ouestdynamics.com',
+          domainDisplay: 'sovereign-cp.com',
+          accentColor: '#F59E0B',
+          challenge:
+            'An outdated web identity failed to convey the institutional caliber needed to court top-tier institutional limited partners and sovereign funds.',
+          solution:
+            'Designed a prestigious visual identity system, custom typography, luxury physical collateral, and a private encrypted investor portal with multi-factor authentication.',
+          outcome:
+            'Successfully closed an oversubscribed $200M growth vehicle within 4 months of the new brand launch with exceptional investor feedback.',
+          testimonial: {
+            quote:
+              'Our brand perception moved from regional firm to world-class investment boutique overnight. The craftsmanship is palpable.',
+            author: 'Christian Laurent',
+            role: 'Senior Partner',
+            company: 'Sovereign Capital Group',
+          },
+        },
+        {
+          id: 'nomad-roasters',
+          title: 'Nomad Roasters',
+          client: 'Nomad Coffee Collective',
+          year: '2023',
+          category: 'web',
+          categoryLabel: 'Global D2C Subscription',
+          tagline: 'Direct-to-consumer coffee club with automated recurring deliveries and tasting quiz.',
+          description:
+            'A high-speed subscription commerce platform serving specialty coffee lovers across 18 countries with intelligent taste profiling and flexible delivery scheduling.',
+          metrics: [
+            { value: '+310%', label: 'Recurring ARR' },
+            { value: '3.2x', label: 'Customer LTV' },
+            { value: '18', label: 'Countries Shipped' },
+          ],
+          tags: ['Headless Commerce', 'React', 'Stripe Billing', 'Tailwind CSS'],
+          serviceId: 'web',
+          url: 'https://nomadroasters.preview.ouestdynamics.com',
+          domainDisplay: 'nomad-roasters.com',
+          accentColor: '#FB923C',
+          challenge:
+            'Standard e-commerce templates proved clunky for subscription management, causing 45% subscriber churn within the first 60 days.',
+          solution:
+            'Created a bespoke interactive tasting quiz that automatically builds customized recurring orders, paired with a seamless 1-click customer portal.',
+          outcome:
+            'Recurring annual revenue grew by 310%, average customer lifetime value more than tripled, and churn dropped to an industry-leading 3.8%.',
+          testimonial: {
+            quote:
+              'The smoothest subscription flow we have ever operated. Our members constantly praise how effortless it is to manage their orders.',
+            author: 'Sarah Lindqvist',
+            role: 'Co-Founder & CEO',
+            company: 'Nomad Coffee Collective',
+          },
+        },
+        {
+          id: 'pulse-fitness',
+          title: 'Pulse Athletics & Club',
+          client: 'Pulse Fitness Worldwide',
+          year: '2024',
+          category: 'mobile',
+          categoryLabel: 'Mobile App & Connected Health',
+          tagline: 'Smart workout companion, live studio bookings, and wearable biometrics sync.',
+          description:
+            'An elegant iOS and Android companion app for premium athletic clubs, integrating Apple HealthKit, biometric heart-rate tracking, and 1-tap class bookings.',
+          metrics: [
+            { value: '85k+', label: 'Active Downloads' },
+            { value: '4.8★', label: 'App Store Rating' },
+            { value: '68%', label: '30-Day Retention' },
+          ],
+          tags: ['React Native', 'HealthKit API', 'Google Fit', 'Push Engine'],
+          serviceId: 'mobile',
+          url: 'https://pulsefitness.preview.ouestdynamics.com',
+          domainDisplay: 'pulse-athletics.app',
+          accentColor: '#A855F7',
+          challenge:
+            'Club members struggled with frustrating third-party booking plugins and lacked a unified way to track studio workout performance.',
+          solution:
+            'Engineered an ultra-sleek mobile app with biometric login, real-time studio floor capacity maps, and automatic workout synchronization with wearable devices.',
+          outcome:
+            'Club class attendance increased by 38%, 30-day user retention reached 68%, and the app earned thousands of 5-star reviews on iOS and Android.',
+          testimonial: {
+            quote:
+              'Our club members actually look forward to opening the app every day. It elevated our gym into an all-in-one lifestyle community.',
+            author: 'Marcus Thorne',
+            role: 'Head of Brand & Experience',
+            company: 'Pulse Fitness Worldwide',
+          },
         },
       ],
     },
@@ -420,6 +724,7 @@ export const translations: Record<Language, Translations> = {
   fr: {
     nav: {
       expertises: 'Ce que nous faisons',
+      portfolio: 'Réalisations',
       methodology: 'Comment ça marche',
       governance: 'Nos Garanties',
       contact: 'Demander un Devis',
@@ -532,6 +837,247 @@ export const translations: Record<Language, Translations> = {
           whyChoose:
             'Votre entreprise reste vivante et active en ligne sans que vous ayez besoin de passer vos soirées à rédiger des posts ou monter des vidéos.',
           turnaround: 'Accompagnement mensuel',
+        },
+      ],
+    },
+    portfolio: {
+      surtitle: 'PROJETS EMBLÉMATIQUES & PRODUCTIONS',
+      title: 'Des Projets Réels Conçus pour Accélérer Votre Croissance.',
+      subtitle:
+        'Explorez nos réalisations récentes : plateformes web, applications mobiles et expériences digitales de prestige. En production et approuvées par nos clients.',
+      filterAll: 'Tous les projets',
+      categories: {
+        all: 'Tous les projets',
+        web: 'Web & E-Commerce',
+        mobile: 'Applications Mobiles',
+        fintech: 'Fintech & SaaS',
+        design: 'Identité & 3D',
+      },
+      visitLive: 'Visiter le site en direct',
+      caseStudy: "Voir l'étude de cas",
+      launchSimilar: 'Lancer un projet similaire',
+      liveProduction: 'EN PRODUCTION RÉELLE',
+      scrollHint: 'Faites défiler ou glissez horizontalement pour découvrir nos réalisations',
+      dragHint: 'Glissez ou utilisez les flèches pour naviguer',
+      viewAllProjects: 'Découvrir nos 6 projets en vitrine',
+      modalTitle: 'Étude de Cas Détaillée & Démo',
+      overviewTab: 'Vue d’ensemble',
+      impactTab: 'Impact & Métriques',
+      testimonialTab: 'Avis Client',
+      clientLabel: 'Client',
+      yearLabel: 'Année',
+      servicesLabel: 'Catégorie',
+      challengeTitle: 'Le Défi Initial',
+      solutionTitle: 'Notre Solution Technique & Design',
+      outcomeTitle: 'Résultats & Valeur Créée',
+      resultsTitle: 'Performances Vérifiées',
+      closeModal: 'Fermer',
+      copyLinkSuccess: 'Lien direct du projet copié dans le presse-papier !',
+      shareProject: 'Partager le projet',
+      items: [
+        {
+          id: 'aura-living',
+          title: 'Aura Living',
+          client: 'Aura Atelier International',
+          year: '2024',
+          category: 'web',
+          categoryLabel: 'E-Commerce de Prestige & 3D',
+          tagline: 'Flagship e-commerce de mobilier haut de gamme avec configurateur 3D temps réel.',
+          description:
+            'Une vitrine commerciale d’exception permettant aux clients de Paris, Londres et Abidjan de personnaliser leur mobilier en 3D interactive avec paiement multi-devises instantané.',
+          metrics: [
+            { value: '+240%', label: 'Taux de conversion' },
+            { value: '0.6s', label: 'Temps de chargement' },
+            { value: '3,8M€+', label: 'Ventes en ligne générées' },
+          ],
+          tags: ['Next.js 14', 'Three.js / WebGL', 'Stripe & Mobile Money', 'Tailwind CSS'],
+          serviceId: 'web',
+          url: 'https://aura-living.preview.ouestdynamics.com',
+          domainDisplay: 'aura-living.com',
+          accentColor: '#D4AF37',
+          challenge:
+            'L’ancien site du client était trop lourd (4,2 secondes), 70% des visiteurs abandonnaient leur panier et il était impossible de visualiser les textures de marbre et tissus sur-mesure.',
+          solution:
+            'Développement d’une architecture Next.js ultra-fluide avec configurateur 3D interactif Three.js, conversion automatique des monnaies (EUR, USD, XOF) et tunnel d’achat en 2 étapes.',
+          outcome:
+            'Conversion mobile multipliée par 2,4, vitesse de chargement améliorée de 85%, et commandes internationales triplées en 90 jours.',
+          testimonial: {
+            quote:
+              "Ouest Dynamics a propulsé notre enseigne dans une autre dimension. Nos ventes en ligne ont battu tous nos records dès le premier trimestre.",
+            author: 'Alexandre Vance',
+            role: 'Directeur Général',
+            company: 'Aura Atelier Ltd.',
+          },
+        },
+        {
+          id: 'kauri-pay',
+          title: 'Kauri Pay',
+          client: 'Kauri Financial Technologies',
+          year: '2024',
+          category: 'fintech',
+          categoryLabel: 'Fintech & Portefeuille Mobile',
+          tagline: 'Paiements transfrontaliers instantanés et encaissement marchand par QR code.',
+          description:
+            'Une application financière robuste conçue pour fonctionner avec une réactivité totale en Afrique de l’Ouest, intégrant virements instantanés, règlements de factures et QR code sécurisé.',
+          metrics: [
+            { value: '42M$+', label: 'Volume traité' },
+            { value: '120k+', label: 'Utilisateurs actifs' },
+            { value: '99.99%', label: 'Disponibilité système' },
+          ],
+          tags: ['React Native', 'TypeScript', 'Microservices Go', 'Biométrie / FaceID'],
+          serviceId: 'mobile',
+          url: 'https://kauripay.preview.ouestdynamics.com',
+          domainDisplay: 'kauri.finance',
+          accentColor: '#38BDF8',
+          challenge:
+            'Les applications bancaires classiques plantaient constamment lors de micro-coupures réseau 3G, provoquant des échecs de paiement aux caisses des commerçants.',
+          solution:
+            'Conception d’une application native ultra-légère avec mise en cache hors-ligne des transactions, signature cryptographique instantanée et confirmation en moins d’une seconde.',
+          outcome:
+            'Plus de 120 000 utilisateurs enregistrés en 6 mois, plus de 42 millions de dollars traités et note moyenne de 4,9 étoiles sur l’App Store.',
+          testimonial: {
+            quote:
+              "La vitesse et la stabilité conçues par Ouest Dynamics nous ont donné une avance concurrentielle déterminante face aux banques traditionnelles.",
+            author: 'Aminata Traoré',
+            role: 'Directrice Produit',
+            company: 'Kauri Financial Technologies',
+          },
+        },
+        {
+          id: 'zenith-health',
+          title: 'Zenith Health Logistics',
+          client: 'Zenith Medical Alliance',
+          year: '2023',
+          category: 'web',
+          categoryLabel: 'Plateforme Cloud & Logistique Santé',
+          tagline: 'Supervision de la chaîne du froid médicale et régulation logistique en direct.',
+          description:
+            'Tableau de bord opérationnel critique reliant plus de 1 400 hôpitaux, pharmacies et flottes de livraison réfrigérées avec régulation automatisée et alertes thermiques IoT.',
+          metrics: [
+            { value: '-45%', label: 'Retards de livraison' },
+            { value: '1 400+', label: 'Cliniques connectées' },
+            { value: '0%', label: 'Perte de vaccins' },
+          ],
+          tags: ['React 18', 'Node.js', 'Mapbox GL', 'WebSockets', 'PostgreSQL'],
+          serviceId: 'web',
+          url: 'https://zenith-health.preview.ouestdynamics.com',
+          domainDisplay: 'zenith-logistics.io',
+          accentColor: '#34D399',
+          challenge:
+            'Les stocks de vaccins et médicaments urgents subissaient des retards critiques à cause de registres papier manuels et d’une visibilité limitée sur les tournées.',
+          solution:
+            'Création d’un poste de commande en direct avec géolocalisation des convois, alertes de température automatiques et dispatch intelligent par SMS aux soignants.',
+          outcome:
+            'Temps d’acheminement réduit de 45%, zéro perte de produits thermosensibles et déploiement national officiel auprès de 3 réseaux de santé.',
+          testimonial: {
+            quote:
+              "Une fiabilité d’ingénierie exemplaire. L’outil bâti par Ouest Dynamics protège des traitements vitaux et sauve concrètement des vies chaque jour.",
+            author: 'Dr. Marc Desjardins',
+            role: 'Directeur des Opérations Médicales',
+            company: 'Zenith Medical Alliance',
+          },
+        },
+        {
+          id: 'sovereign-capital',
+          title: 'Sovereign Capital Partners',
+          client: 'Sovereign Capital Group',
+          year: '2024',
+          category: 'design',
+          categoryLabel: 'Identité de Marque & Portail Investisseurs',
+          tagline: 'Image de marque d’investissement, typographie d’art & data room chiffrée.',
+          description:
+            'Refonte prestigieuse d’identité visuelle et création d’un portail privé sécurisé pour une société de gestion d’actifs conseillant des fonds souverains et institutionnels.',
+          metrics: [
+            { value: '650M$', label: 'Actifs supervisés' },
+            { value: '100%', label: 'Audit sécurité réussi' },
+            { value: 'SOC2', label: 'Standard de conformité' },
+          ],
+          tags: ['Typographie Sur-Mesure', 'Next.js', 'Coffre AES-256', 'Design System'],
+          serviceId: 'design',
+          url: 'https://sovereign-capital.preview.ouestdynamics.com',
+          domainDisplay: 'sovereign-cp.com',
+          accentColor: '#F59E0B',
+          challenge:
+            'L’ancienne image de marque était vieillissante et ne reflétait pas le niveau d’excellence exigé par les grands investisseurs internationaux et fonds souverains.',
+          solution:
+            'Création d’une identité de prestige complète, typographie exclusive, supports physiques luxueux et data room chiffrée en AES-256 avec double authentification.',
+          outcome:
+            'Clôture record d’un fonds de 200 millions de dollars en 4 mois avec des retours extrêmement élogieux de la part des souscripteurs.',
+          testimonial: {
+            quote:
+              "Notre stature est passée instantanément au niveau des plus prestigieuses banques d'affaires mondiales. Un travail d'orfèvre numérique.",
+            author: 'Christian Laurent',
+            role: 'Associé Gérant',
+            company: 'Sovereign Capital Group',
+          },
+        },
+        {
+          id: 'nomad-roasters',
+          title: 'Nomad Roasters',
+          client: 'Nomad Coffee Collective',
+          year: '2023',
+          category: 'web',
+          categoryLabel: 'E-Commerce D2C & Abonnements',
+          tagline: 'Club de café de spécialité avec livraisons récurrentes automatisées et quiz gustatif.',
+          description:
+            'Plateforme e-commerce ultra-véloce servant les passionnés de café dans 18 pays, avec sélection personnalisée par algorithme gustatif et gestion d’abonnement en 1 clic.',
+          metrics: [
+            { value: '+310%', label: 'Croissance ARR abonnements' },
+            { value: '3.2x', label: 'Valeur vie client (LTV)' },
+            { value: '18', label: 'Pays livrés sans accroc' },
+          ],
+          tags: ['Commerce Headless', 'React', 'Stripe Billing', 'Tailwind CSS'],
+          serviceId: 'web',
+          url: 'https://nomadroasters.preview.ouestdynamics.com',
+          domainDisplay: 'nomad-roasters.com',
+          accentColor: '#FB923C',
+          challenge:
+            'Les plateformes e-commerce standards rendaient la gestion des abonnements fastidieuse, générant un désengagement de 45% des clients dans les deux premiers mois.',
+          solution:
+            'Développement d’un quiz interactif composant automatiquement la box sur-mesure du client, couplé à un espace membre fluide pour modifier la fréquence sans friction.',
+          outcome:
+            'Revenus récurrents en hausse de 310%, fidélisation client triplée et taux d’annulation réduit au record de 3,8%.',
+          testimonial: {
+            quote:
+              "L'expérience d'abonnement la plus fluide que nous ayons jamais vue. Nos clients adorent la simplicité avec laquelle ils peuvent gérer leurs livraisons.",
+            author: 'Sarah Lindqvist',
+            role: 'Co-Fondatrice & CEO',
+            company: 'Nomad Coffee Collective',
+          },
+        },
+        {
+          id: 'pulse-fitness',
+          title: 'Pulse Athletics & Club',
+          client: 'Pulse Fitness Worldwide',
+          year: '2024',
+          category: 'mobile',
+          categoryLabel: 'Application Mobile & Santé Connectée',
+          tagline: 'Compagnon d’entraînement connecté, réservations de cours et synchronisation montres.',
+          description:
+            'Application mobile élégante pour clubs de sport haut de gamme, intégrant synchronisation avec Apple Santé et Google Fit, suivi cardiaque et réservation instantanée de cours.',
+          metrics: [
+            { value: '85k+', label: 'Téléchargements actifs' },
+            { value: '4.8★', label: 'Note moyenne des utilisateurs' },
+            { value: '68%', label: 'Rétention à 30 jours' },
+          ],
+          tags: ['React Native', 'API HealthKit', 'Google Fit', 'Moteur de Push'],
+          serviceId: 'mobile',
+          url: 'https://pulsefitness.preview.ouestdynamics.com',
+          domainDisplay: 'pulse-athletics.app',
+          accentColor: '#A855F7',
+          challenge:
+            'Les adhérents du club devaient composer avec des outils de réservation lents et n’avaient aucun moyen moderne de mesurer leurs performances sportives en salle.',
+          solution:
+            'Création d’une application mobile raffinée avec identification biométrique, affichage des places restantes en temps réel et synchronisation automatique des efforts.',
+          outcome:
+            'Taux de fréquentation des cours en hausse de 38%, fidélisation à 30 jours portée à 68% et milliers d’avis 5 étoiles déposés par les adhérents.',
+          testimonial: {
+            quote:
+              "Nos membres ouvrent l'application avec plaisir chaque matin. Elle a transformé notre salle en une véritable communauté dynamique et connectée.",
+            author: 'Marcus Thorne',
+            role: 'Directeur de Marque & Expérience',
+            company: 'Pulse Fitness Worldwide',
+          },
         },
       ],
     },

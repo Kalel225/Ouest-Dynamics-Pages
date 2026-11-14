@@ -1,0 +1,6 @@
+# Ouest Dynamics — Search Engine Crawler Directives
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://ouestdynamics.com/sitemap.xml

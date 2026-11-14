@@ -1,143 +1,68 @@
-# DOCUMENTATION TECHNIQUE COMPLÈTE — OUEST DYNAMICS
-**Digital Engineering & Growth Partner · Creative Web & Mobile Studio**
+# Ouest Dynamics — Documentation Complète d’Architecture & Base de Données
+
+**Ouest Dynamics** est une plateforme full-stack (React 19 + TypeScript + Tailwind CSS v4 + Express + Base de Données JSON persistante Lowdb) conçue pour une maison d'ingénierie digitale et de croissance sur-mesure.
 
 ---
 
-## 1. VISION & POSITIONNEMENT DU PROJET
+## 1. Identité Visuelle & Direction Artistique
 
-**Ouest Dynamics** est un studio numérique de prestige spécialisé dans l'ingénierie web, le développement d'applications mobiles haut de gamme, le design d'identités remarquables et les stratégies d'acquisition orientées retour sur investissement (ROI).
+### Palette Chromatique (Atelier Architectural)
+L'esthétique s'inspire de l'architecture contemporaine chaleureuse (travertin chaud, terre cuite, bronze doré et ébène torréfié) sans mentionner littéralement ce style dans les textes de l'interface :
+- **Pierre Travertin Chaud (`#F7F4EE`)** : Toile de fond principale, lumineuse et apaisante.
+- **Calcaire Sablé (`#EFECE6`)** : Cartes secondaires, barre d'outils et surfaces de contraste doux.
+- **Ébène Torréfié (`#181512` & `#221E1A`)** : Sections d'ancrage à fort contraste (Galerie Portfolio, Bannière Call-To-Action, Pied de page).
+- **Terre Cuite (`#A64B2A` / Hover `#8E3D20`)** : Signature chromatique réservée aux actions principales (CTA), au point du logo et aux indicateurs actifs.
+- **Bronze Doré (`#D49B6A`)** : Accents éditoriaux sur fond sombre.
+- **Bordures Architecturales (`#E2DDD5` sur fond clair / `#332C26` sur fond sombre)** : Filets structurels de `1px`.
 
-Le projet a été développé selon les **standards technologiques américains les plus rigoureux**, en garantissant :
-1. **Un slogan fort et prestigieux** :
-   - *Anglais* : **"Digital Excellence Engineered for Your Growth."**
-   - *Français* : **"L'Excellence Numérique au Service de Votre Croissance."**
-2. **Une ergonomie sans faille sur tablettes et smartphones** :
-   - Zéro déformation visuelle : grilles adaptatives (1 colonne sur mobile, 2 colonnes sur tablette, jusqu'à 4 sur grand écran).
-   - Suppression totale des débordements horizontaux (`overflow-x-hidden`, canvas 3D borné en `w-full h-full block`).
-   - Cibles tactiles conformes aux standards Apple Human Interface & Google Material (`min-h-[44px]` et `min-h-[50px]`).
-3. **Une adaptation automatique et transparente des devises selon la région** :
-   - L'utilisateur n'a plus à choisir manuellement sa monnaie via des boutons encombrants (onglets manuels retirés de la navigation et du formulaire).
-   - Le système détecte automatiquement la localisation du visiteur par son fuseau horaire et ses paramètres régionaux :
-     - **Afrique de l'Ouest (Abidjan, Dakar, etc.)** : Franc CFA (**XOF / F CFA**)
-     - **Zone Euro / Europe** : Euro (**EUR / €**)
-     - **Royaume-Uni** : Livre Sterling (**GBP / £**)
-     - **États-Unis / Reste du Monde** : Dollar Américain (**USD / $**)
-4. **Validation du formulaire & Pop-up de Politique de Confidentialité Thématique** :
-   - Dès qu'un client remplit et valide le formulaire de demande de devis, les informations sont traitées et enregistrées de manière sécurisée en base de données.
-   - Un **pop-up élégant dans le thème du site** s'ouvre automatiquement pour présenter les engagements stricts de confidentialité : accord de non-divulgation immédiat (NDA automatique), absence de revente de données, stockage sécurisé, droit d'accès et d'effacement (RGPD/CCPA), et propriété intellectuelle intégrale garantie à 100% au client.
-5. **Réseaux Sociaux Officiels intégrés** :
-   - Liens officiels vers **TikTok**, **Facebook** et **Instagram** avec icônes soignées intégrés dans le pied de page (`Footer.tsx`), le menu tiroir mobile (`Navbar.tsx`) et le modal de confidentialité.
-6. **Base de Données Solide & Totalement Fonctionnelle** :
-   - Moteur backend Express avec stockage persistant typé (`lowdb`) enregistrant chaque demande de projet avec référence unique de suivi (`OD-YYYY-XXXXX`), horodatage et audit trail.
+### Système Typographique (3 Polices Google Fonts)
+1. **Titres Éditoriaux (`--font-serif` : `'Fraunces'`, serif)** : Utilisée pour le logo `Ouest Dynamics.`, les grands titres H1/H2/H3 et les chiffres clés.
+2. **Interface & Corps de Texte (`--font-sans` : `'Plus Jakarta Sans'`, sans-serif)** : Lecture fluide et accessible aux non-initiés comme aux dirigeants.
+3. **Données & Chiffres Tabulaires (`--font-mono` : `'IBM Plex Mono'`, monospace)** : Alignement tabulaire (`font-variant-numeric: tabular-nums`) pour les métriques, numéros de référence (`OD-YYYY-XXXXX`) et horodatages.
 
 ---
 
-## 2. ARCHITECTURE DE LA BASE DE DONNÉES
+## 2. Fonctionnalités & Composants Clés
 
-L'application intègre une architecture full-stack moderne propulsée par Express et une base de données persistante structurée.
+### 2.1. Animation d'Introduction Fluide Lettre par Lettre (`src/components/LoadingScreen.tsx` & `src/components/BrandLogo.tsx`)
+- **Apparition pure du Logo** : Au chargement initial de la page principale, seul le logo `Ouest Dynamics.` apparaît au centre de l'écran en travertin chaud (`#F7F4EE`), révélé lettre par lettre avec un fondu progressif.
+- **Transition Naturelle Centre-à-Centre (`motion/react`)** : Chaque caractère calcule le vecteur exact entre son centre de départ et le centre de son caractère jumeau dans la barre de navigation (`Navbar.tsx`), ainsi que le ratio exact de taille de police (`fontSize`). Pendant le vol fluide des lettres, le logo de la barre de navigation reste masqué (`hideLogoDuringIntro`), le rideau `#F7F4EE` se dissout progressivement, puis un fondu croisé (`onHandoverLogo`) transfère le relais au logo de la barre de navigation sans aucun saut visuel.
 
-### Structure du Fichier de Stockage
-- **Emplacement physique** : `./data/database.json`
-- **Moteur** : `lowdb` (JSONFilePreset) avec écritures atomiques sécurisées.
-- **Sauvegarde** : Les données survivent aux redémarrages du serveur et sont facilement sauvegardables ou exportables.
+### 2.2. Processus Simplifié en 3 Lignes Éditoriales (`src/components/Methodology.tsx`)
+- Conçu sous forme d'une liste architecturale épurée à 3 lignes horizontales séparées par de fins filets (`1px`) au lieu de cartes denses côte à côte.
+- Chaque étape présente l'essentiel d'un seul coup d'œil : numéro et délai (`01`, `02`, `03`), titre et explication claire, ainsi que le livrable concret obtenu.
 
-### Modèle de Données (TypeScript Schema)
+### 2.3. Section FAQ Interactive (`src/components/FAQ.tsx`)
+- Accordéon fluide animé avec `AnimatePresence` (`motion/react`) répondant en langage simple (FR / EN) aux 6 questions essentielles : autonomie sans compétence technique, garantie maquette avant code, paiement échelonné en 3 jalons (40% / 30% / 30%), propriété intellectuelle à 100%, délais de livraison et garantie technique de 6 mois.
 
-```typescript
-export interface SubmissionRecord {
-  id: string;               // Identifiant unique système (ex: sub_1741234567_a8f9)
-  reference: string;        // Numéro de dossier client (ex: OD-2026-84729)
-  fullName: string;         // Nom complet du contact
-  companyName: string;      // Nom de l'entreprise ou du projet
-  email: string;            // Adresse email professionnelle
-  service: string;          // Pôle choisi : 'web' | 'mobile' | 'design' | 'growth'
-  budget: string;           // Fourchette budgétaire sélectionnée
-  currency: string;         // Devise détectée : 'USD' | 'EUR' | 'XOF' | 'GBP'
-  description: string;      // Description détaillée du projet
-  createdAt: string;        // Date et heure ISO 8601 (ex: 2026-10-15T12:00:00.000Z)
-  status: 'received' | 'reviewing' | 'contacted'; // Statut de traitement
-  userAgent?: string;       // Navigateur / appareil du visiteur
-}
+### 2.4. Animations au Défilement (`Scroll Animations` via `motion/react`)
+- Toutes les sections principales (`Hero`, `Services`, `Portfolio`, `Methodology`, `FAQ`, `CTABanner`) intègrent des animations d'entrée au scroll (`whileInView`) fluides et progressives (`cubic-bezier(0.22, 1, 0.36, 1)`).
 
-export interface DatabaseSchema {
-  submissions: SubmissionRecord[];
-  analytics: {
-    totalRequests: number;
-    lastRequestAt: string | null;
-  };
-}
-```
+### 2.5. Pages Légales Dédiées : Politique de Confidentialité & CGU
+1. **Page Politique de Confidentialité (`src/components/PrivacyPolicyPage.tsx`)** : Accessible via `/#politique-de-confidentialite` ou `/privacy`.
+2. **Page Conditions Générales d'Utilisation & de Prestation — CGU (`src/components/TermsPage.tsx`)** : Accessible via `/#cgu` ou `/terms`.
+3. **Modale Post-Validation (`src/components/PrivacyPolicyModal.tsx`)** : S'ouvre automatiquement après la validation réussie du formulaire avec le numéro de dossier officiel (`OD-2026-XXXXX`).
 
-### Endpoints de l'API RESTful
+### 2.6. Bannière de Gestion des Cookies (`src/components/CookieBanner.tsx`)
+- Conforme RGPD / CCPA, permettant d'**Accepter tout**, de choisir **Essentiels uniquement**, ou de **Personnaliser** les catégories, avec persistance dans `localStorage` (`od_cookie_consent_v1`).
 
-| Méthode | Route | Description | Exemple de Réponse |
-| :--- | :--- | :--- | :--- |
-| **POST** | `/api/submissions` | Valide et enregistre une nouvelle demande en base de données. Génère une référence officielle. | `{ "success": true, "reference": "OD-2026-48210", "submission": { ... } }` |
-| **GET** | `/api/submissions` | Liste l'ensemble des soumissions enregistrées et les statistiques d'audience. | `{ "total": 12, "submissions": [...], "analytics": { ... } }` |
-| **GET** | `/api/submissions/:ref` | Recherche un dossier spécifique par son code de référence. | `{ "submission": { "reference": "OD-2026-48210", ... } }` |
-| **GET** | `/api/health` | Vérifie la santé du serveur, l'état de la base de données et le volume d'enregistrements. | `{ "status": "healthy", "database": "lowdb-json-persistent", "totalRecords": 12 }` |
+### 2.7. Validation Temps Réel du Formulaire & Protection Anti-Spam Multi-Couches (`src/components/ContactForm.tsx` & `server.ts`)
+- **Validation Temps Réel** : Vérification `onBlur` et en direct, coches vertes `✓` et compteur de caractères.
+- **Protection Anti-Spam en 4 Couches** : Champ Honeypot invisible (`company_website_url`), contrôle de vélocité (`< 1200ms` bloqué), défi mathématique humain, et limitation de débit par IP (`Rate Limiting` dans `server.ts`).
+
+### 2.8. Sitemap XML, `robots.txt` & Optimisation de la Vitesse de Chargement
+- **SEO Technique** : Routes dynamiques `/sitemap.xml` et `/robots.txt` dans `server.ts` et fichiers statiques dans `public/`.
+- **Performance** : `fetchPriority="high"` sur l'image Hero, `loading="lazy" decoding="async"` sur la galerie Portfolio, et en-têtes de cache HTTP sur les ressources statiques.
 
 ---
 
-## 3. ARBORESCENCE DU CODE SOURCE
+## 3. Architecture de la Base de Données (`server.ts` + `./data/database.json`)
 
-```
-ouest-dynamics/
-├── data/
-│   └── database.json              # Fichier physique de la base de données persistante
-├── server.ts                      # Serveur full-stack Express + API Database + Middleware Vite
-├── index.html                     # Point d'entrée HTML avec balises SEO, OpenGraph et Schema.org
-├── metadata.json                  # Métadonnées officielles du projet AI Studio
-├── package.json                   # Dépendances et scripts de démarrage full-stack
-├── DOCUMENTATION.md               # Cette documentation technique complète
-├── GUIDE_MODIFICATION.md          # Guide pratique de modification pas-à-pas
-└── src/
-    ├── main.tsx                   # Point de montage React
-    ├── App.tsx                    # Composant racine, providers et modaux globaux
-    ├── index.css                  # Configuration Tailwind CSS moderne
-    ├── translations.ts            # Dictionnaire complet bilingue (EN / FR) avec slogan restauré
-    ├── context/
-    │   ├── LanguageContext.tsx    # Gestion de la langue (EN par défaut, détection FR de l'appareil)
-    │   └── CurrencyContext.tsx    # Détection automatique de la monnaie par région
-    └── components/
-        ├── BrandLogo.tsx          # Logo officiel Ouest Dynamics (géométrie dorée & monogramme)
-        ├── Hero.tsx               # Section Hero avec slogan restauré et proof bar responsive
-        ├── Hero3DBackground.tsx   # Sculpture cinétique 3D Three.js (Torus titane & maillage or)
-        ├── Navbar.tsx             # Barre de navigation capsule (liens, langue, CTA, menu mobile)
-        ├── Services.tsx           # Grille éditoriale frameless des 4 pôles d'expertises
-        ├── Methodology.tsx        # Parcours en 3 étapes claires avec onglets responsives
-        ├── ContactForm.tsx        # Formulaire avec devises auto-adaptées et soumission DB
-        ├── PrivacyPolicyModal.tsx # Pop-up thématique de la Politique de Confidentialité
-        ├── MobileBottomBar.tsx    # Barre d'actions basse ergonomique pour smartphones
-        ├── ProjectModal.tsx       # Modal de cadrage initial de projet
-        ├── LoadingScreen.tsx      # Écran de chargement initial fluide
-        └── LanguagePromptBanner.tsx # Bannière non-intrusive de proposition de traduction
-```
-
----
-
-## 4. RESPONSIVE DESIGN & CONTRÔLE ERGONOMIQUE
-
-Toutes les déformations visuelles signalées ont été corrigées avec précision :
-
-1. **Section Hero** :
-   - La barre d'éléments de réassurance (sur-mesure, monnaie, simplicité, maquette) est désormais organisée sous forme d'une **grille propre 2x2 sur smartphone / 4 colonnes sur tablette et grand écran**, éliminant les séparateurs verticaux orphelins.
-   - Les tailles de titres utilisent des classes fluides `text-3xl sm:text-4xl md:text-5xl lg:text-6xl` qui s'ajustent parfaitement sans provoquer de cassures inesthétiques.
-2. **Section Services** :
-   - Mise en page à 2 colonnes bien équilibrées sur tablette, avec espacement vertical aéré (`gap-10 sm:gap-14 lg:gap-16`).
-   - L'alignement bas (bénéfice clé et boutons d'action) a été calibré avec des hauteurs tactiles minimales de `44px`.
-3. **Section Méthodologie** :
-   - Les 3 étapes utilisent un défilement horizontal fluide sur les écrans étroits (`scrollbar-none`) et une grille nette dès que l'espace le permet, évitant tout tassement du texte.
-4. **Formulaire de Contact** :
-   - Les champs de saisie disposent d'une taille de police `16px` (`text-base`) sur mobile pour empêcher le zoom intempestif d'iOS Safari, et passent à `text-sm` sur les écrans plus larges.
-   - Les boutons de budget sont organisés en grille `grid-cols-2 sm:grid-cols-4` toujours parfaitement symétrique.
-5. **Pied de Page (Footer)** :
-   - Réorganisation responsive : `grid-cols-1 sm:grid-cols-2 lg:grid-cols-12` pour garantir que chaque bloc (logo, services, méthode, garanties) dispose d'une largeur généreuse sur tablette.
-
----
-
-## 5. ACCESSIBILITÉ & PHILOSOPHIE ZERO-JARGON
-
-Le vocabulaire du site est spécialement rédigé pour être compris instantanément par n'importe quel porteur de projet, créateur ou dirigeant d'entreprise sans bagage technique :
-- Au lieu de termes comme *"Microservices", "SSR", "OWASP"*, le site met en avant des bénéfices réels : **"Votre site s'affiche instantanément sur smartphone"**, **"Vos clients commandent en 2 clics"**, **"Vous validez la maquette avant de coder"**, **"Vous êtes 100% propriétaire de vos créations"**.
-- La politique de confidentialité s'adresse directement à l'utilisateur de manière limpide et rassurante.
+| Route API | Méthode | Description |
+| :--- | :--- | :--- |
+| `/api/submissions` | `POST` | Valide les champs, filtre le spam (honeypot, vélocité, rate-limit IP) et enregistre un dossier (`OD-YYYY-XXXXX`) dans `./data/database.json`. |
+| `/api/submissions` | `GET` | Retourne la liste complète des dossiers enregistrés et les statistiques globales. |
+| `/api/submissions/:reference` | `GET` | Recherche un dossier précis via sa référence unique. |
+| `/api/health` | `GET` | Vérifie l'état de santé du serveur et de la base de données. |
+| `/robots.txt` | `GET` | Directives d'indexation pour les moteurs de recherche. |
+| `/sitemap.xml` | `GET` | Plan du site XML dynamique pour Google, Bing et autres moteurs. |

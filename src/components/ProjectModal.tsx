@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, ArrowRight, ShieldCheck, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, ArrowUpRight, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface ProjectModalProps {
@@ -16,90 +16,121 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   initialService = 'web',
 }) => {
   const { t } = useLanguage();
-  const [selectedService, setSelectedService] = useState(initialService);
+  const [selected, setSelected] = useState(initialService);
+
+  useEffect(() => {
+    if (initialService) {
+      setSelected(initialService);
+    }
+  }, [initialService]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleContinue = () => {
-    onNavigateToForm(selectedService);
     onClose();
+    onNavigateToForm(selected);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0B0B0B]/85 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="bg-[#141414]/95 backdrop-blur-2xl border border-white/[0.1] rounded-3xl max-w-xl w-full p-6 sm:p-9 relative shadow-[0_25px_60px_rgba(0,0,0,0.95)] max-h-[92vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 sm:top-6 sm:right-6 min-w-[44px] min-h-[44px] rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] flex items-center justify-center text-[#F4F4F6]/60 hover:text-white transition-colors cursor-pointer"
-          aria-label={t.projectModal.cancelBtn}
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
-            <span className="text-[10px] sm:text-[11px] font-mono uppercase text-[#D4AF37] tracking-wider">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/65 backdrop-blur-xs"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-xl bg-[#F7F4EE] text-[#161412] border border-[#E2DDD5] rounded-xl shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-5 bg-white border-b border-[#E2DDD5] flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-[#A64B2A] mb-0.5">
               {t.projectModal.surtitle}
-            </span>
+            </p>
+            <h3 className="font-serif-display text-xl sm:text-2xl font-semibold text-[#161412]">
+              {t.projectModal.title}
+            </h3>
           </div>
-          <h3 className="font-display text-xl sm:text-2xl font-bold text-white mt-1">
-            {t.projectModal.title}
-          </h3>
-          <p className="text-xs sm:text-sm text-[#F4F4F6]/75 mt-1 font-body">
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-lg border border-[#E2DDD5] text-[#5C554E] hover:text-[#161412] cursor-pointer"
+            aria-label={t.projectModal.cancelBtn}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          <p className="text-sm text-[#5C554E] leading-relaxed">
             {t.projectModal.subtitle}
           </p>
-        </div>
 
-        {/* Services Selection */}
-        <div className="space-y-2.5 mb-6">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-white mb-2 font-mono">
-            {t.projectModal.serviceLabel}
-          </label>
-          {t.services.items.map((srv) => (
-            <div
-              key={srv.id}
-              onClick={() => setSelectedService(srv.id)}
-              className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between min-h-[56px] ${
-                selectedService === srv.id
-                  ? 'bg-white/[0.06] border-[#D4AF37] shadow-[inset_0_1px_1px_rgba(212,175,55,0.3)]'
-                  : 'bg-white/[0.02] border-white/[0.08] hover:border-white/[0.15] hover:bg-white/[0.04]'
-              }`}
-            >
-              <div>
-                <span className="block text-xs sm:text-sm font-bold text-white">
-                  {srv.title}
-                </span>
-                <span className="block text-[11px] text-[#F4F4F6]/65 line-clamp-1 font-body">
-                  {srv.subtitle}
-                </span>
-              </div>
-              <div
-                className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-3 ${
-                  selectedService === srv.id
-                    ? 'border-[#D4AF37] bg-[#D4AF37] text-[#0B0B0B]'
-                    : 'border-white/[0.2]'
-                }`}
-              >
-                {selectedService === srv.id && <Check className="w-3 h-3 stroke-[3]" />}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Action Button */}
-        <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs text-[#F4F4F6]/60 font-body hidden sm:flex">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>Devis gratuit & réponse sous 4h</span>
+          <div className="space-y-2.5">
+            <p className="text-xs font-semibold text-[#161412]">
+              {t.projectModal.serviceLabel}
+            </p>
+            {t.services.items.map((item) => {
+              const isSelected = selected === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setSelected(item.id)}
+                  className={`w-full p-4 rounded-lg border text-left transition-colors cursor-pointer flex items-start justify-between gap-3 ${
+                    isSelected
+                      ? 'bg-white border-[#A64B2A]'
+                      : 'bg-white/60 border-[#E2DDD5] hover:border-[#161412]'
+                  }`}
+                >
+                  <div>
+                    <div className="font-serif-display text-base font-semibold text-[#161412]">
+                      {item.number}. {item.title}
+                    </div>
+                    <div className="text-xs text-[#5C554E] mt-0.5">
+                      {item.subtitle}
+                    </div>
+                  </div>
+                  <div
+                    className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
+                      isSelected
+                        ? 'border-[#A64B2A] bg-[#A64B2A] text-[#F7F4EE]'
+                        : 'border-[#D5CFC4]'
+                    }`}
+                  >
+                    {isSelected && <Check className="w-3 h-3" />}
+                  </div>
+                </button>
+              );
+            })}
           </div>
+        </div>
+
+        <div className="px-6 py-4 bg-white border-t border-[#E2DDD5] flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-xs font-semibold text-[#5C554E] hover:text-[#161412] cursor-pointer"
+          >
+            {t.projectModal.cancelBtn}
+          </button>
 
           <button
+            type="button"
             onClick={handleContinue}
-            className="w-full sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2 px-7 py-3 text-xs font-semibold uppercase tracking-wider text-[#0B0B0B] bg-[#D4AF37] hover:bg-[#E2C255] rounded-full transition-all cursor-pointer shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
+            className="min-h-[44px] px-6 py-2.5 rounded-lg bg-[#A64B2A] hover:bg-[#8E3D20] text-[#F7F4EE] text-xs font-semibold inline-flex items-center gap-2 transition-colors cursor-pointer"
           >
             <span>{t.projectModal.continueBtn}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowUpRight className="w-4 h-4" />
           </button>
         </div>
       </div>
