@@ -19,6 +19,7 @@ import { CookieBanner } from './components/CookieBanner';
 import { LanguagePromptBanner } from './components/LanguagePromptBanner';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
+import { AIChatbot } from './components/AIChatbot';
 
 type ViewMode = 'home' | 'privacy' | 'terms' | '404';
 
@@ -64,9 +65,6 @@ function MainApp() {
   const [selectedService, setSelectedService] = useState('web');
   const [viewMode, setViewMode] = useState<ViewMode>(resolveViewModeFromLocation);
   const [showLoading, setShowLoading] = useState<boolean>(
-    () => resolveViewModeFromLocation() === 'home'
-  );
-  const [hideNavLogo, setHideNavLogo] = useState<boolean>(
     () => resolveViewModeFromLocation() === 'home'
   );
 
@@ -133,32 +131,45 @@ function MainApp() {
     }
   };
 
-  const handleScrollToContact = () => {
+  const handleScrollToContact = useCallback(() => {
+    if (viewMode !== 'home') {
+      window.history.pushState({}, '', '/#contact');
+      setViewMode('home');
+      setTimeout(() => {
+        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+      }, 80);
+      return;
+    }
     const contactSection = document.getElementById('contact');
     if (contactSection) {
       contactSection.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, [viewMode]);
 
-  const handleNavigateFromModal = (serviceKey: string) => {
-    setSelectedService(serviceKey);
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const handleNavigateFromModal = useCallback(
+    (serviceKey: string) => {
+      setSelectedService(serviceKey);
+      if (viewMode !== 'home') {
+        window.history.pushState({}, '', '/#contact');
+        setViewMode('home');
+        setTimeout(() => {
+          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+        }, 80);
+        return;
+      }
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    [viewMode]
+  );
 
   return (
     <div className="min-h-screen bg-[#F7F4EE] text-[#161412] selection:bg-[#A64B2A] selection:text-[#F7F4EE] relative overflow-x-hidden w-full pb-16 sm:pb-0">
       {/* Architectural Letter-by-Letter Logo Transition Loading Screen */}
       {showLoading && viewMode === 'home' && (
-        <LoadingScreen
-          onHandoverLogo={() => setHideNavLogo(false)}
-          onComplete={() => {
-            setHideNavLogo(false);
-            setShowLoading(false);
-          }}
-        />
+        <LoadingScreen onComplete={() => setShowLoading(false)} />
       )}
 
       {viewMode === '404' ? (
@@ -183,10 +194,7 @@ function MainApp() {
           <LanguagePromptBanner />
 
           {/* Top Bar Contract Navigation */}
-          <Navbar
-            onOpenProjectModal={() => handleOpenProjectModal()}
-            hideLogoDuringIntro={hideNavLogo}
-          />
+          <Navbar onOpenProjectModal={() => handleOpenProjectModal()} />
 
           <main>
             {/* Section 1 : Architectural Split Hero & 4-Column Quantitative Proof */}
@@ -232,6 +240,12 @@ function MainApp() {
           <MobileBottomBar onOpenProjectModal={() => handleOpenProjectModal()} />
         </>
       )}
+
+      {/* AI-Powered Interactive Chatbot Advisor */}
+      <AIChatbot
+        onOpenProjectModal={() => handleOpenProjectModal()}
+        onScrollToContact={handleScrollToContact}
+      />
 
       {/* Cookie Consent Banner (GDPR / CCPA) */}
       <CookieBanner onOpenPrivacyPage={handleOpenPrivacyPage} />

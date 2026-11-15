@@ -5,13 +5,9 @@ import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
   onOpenProjectModal: (service?: string) => void;
-  hideLogoDuringIntro?: boolean;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onOpenProjectModal,
-  hideLogoDuringIntro = false,
-}) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenProjectModal }) => {
   const { language, setLanguage, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,16 +58,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-8">
-          {/* Zone 1: Single Text Element Wordmark (Cross-fades in cleanly when loading letters land) */}
+          {/* Zone 1: Single Text Element Wordmark */}
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className={`whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#A64B2A] transition-opacity duration-200 ${
-              hideLogoDuringIntro ? 'opacity-0' : 'opacity-100'
-            }`}
+            className="whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#A64B2A]"
             title="Ouest Dynamics"
           >
             <BrandLogo idPrefix="nav" size="md" variant="dark" />

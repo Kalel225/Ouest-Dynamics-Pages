@@ -172,11 +172,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({
       setSubmittedRef(refCode);
       setShowPrivacyModal(true);
     } catch {
-      const fallbackRef = `OD-${new Date().getFullYear()}-${Math.floor(
-        10000 + Math.random() * 90000
-      )}`;
-      setSubmittedRef(fallbackRef);
-      setShowPrivacyModal(true);
+      setErrors({
+        form: isFr
+          ? 'Impossible de joindre le serveur pour enregistrer votre dossier. Veuillez vérifier votre connexion et réessayer.'
+          : 'Unable to reach the server to save your inquiry. Please check your connection and try again.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -208,8 +208,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({
             <div>
               <p className="text-xs sm:text-sm font-semibold text-[#A64B2A] mb-3">
                 {isFr
-                  ? 'Chapitre 04 · Consultation & Devis Sur-Mesure'
-                  : 'Chapter 04 · Private Consultation & Estimate'}
+                  ? 'Chapitre 05 · Consultation & Devis Sur-Mesure'
+                  : 'Chapter 05 · Private Consultation & Estimate'}
               </p>
               <h2 className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#161412] tracking-tight leading-[1.12] mb-4 [text-wrap:balance]">
                 {t.contact.title}

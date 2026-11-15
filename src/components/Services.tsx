@@ -52,7 +52,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
         <motion.div
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
+          viewport={{ once: true, amount: 0.25, margin: '0px 0px -80px 0px' }}
           transition={{ duration: shouldReduceMotion ? 0.1 : 0.6, ease: smoothEase }}
           className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 mb-14 sm:mb-20 items-end"
         >
@@ -78,7 +78,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
+          viewport={{ once: true, amount: 0.15, margin: '0px 0px -80px 0px' }}
           className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8"
         >
           {t.services.items.map((service, idx) => {
@@ -173,7 +173,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs"
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs"
             onClick={() => setActiveModalId(null)}
           >
             <motion.div

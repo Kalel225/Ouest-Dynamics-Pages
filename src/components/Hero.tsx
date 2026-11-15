@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { ArrowUpRight, ArrowDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -23,13 +22,7 @@ export const Hero: React.FC<HeroProps> = ({
     <section className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-8 bg-[#F7F4EE] border-b border-[#E2DDD5]">
       <div className="max-w-7xl mx-auto">
         {/* Top Metadata & Language Selector Bar (Below Header, Above Split) */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 sm:mb-12 border-b border-[#E2DDD5]"
-        >
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 sm:mb-12 border-b border-[#E2DDD5]">
           <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#5C554E]">
             <span className="font-semibold text-[#A64B2A]">
               {language === 'fr'
@@ -69,18 +62,12 @@ export const Hero: React.FC<HeroProps> = ({
               Français
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* 2-Column Asymmetric Architectural Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
           {/* Left Column (7 cols): Editorial Headline, Plain-Language Value Prop & Single Primary CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7 flex flex-col justify-between"
-          >
+          <div className="lg:col-span-7 flex flex-col justify-between">
             <div>
               <h1 className="font-serif-display text-[clamp(2.25rem,4.2vw,4rem)] font-semibold text-[#161412] leading-[1.08] tracking-tight mb-6 [text-wrap:balance]">
                 {t.hero.title}
@@ -141,20 +128,18 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right Column (5 cols): Architectural Visual Monograph Frame */}
-          <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.98 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 flex flex-col"
-          >
+          <div className="lg:col-span-5 flex flex-col">
             <div className="relative flex-1 min-h-[280px] sm:min-h-[360px] lg:h-full rounded-xl overflow-hidden border border-[#E2DDD5] bg-[#181512]">
               <img
                 src={heroImageUrl}
-                alt="Ouest Dynamics — Atelier d'architecture digitale"
+                alt={
+                  language === 'fr'
+                    ? 'Ouest Dynamics — Atelier d’architecture digitale'
+                    : 'Ouest Dynamics — Digital Architecture Studio'
+                }
                 fetchPriority="high"
                 decoding="async"
                 referrerPolicy="no-referrer"
@@ -174,17 +159,11 @@ export const Hero: React.FC<HeroProps> = ({
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Full-Width 4-Column Quantitative Proof Row Below Hero Split */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-[#E2DDD5] grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
-        >
+        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-[#E2DDD5] grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           <div>
             <div className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412] font-mono-tabular mb-1">
               {currencyConfig.heroStat.amount}
@@ -220,7 +199,7 @@ export const Hero: React.FC<HeroProps> = ({
               {t.hero.ownershipSub}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

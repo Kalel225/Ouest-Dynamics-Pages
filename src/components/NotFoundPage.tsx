@@ -140,7 +140,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
                     {isFr ? 'Accès rapide aux chapitres :' : 'Quick chapter directory:'}
                   </span>
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-xs">
                   <button
                     type="button"
                     onClick={() => onNavigateSection('expertises')}
@@ -164,10 +164,17 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
                   </button>
                   <button
                     type="button"
-                    onClick={() => onNavigateSection('contact')}
+                    onClick={() => onNavigateSection('faq')}
                     className="p-2.5 rounded-lg bg-[#F7F4EE] border border-[#E2DDD5] hover:border-[#A64B2A] text-left font-medium text-[#161412] transition-colors cursor-pointer"
                   >
-                    04. {isFr ? 'Contact' : 'Contact'}
+                    04. FAQ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigateSection('contact')}
+                    className="col-span-2 sm:col-span-1 p-2.5 rounded-lg bg-[#F7F4EE] border border-[#E2DDD5] hover:border-[#A64B2A] text-left font-medium text-[#161412] transition-colors cursor-pointer"
+                  >
+                    05. {isFr ? 'Contact' : 'Contact'}
                   </button>
                 </div>
               </div>

@@ -15,39 +15,42 @@ Le slogan officiel est :
 
 ---
 
-## 2. Personnaliser l'Animation de Chargement Lettre par Lettre
+## 2. Configurer le Chatbot IA (« Luxury Engineering Partner »)
+
+- **Interface Frontend** : `src/components/AIChatbot.tsx`
+- **Endpoint Backend Gemini** : `POST /api/chat` dans `server.ts` (SDK `@google/genai`, modèle `gemini-4-hydrogen`).
+- **Personnalisation du Prompt Système** :
+  - Dans `server.ts`, modifiez la variable `systemInstruction` (Français et Anglais) pour ajuster le ton *Luxury Engineering Partner*, les délais ou les arguments commerciaux présentés par l'assistant.
+  - La clé API Gemini est gérée automatiquement côté serveur via `process.env.GEMINI_API_KEY` (ne jamais l'exposer côté client).
+
+---
+
+## 3. Personnaliser l'Animation de Chargement Lettre par Lettre
 
 - **Fichiers** : `src/components/LoadingScreen.tsx`, `src/components/BrandLogo.tsx` et `src/components/Navbar.tsx`
 - **Fonctionnement** :
   - `BrandLogo.tsx` attribue un identifiant unique à chaque lettre du logo dans la barre de navigation (`nav-ouest-0` jusqu'à `nav-dot`).
   - Pendant l'introduction, `Navbar.tsx` garde son logo invisible (`hideLogoDuringIntro={true}`) pour éviter tout doublon visuel.
-  - `LoadingScreen.tsx` affiche le logo lettre par lettre au centre, mesure le vecteur centre-à-centre et le ratio exact de taille de police vers la barre de navigation, fait glisser chaque lettre avec `motion/react`, puis déclenche `onHandoverLogo()` à l'atterrissage pour un fondu croisé imperceptible.
+  - `LoadingScreen.tsx` mesure le vecteur centre-à-centre et le ratio exact de taille de police vers la barre de navigation, anime chaque lettre avec `motion/react`, puis déclenche `onHandoverLogo()` à l'atterrissage.
 
 ---
 
-## 3. Modifier la Section Processus en 3 Étapes (Chapitre 03)
+## 4. Modifier la Section Processus (Chapitre 03) & la FAQ (Chapitre 04)
 
-- **Fichier** : `src/components/Methodology.tsx`
-- Présentée sous forme de 3 lignes éditoriales épurées avec animations d'apparition au scroll (`whileInView`). Les textes des 3 étapes se modifient dans `src/translations.ts` sous la clé `methodology.steps`.
-
----
-
-## 4. Modifier la Section Questions Fréquentes (FAQ)
-
-- **Fichier** : `src/components/FAQ.tsx`
-- Contient le tableau `faqItems` bilingue (Français et Anglais) avec 6 questions-réponses claires et un accordéon animé via `AnimatePresence`. Vous pouvez y ajouter ou modifier des questions directement.
+- **Méthodologie (`src/components/Methodology.tsx`)** : Liste éditoriale en 3 lignes épurées dont les textes sont dans `src/translations.ts` (`methodology.steps`).
+- **FAQ (`src/components/FAQ.tsx`)** : Tableau `faqItems` bilingue avec 6 questions-réponses claires et accordéon animé via `AnimatePresence`.
 
 ---
 
 ## 5. Modifier les Pages Légales (Politique de Confidentialité & CGU)
 
-1. **Page Politique de Confidentialité** : `src/components/PrivacyPolicyPage.tsx` (accessible via `/#politique-de-confidentialite` ou `/privacy`).
-2. **Page Conditions Générales d'Utilisation (CGU)** : `src/components/TermsPage.tsx` (accessible via `/#cgu` ou `/terms`).
+1. **Page Politique de Confidentialité** : `src/components/PrivacyPolicyPage.tsx` (`/#politique-de-confidentialite` ou `/privacy`).
+2. **Page Conditions Générales d'Utilisation (CGU)** : `src/components/TermsPage.tsx` (`/#cgu` ou `/terms`).
 3. **Modale de Confidentialité Post-Formulaire** : `src/components/PrivacyPolicyModal.tsx`.
 
 ---
 
 ## 6. Modifier la Validation du Formulaire & l'Anti-Spam
 
-- **Côté Client (`src/components/ContactForm.tsx`)** : Validation en temps réel (`validateField`), champ Honeypot caché (`company_website_url`), délai minimum de soumission (`1200ms`) et défi mathématique humain.
+- **Côté Client (`src/components/ContactForm.tsx`)** : Validation temps réel (`validateField`), champ Honeypot caché (`company_website_url`), délai minimum de soumission (`1200ms`) et défi mathématique humain.
 - **Côté Serveur (`server.ts`)** : Vérifie `_honeypot`, `_elapsedMs` (`< 1000ms` rejeté) et limite chaque adresse IP à 8 requêtes par tranche de 10 minutes.

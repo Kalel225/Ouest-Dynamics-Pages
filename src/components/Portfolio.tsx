@@ -420,7 +420,7 @@ export const Portfolio: React.FC<PortfolioProps> = ({ onSelectService }) => {
       {/* Case Study Monograph Lightbox Modal */}
       {activeProject && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs"
           onClick={() => setActiveModalId(null)}
         >
           <div

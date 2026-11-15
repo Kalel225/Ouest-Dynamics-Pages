@@ -39,7 +39,12 @@ export const Footer: React.FC<FooterProps> = ({
               <span className="font-semibold text-[#F7F4EE]">
                 {language === 'fr' ? 'Siège & Atelier :' : 'Practice & Studio:'}
               </span>{' '}
-              <span>{t.footer.location} · Ingénierie & Croissance Digitale</span>
+              <span>
+                {t.footer.location} ·{' '}
+                {language === 'fr'
+                  ? 'Ingénierie & Croissance Digitale'
+                  : 'Digital Engineering & Growth'}
+              </span>
             </div>
 
             {/* Official Social Links (TikTok, Facebook, Instagram) */}
@@ -127,6 +132,14 @@ export const Footer: React.FC<FooterProps> = ({
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href="#faq"
+                  className="hover:text-[#F7F4EE] transition-colors py-0.5 inline-block text-[#F7F4EE] font-medium"
+                >
+                  04. {language === 'fr' ? 'Questions Fréquentes (FAQ)' : 'FAQ'}
+                </a>
+              </li>
             </ul>
           </div>
 

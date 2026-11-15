@@ -42,7 +42,7 @@ export const LanguagePromptBanner: React.FC = () => {
   if (!showLangPrompt || !readyToShow) return null;
 
   return (
-    <div className="fixed bottom-16 sm:bottom-6 right-4 sm:right-6 z-40 max-w-md bg-white border border-[#E2DDD5] rounded-xl shadow-lg p-4 text-[#161412]">
+    <div className="fixed top-20 right-4 sm:right-8 z-40 max-w-sm sm:max-w-md bg-white border border-[#E2DDD5] rounded-xl shadow-lg p-4 text-[#161412]">
       <div className="flex items-start justify-between gap-3 mb-3">
         <p className="text-xs leading-relaxed text-[#161412]">{t.langPrompt.detected}</p>
         <button

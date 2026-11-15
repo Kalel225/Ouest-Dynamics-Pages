@@ -26,13 +26,17 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacyPage })
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) {
-      // Show cookie banner after loading screen finishes (1.5s)
-      const timer = setTimeout(() => {
+    if (saved) return;
+
+    const handleScroll = () => {
+      if (window.scrollY > 220) {
         setIsVisible(true);
-      }, 1600);
-      return () => clearTimeout(timer);
-    }
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const saveConsent = (analytics: boolean, preferences: boolean) => {
@@ -49,7 +53,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacyPage })
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-16 sm:bottom-5 left-4 right-4 sm:left-6 sm:right-auto z-50 max-w-lg bg-white border border-[#E2DDD5] rounded-xl shadow-xl p-5 text-[#161412]">
+    <div className="fixed bottom-16 sm:bottom-5 left-4 right-4 sm:left-6 sm:right-auto z-[45] max-w-lg bg-white border border-[#E2DDD5] rounded-xl shadow-xl p-5 text-[#161412]">
       <div className="flex items-start justify-between gap-3 mb-2.5">
         <div className="flex items-center gap-2">
           <Cookie className="w-4 h-4 text-[#A64B2A] shrink-0" />
