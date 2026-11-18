@@ -1,204 +1,198 @@
 import React from 'react';
-import { ArrowUp, ArrowUpRight } from 'lucide-react';
-import { BrandLogo } from './BrandLogo';
 import { useLanguage } from '../context/LanguageContext';
+import { LegalTab } from './LegalPortal';
 
 interface FooterProps {
-  onOpenPrivacyPolicy?: () => void;
-  onOpenPrivacyPage?: () => void;
-  onOpenTermsPage?: () => void;
+  onNavigateSection: (sectionId: string) => void;
+  onOpenLegalTab: (tab: LegalTab) => void;
+  onOpenCookiePreferences: () => void;
+  onOpenConcierge: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
-  onOpenPrivacyPolicy,
-  onOpenPrivacyPage,
-  onOpenTermsPage,
+  onNavigateSection,
+  onOpenLegalTab,
+  onOpenCookiePreferences,
+  onOpenConcierge,
 }) => {
-  const { t, language } = useLanguage();
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#181512] text-[#F7F4EE] border-t border-[#2C2621] pt-16 sm:pt-20 pb-24 sm:pb-14 px-4 sm:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-[#2C2621]">
-          {/* Col 1: Brand & Official Social Channels (5 cols) */}
-          <div className="sm:col-span-2 lg:col-span-5 space-y-5">
-            <div>
-              <BrandLogo idPrefix="footer" size="lg" variant="light" />
-            </div>
-
-            <p className="text-sm text-[#C8C1B6] leading-relaxed max-w-md">
-              {t.footer.tagline}
-            </p>
-
-            {/* Unboxed Regional Presence */}
-            <div className="text-xs text-[#C8C1B6]">
-              <span className="font-semibold text-[#F7F4EE]">
-                {language === 'fr' ? 'Siège & Atelier :' : 'Practice & Studio:'}
-              </span>{' '}
-              <span>
-                {t.footer.location} ·{' '}
-                {language === 'fr'
-                  ? 'Ingénierie & Croissance Digitale'
-                  : 'Digital Engineering & Growth'}
+    <footer className="bg-[#0B0D12] text-[#A1A7B5] border-t border-[#D4AF37]/18 pt-14 pb-12 px-4 sm:px-8">
+      <div className="max-w-[1280px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-[#D4AF37]/15">
+          {/* Col 1: Sovereign Brand Identity */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="inline-flex items-center gap-3">
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <rect
+                  x="1"
+                  y="1"
+                  width="34"
+                  height="34"
+                  rx="6"
+                  fill="#141821"
+                  stroke="#D4AF37"
+                  strokeWidth="1.25"
+                />
+                <path
+                  d="M9 18L18 9L27 18L18 27L9 18Z"
+                  stroke="#D4AF37"
+                  strokeWidth="1.5"
+                />
+                <circle cx="18" cy="18" r="3.5" fill="#D4AF37" />
+              </svg>
+              <span className="font-display font-bold text-lg text-[#F4F4F6]">
+                Ouest Dynamics
               </span>
             </div>
 
-            {/* Official Social Links (TikTok, Facebook, Instagram) */}
-            <div className="pt-2">
-              <p className="text-xs text-[#C8C1B6] mb-3">
-                {language === 'fr'
-                  ? 'Réseaux Sociaux Officiels :'
-                  : 'Official Social Channels:'}
-              </p>
-              <div className="flex flex-wrap items-center gap-5 text-xs font-semibold text-[#F7F4EE]">
-                <a
-                  href="https://www.tiktok.com/@ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:text-[#D49B6A] transition-colors"
-                >
-                  <span>TikTok</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#D49B6A]" />
-                </a>
-                <span className="text-[#332C26]" aria-hidden="true">·</span>
-                <a
-                  href="https://www.facebook.com/ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:text-[#D49B6A] transition-colors"
-                >
-                  <span>Facebook</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#D49B6A]" />
-                </a>
-                <span className="text-[#332C26]" aria-hidden="true">·</span>
-                <a
-                  href="https://www.instagram.com/ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:text-[#D49B6A] transition-colors"
-                >
-                  <span>Instagram</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#D49B6A]" />
-                </a>
-              </div>
+            <p className="text-xs sm:text-sm text-[#A1A7B5] leading-relaxed">
+              {t.footer.tagline}
+            </p>
+
+            <div className="text-xs font-mono-code text-[#D4AF37]">
+              Abidjan, Côte d’Ivoire · UEMOA · International
             </div>
           </div>
 
-          {/* Col 2: Capabilities & Portfolio (3 cols) */}
-          <div className="sm:col-span-1 lg:col-span-3 space-y-3">
-            <p className="text-xs font-semibold text-[#D49B6A]">
-              {t.footer.domainsTitle}
-            </p>
-            <ul className="space-y-2 text-xs text-[#C8C1B6]">
+          {/* Col 2: Platform Navigation */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
+              {t.footer.navigationTitle}
+            </h4>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <a
-                  href="#portfolio"
-                  className="text-[#F7F4EE] hover:text-[#D49B6A] font-medium transition-colors inline-flex items-center gap-1 py-0.5"
+                <button
+                  type="button"
+                  onClick={() => onNavigateSection('poles')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
                 >
-                  <span>{t.nav.portfolio}</span>
-                  <ArrowUpRight className="w-3 h-3 text-[#D49B6A]" />
-                </a>
+                  {t.nav.poles}
+                </button>
               </li>
-              {t.services.items.map((s) => (
-                <li key={s.id}>
-                  <a
-                    href="#expertises"
-                    className="hover:text-[#F7F4EE] transition-colors py-0.5 inline-block"
-                  >
-                    {s.title}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigateSection('governance')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                >
+                  {t.nav.methodology}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigateSection('portfolio')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                >
+                  {t.nav.portfolio}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigateSection('configurator')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                >
+                  {t.nav.configurator}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={onOpenConcierge}
+                  className="text-[#D4AF37] hover:text-[#E3C358] transition-colors cursor-pointer"
+                >
+                  {t.nav.concierge}
+                </button>
+              </li>
             </ul>
           </div>
 
-          {/* Col 3: Process (2 cols) */}
-          <div className="sm:col-span-1 lg:col-span-2 space-y-3">
-            <p className="text-xs font-semibold text-[#D49B6A]">
-              {t.footer.methodologyTitle}
-            </p>
-            <ul className="space-y-2 text-xs text-[#C8C1B6]">
-              {t.methodology.steps.map((st) => (
-                <li key={st.number}>
-                  <a
-                    href="#methodologie"
-                    className="hover:text-[#F7F4EE] transition-colors py-0.5 inline-block"
-                  >
-                    {st.number}. {st.title}
-                  </a>
-                </li>
-              ))}
+          {/* Col 3: Unified Legal Portal Links (Zero Modal Duplication) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
+              {t.footer.legalTitle}
+            </h4>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <a
-                  href="#faq"
-                  className="hover:text-[#F7F4EE] transition-colors py-0.5 inline-block text-[#F7F4EE] font-medium"
+                <button
+                  type="button"
+                  onClick={() => onOpenLegalTab('privacy')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
                 >
-                  04. {language === 'fr' ? 'Questions Fréquentes (FAQ)' : 'FAQ'}
-                </a>
+                  {t.legal.tabs.privacy}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onOpenLegalTab('terms')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
+                >
+                  {t.legal.tabs.terms}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onOpenLegalTab('notices')}
+                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
+                >
+                  {t.legal.tabs.notices}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={onOpenCookiePreferences}
+                  className="hover:text-[#D4AF37] underline underline-offset-4 transition-colors cursor-pointer text-left"
+                >
+                  {t.footer.manageCookies}
+                </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Guarantees (2 cols) */}
-          <div className="sm:col-span-2 lg:col-span-2 space-y-3">
-            <p className="text-xs font-semibold text-[#D49B6A]">
-              {t.footer.guaranteesTitle}
-            </p>
-            <p className="text-xs text-[#C8C1B6] leading-relaxed">
-              {t.footer.confidentialityNote}
-            </p>
+          {/* Col 4: Contractual Governance Commitments */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
+              {t.footer.governanceTitle}
+            </h4>
+            <ul className="space-y-2 text-xs text-[#A1A7B5]">
+              {t.footer.governanceBullets.map((b, idx) => (
+                <li key={idx}>· {b}</li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* Bottom Legal & Back to Top Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#C8C1B6]">
-          <div className="flex flex-wrap items-center gap-3">
-            <span>
-              © {new Date().getFullYear()} Ouest Dynamics. {t.footer.rightsReserved}
-            </span>
-            <span aria-hidden="true">·</span>
-            <button
-              type="button"
-              onClick={onOpenPrivacyPage || onOpenPrivacyPolicy}
-              className="text-[#F7F4EE] hover:text-[#D49B6A] underline underline-offset-4 transition-colors cursor-pointer"
-            >
-              {t.footer.privacyPolicy}
-            </button>
-            {onOpenTermsPage && (
-              <>
-                <span aria-hidden="true">·</span>
-                <button
-                  type="button"
-                  onClick={onOpenTermsPage}
-                  className="text-[#F7F4EE] hover:text-[#D49B6A] underline underline-offset-4 transition-colors cursor-pointer"
-                >
-                  {language === 'fr' ? 'CGU & Mentions Légales' : 'Terms & Conditions (CGU)'}
-                </button>
-              </>
-            )}
-            <span aria-hidden="true">·</span>
+        {/* Bottom Copyright & Technical Links */}
+        <div className="pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-[#A1A7B5]">
+          <span>{t.footer.copyright}</span>
+          <div className="flex items-center gap-4 font-mono-code">
             <a
               href="/sitemap.xml"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#C8C1B6] hover:text-[#D49B6A] transition-colors"
+              className="hover:text-[#D4AF37] transition-colors"
             >
-              Sitemap
+              sitemap.xml
+            </a>
+            <span aria-hidden="true">·</span>
+            <a
+              href="/robots.txt"
+              className="hover:text-[#D4AF37] transition-colors"
+            >
+              robots.txt
             </a>
           </div>
-
-          <button
-            type="button"
-            onClick={scrollToTop}
-            className="inline-flex items-center gap-1.5 text-[#F7F4EE] hover:text-[#D49B6A] transition-colors cursor-pointer"
-          >
-            <span>{t.footer.backToTop}</span>
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
     </footer>

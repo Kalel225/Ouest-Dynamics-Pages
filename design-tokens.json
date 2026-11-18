@@ -1,0 +1,189 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "meta": {
+    "brand": "Ouest Dynamics",
+    "concept": "Architecture Digitale Souveraine",
+    "version": "2.0.0"
+  },
+  "color": {
+    "surface": {
+      "obsidian": {
+        "$type": "color",
+        "$value": "#0B0D12",
+        "oklch": "oklch(0.14 0.01 260)"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "#141821",
+        "oklch": "oklch(0.19 0.012 260)"
+      },
+      "elevatedHover": {
+        "$type": "color",
+        "$value": "#1B202C",
+        "oklch": "oklch(0.23 0.015 260)"
+      },
+      "ivory": {
+        "$type": "color",
+        "$value": "#F8F6F1",
+        "oklch": "oklch(0.97 0.006 85)"
+      }
+    },
+    "accent": {
+      "sovereignGold": {
+        "$type": "color",
+        "$value": "#D4AF37",
+        "oklch": "oklch(0.76 0.12 82)",
+        "wcagOnObsidian": "9.4:1 (AAA)"
+      },
+      "goldLightHover": {
+        "$type": "color",
+        "$value": "#E3C358",
+        "oklch": "oklch(0.82 0.11 84)"
+      },
+      "goldAccessibleOnLight": {
+        "$type": "color",
+        "$value": "#8A6D1B",
+        "oklch": "oklch(0.52 0.11 80)",
+        "wcagOnIvory": "5.1:1 (AA)"
+      }
+    },
+    "text": {
+      "primaryDark": {
+        "$type": "color",
+        "$value": "#F4F4F6",
+        "oklch": "oklch(0.96 0.004 90)",
+        "wcagOnObsidian": "17.8:1 (AAA)"
+      },
+      "mutedDark": {
+        "$type": "color",
+        "$value": "#A1A7B5",
+        "oklch": "oklch(0.72 0.01 260)",
+        "wcagOnObsidian": "7.9:1 (AAA)"
+      },
+      "primaryLight": {
+        "$type": "color",
+        "$value": "#111318",
+        "oklch": "oklch(0.18 0.01 260)",
+        "wcagOnIvory": "16.9:1 (AAA)"
+      }
+    },
+    "semantic": {
+      "success": {
+        "$type": "color",
+        "$value": "#10B981"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#F59E0B"
+      },
+      "danger": {
+        "$type": "color",
+        "$value": "#EF4444"
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "display": {
+        "$type": "fontFamily",
+        "$value": [
+          "Plus Jakarta Sans",
+          "system-ui",
+          "sans-serif"
+        ]
+      },
+      "body": {
+        "$type": "fontFamily",
+        "$value": [
+          "Inter",
+          "system-ui",
+          "sans-serif"
+        ]
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": [
+          "JetBrains Mono",
+          "monospace"
+        ]
+      }
+    },
+    "scale": {
+      "hero": {
+        "$type": "dimension",
+        "$value": "clamp(2.25rem, 4.5vw, 4.25rem)"
+      },
+      "h2": {
+        "$type": "dimension",
+        "$value": "clamp(1.75rem, 3vw, 2.75rem)"
+      },
+      "h3": {
+        "$type": "dimension",
+        "$value": "1.25rem"
+      },
+      "body": {
+        "$type": "dimension",
+        "$value": "1rem"
+      },
+      "caption": {
+        "$type": "dimension",
+        "$value": "0.8125rem"
+      }
+    }
+  },
+  "spacing": {
+    "containerMax": {
+      "$type": "dimension",
+      "$value": "1280px"
+    },
+    "sectionY": {
+      "$type": "dimension",
+      "$value": "clamp(4rem, 8vw, 7rem)"
+    },
+    "cardPadding": {
+      "$type": "dimension",
+      "$value": "1.75rem"
+    }
+  },
+  "borderRadius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "6px"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12px"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "9999px"
+    }
+  },
+  "motion": {
+    "easing": {
+      "architectural": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.22,
+          1,
+          0.36,
+          1
+        ]
+      }
+    },
+    "duration": {
+      "fast": {
+        "$type": "duration",
+        "$value": "180ms"
+      },
+      "standard": {
+        "$type": "duration",
+        "$value": "360ms"
+      }
+    }
+  }
+}

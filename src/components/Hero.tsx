@@ -1,204 +1,361 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDown } from 'lucide-react';
+import { ArrowUpRight, Sparkles, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
 
 interface HeroProps {
-  onOpenProjectModal: () => void;
-  onExploreServices: () => void;
-  isLoaded?: boolean;
+  onConfigureBrief: () => void;
+  onOpenConcierge: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({
-  onOpenProjectModal,
-  onExploreServices,
-}) => {
-  const { t, language, setLanguage } = useLanguage();
-  const { currencyConfig } = useCurrency();
-
-  const heroImageUrl = '/src/assets/images/hero_atelier_architecture_1794659548636.jpg';
+export const Hero: React.FC<HeroProps> = ({ onConfigureBrief, onOpenConcierge }) => {
+  const { t, language } = useLanguage();
+  const { currency, parityLabel } = useCurrency();
 
   return (
-    <section className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-8 bg-[#F7F4EE] border-b border-[#E2DDD5]">
-      <div className="max-w-7xl mx-auto">
-        {/* Top Metadata & Language Selector Bar (Below Header, Above Split) */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 sm:mb-12 border-b border-[#E2DDD5]">
-          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#5C554E]">
-            <span className="font-semibold text-[#A64B2A]">
-              {language === 'fr'
-                ? 'Maison d’Ingénierie Digitale & Croissance'
-                : 'Digital Architecture & Growth Practice'}
-            </span>
-            <span aria-hidden="true">·</span>
-            <span>
-              {language === 'fr'
-                ? 'Conception & Développement Sur-Mesure'
-                : 'Bespoke Digital Engineering & Design'}
+    <section className="relative pt-12 sm:pt-20 pb-16 sm:pb-24 px-4 sm:px-8 bg-[#0B0D12] border-b border-[#D4AF37]/18 overflow-hidden">
+      {/* Subtle Architectural Radial Glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-40 right-1/4 w-[640px] h-[640px] rounded-full opacity-15"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(212, 175, 55, 0.28) 0%, rgba(11, 13, 18, 0) 70%)',
+        }}
+      />
+
+      <div className="max-w-[1280px] mx-auto relative z-10">
+        {/* Top Authority Kicker & Currency Calibration Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-10 sm:mb-14 border-b border-[#D4AF37]/18 text-xs sm:text-[13px] text-[#A1A7B5]">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono-code text-[#D4AF37] font-medium">
+              {t.hero.kicker}
             </span>
           </div>
-
-          {/* Interactive Language Segmented Control */}
-          <div className="inline-flex items-center gap-1 p-1 bg-[#EFECE6] rounded-lg border border-[#E2DDD5]">
-            <button
-              type="button"
-              onClick={() => setLanguage('en')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                language === 'en'
-                  ? 'bg-white text-[#161412] shadow-xs'
-                  : 'text-[#5C554E] hover:text-[#161412]'
-              }`}
-            >
-              English
-            </button>
-            <button
-              type="button"
-              onClick={() => setLanguage('fr')}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                language === 'fr'
-                  ? 'bg-white text-[#161412] shadow-xs'
-                  : 'text-[#5C554E] hover:text-[#161412]'
-              }`}
-            >
-              Français
-            </button>
+          <div className="font-mono-code text-xs text-[#A1A7B5]">
+            <span>
+              {language === 'fr' ? 'Tarification active :' : 'Active pricing:'}{' '}
+              <strong className="text-[#F4F4F6]">{currency}</strong> · {parityLabel}
+            </span>
           </div>
         </div>
 
-        {/* 2-Column Asymmetric Architectural Split */}
+        {/* 2-Column Sovereign Split (7 cols Editorial Authority / 5 cols Precision SVG Blueprint) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-stretch">
-          {/* Left Column (7 cols): Editorial Headline, Plain-Language Value Prop & Single Primary CTA */}
+          {/* Left Column: Headline, 360° Proposition & Dual CTA */}
           <div className="lg:col-span-7 flex flex-col justify-between">
             <div>
-              <h1 className="font-serif-display text-[clamp(2.25rem,4.2vw,4rem)] font-semibold text-[#161412] leading-[1.08] tracking-tight mb-6 [text-wrap:balance]">
+              <h1 className="font-display text-[clamp(2.25rem,4.5vw,4.25rem)] font-bold text-[#F4F4F6] leading-[1.08] tracking-tight mb-6 [text-wrap:balance]">
                 {t.hero.title}
               </h1>
 
-              <p className="text-base sm:text-lg text-[#5C554E] leading-relaxed max-w-2xl mb-8">
+              <p className="text-base sm:text-lg text-[#A1A7B5] leading-relaxed max-w-2xl mb-10">
                 {t.hero.subtitle}
               </p>
             </div>
 
             <div className="space-y-8">
-              {/* Primary Action & Quiet Editorial Secondary Link */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+              {/* Dual Action Block: Primary Configurator CTA + Secondary AI Concierge CTA */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <button
-                  onClick={onOpenProjectModal}
-                  className="min-h-[50px] inline-flex items-center justify-center gap-2.5 px-7 py-3.5 text-sm font-semibold text-[#F7F4EE] bg-[#A64B2A] hover:bg-[#8E3D20] rounded-lg transition-colors duration-150 cursor-pointer shadow-xs whitespace-nowrap shrink-0"
+                  type="button"
+                  onClick={onConfigureBrief}
+                  className="min-h-[50px] inline-flex items-center justify-center gap-2.5 px-7 py-3.5 text-sm font-semibold text-[#0B0D12] bg-[#D4AF37] hover:bg-[#E3C358] rounded-[6px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0"
                 >
                   <span>{t.hero.ctaPrimary}</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </button>
 
-                <div className="flex items-center gap-6 px-1">
-                  <a
-                    href="#portfolio"
-                    className="text-sm font-semibold text-[#161412] hover:text-[#A64B2A] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-                  >
-                    {language === 'fr' ? 'Explorer le Portfolio' : 'Explore Selected Works'}
-                  </a>
-                  <span className="text-[#E2DDD5]" aria-hidden="true">/</span>
-                  <button
-                    onClick={onExploreServices}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[#5C554E] hover:text-[#161412] transition-colors cursor-pointer whitespace-nowrap shrink-0"
-                  >
-                    <span>{t.hero.ctaSecondary}</span>
-                    <ArrowDown className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={onOpenConcierge}
+                  className="min-h-[50px] inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-sm font-semibold text-[#F4F4F6] bg-[#141821] hover:bg-[#1B202C] border border-[#D4AF37]/30 hover:border-[#D4AF37] rounded-[6px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0"
+                >
+                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{t.hero.ctaSecondary}</span>
+                </button>
               </div>
 
-              {/* Plain-Language Editorial Trust Note */}
-              <div className="pt-6 border-t border-[#E2DDD5] flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#5C554E]">
-                <span>
-                  {language === 'fr'
-                    ? '01. Maquette visuelle validée avant tout développement'
-                    : '01. Visual mockup approved before any engineering'}
+              {/* Unboxed Governance Summary Line */}
+              <div className="pt-6 border-t border-[#D4AF37]/18 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#A1A7B5]">
+                <span className="inline-flex items-center gap-1.5 text-[#F4F4F6] font-medium">
+                  <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Core &amp; Elastic Guilds</span>
                 </span>
                 <span aria-hidden="true">·</span>
                 <span>
                   {language === 'fr'
-                    ? '02. Zéro jargon technique'
-                    : '02. Plain-language guidance'}
+                    ? '4 Pôles Spécialisés + 2 Moteurs Transverses'
+                    : '4 Specialized Poles + 2 Transverse Engines'}
                 </span>
                 <span aria-hidden="true">·</span>
-                <span>
-                  {language === 'fr'
-                    ? '03. Propriété intellectuelle 100% client'
-                    : '03. 100% client intellectual property'}
-                </span>
+                <span>Zero-Data Retention (ARTCI / RGPD)</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column (5 cols): Architectural Visual Monograph Frame */}
+          {/* Right Column: High-Precision SVG Architectural Blueprint Matrix */}
           <div className="lg:col-span-5 flex flex-col">
-            <div className="relative flex-1 min-h-[280px] sm:min-h-[360px] lg:h-full rounded-xl overflow-hidden border border-[#E2DDD5] bg-[#181512]">
-              <img
-                src={heroImageUrl}
-                alt={
-                  language === 'fr'
-                    ? 'Ouest Dynamics — Atelier d’architecture digitale'
-                    : 'Ouest Dynamics — Digital Architecture Studio'
-                }
-                fetchPriority="high"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover object-center"
-              />
-              {/* Measured Contrast Scrim for Legible Caption */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-5 sm:p-6">
-                <p className="text-xs font-mono-tabular text-[#F7F4EE]/80 mb-1">
-                  {language === 'fr'
-                    ? 'Atelier de Conception · Excellence Éditoriale'
-                    : 'Design & Engineering Practice · Editorial Craft'}
-                </p>
-                <p className="font-serif-display text-base sm:text-lg text-[#F7F4EE] font-medium leading-snug">
-                  {language === 'fr'
-                    ? 'Des plateformes digitales durables, conçues avec la précision d’une œuvre architecturale.'
-                    : 'Enduring digital platforms crafted with the precision of modern architecture.'}
-                </p>
+            <div className="relative flex-1 min-h-[340px] lg:h-full rounded-[12px] bg-[#141821] border border-[#D4AF37]/18 p-6 sm:p-7 flex flex-col justify-between overflow-hidden">
+              <div className="flex items-center justify-between text-xs font-mono-code text-[#A1A7B5] pb-4 border-b border-[#D4AF37]/15">
+                <span className="text-[#D4AF37]">OUEST DYNAMICS · CORE MATRIX V2.0</span>
+                <span>ABIDJAN · INTL</span>
+              </div>
+
+              {/* Architectural Geometric SVG Diagram */}
+              <div className="my-6 flex items-center justify-center">
+                <svg
+                  viewBox="0 0 420 230"
+                  className="w-full max-w-[400px] h-auto"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  role="img"
+                  aria-label="Ouest Dynamics Core & Elastic Guilds Architectural Blueprint"
+                >
+                  {/* Outer Architectural Grid Frame */}
+                  <rect
+                    x="4"
+                    y="4"
+                    width="412"
+                    height="222"
+                    rx="8"
+                    fill="#0B0D12"
+                    stroke="#D4AF37"
+                    strokeOpacity="0.22"
+                  />
+                  <line
+                    x1="4"
+                    y1="76"
+                    x2="416"
+                    y2="76"
+                    stroke="#D4AF37"
+                    strokeOpacity="0.18"
+                    strokeDasharray="4 4"
+                  />
+                  <line
+                    x1="210"
+                    y1="4"
+                    x2="210"
+                    y2="226"
+                    stroke="#D4AF37"
+                    strokeOpacity="0.18"
+                    strokeDasharray="4 4"
+                  />
+
+                  {/* Top Transverse Engine Nodes */}
+                  <rect
+                    x="22"
+                    y="18"
+                    width="172"
+                    height="44"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#D4AF37"
+                    strokeWidth="1.2"
+                  />
+                  <text
+                    x="34"
+                    y="37"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    ENGINE A · +20%
+                  </text>
+                  <text
+                    x="34"
+                    y="51"
+                    fill="#F4F4F6"
+                    fontSize="10.5"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Direction Artistique W3C
+                  </text>
+
+                  <rect
+                    x="226"
+                    y="18"
+                    width="172"
+                    height="44"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#D4AF37"
+                    strokeWidth="1.2"
+                  />
+                  <text
+                    x="238"
+                    y="37"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    ENGINE B · +25%
+                  </text>
+                  <text
+                    x="238"
+                    y="51"
+                    fill="#F4F4F6"
+                    fontSize="10.5"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Ingénierie IA Gemini &amp; n8n
+                  </text>
+
+                  {/* 4 Specialized Execution Poles */}
+                  <rect
+                    x="22"
+                    y="92"
+                    width="172"
+                    height="54"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#F4F4F6"
+                    strokeOpacity="0.16"
+                  />
+                  <text
+                    x="34"
+                    y="112"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    PÔLE 01 · BRANDING
+                  </text>
+                  <text
+                    x="34"
+                    y="129"
+                    fill="#F4F4F6"
+                    fontSize="11"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Identité &amp; Brand Book 360°
+                  </text>
+
+                  <rect
+                    x="226"
+                    y="92"
+                    width="172"
+                    height="54"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#F4F4F6"
+                    strokeOpacity="0.16"
+                  />
+                  <text
+                    x="238"
+                    y="112"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    PÔLE 02 · WEB &amp; SAAS
+                  </text>
+                  <text
+                    x="238"
+                    y="129"
+                    fill="#F4F4F6"
+                    fontSize="11"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Plateformes &amp; E-Commerce
+                  </text>
+
+                  <rect
+                    x="22"
+                    y="158"
+                    width="172"
+                    height="54"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#F4F4F6"
+                    strokeOpacity="0.16"
+                  />
+                  <text
+                    x="34"
+                    y="178"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    PÔLE 03 · MOBILE &amp; DESKTOP
+                  </text>
+                  <text
+                    x="34"
+                    y="195"
+                    fill="#F4F4F6"
+                    fontSize="11"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Apps Offline-First iOS/Android
+                  </text>
+
+                  <rect
+                    x="226"
+                    y="158"
+                    width="172"
+                    height="54"
+                    rx="6"
+                    fill="#141821"
+                    stroke="#F4F4F6"
+                    strokeOpacity="0.16"
+                  />
+                  <text
+                    x="238"
+                    y="178"
+                    fill="#D4AF37"
+                    fontSize="9"
+                    fontFamily="JetBrains Mono, monospace"
+                  >
+                    PÔLE 04 · GROWTH &amp; CAPI
+                  </text>
+                  <text
+                    x="238"
+                    y="195"
+                    fill="#F4F4F6"
+                    fontSize="11"
+                    fontWeight="600"
+                    fontFamily="Plus Jakarta Sans, sans-serif"
+                  >
+                    Paid Media, SEO/GEO &amp; CRO
+                  </text>
+
+                  {/* Center Sovereign Hub Node */}
+                  <circle
+                    cx="210"
+                    cy="152"
+                    r="14"
+                    fill="#0B0D12"
+                    stroke="#D4AF37"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx="210" cy="152" r="4.5" fill="#D4AF37" />
+                </svg>
+              </div>
+
+              <div className="pt-4 border-t border-[#D4AF37]/15 flex items-center justify-between text-xs text-[#A1A7B5]">
+                <span>LCP &lt; 1.8s · CLS = 0 · INP &lt; 100ms</span>
+                <span className="font-mono-code text-[#D4AF37]">W3C TOKENS</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Full-Width 4-Column Quantitative Proof Row Below Hero Split */}
-        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-[#E2DDD5] grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          <div>
-            <div className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412] font-mono-tabular mb-1">
-              {currencyConfig.heroStat.amount}
+        {/* Full-Width 4-Column Governance Proof Strip */}
+        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-[#D4AF37]/18 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {t.hero.governanceMetrics.map((metric, idx) => (
+            <div key={idx} className="space-y-1.5">
+              <div className="font-display text-2xl sm:text-3xl font-bold text-[#D4AF37] font-mono-code">
+                {metric.value}
+              </div>
+              <div className="text-sm font-semibold text-[#F4F4F6]">{metric.label}</div>
+              <div className="text-xs text-[#A1A7B5] leading-relaxed">{metric.detail}</div>
             </div>
-            <div className="text-xs sm:text-sm text-[#5C554E]">
-              {t.hero.valueGenerated} ({currencyConfig.code})
-            </div>
-          </div>
-
-          <div>
-            <div className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412] mb-1">
-              {t.hero.custom}
-            </div>
-            <div className="text-xs sm:text-sm text-[#5C554E]">
-              {t.hero.customSub}
-            </div>
-          </div>
-
-          <div>
-            <div className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412] mb-1">
-              {t.hero.guarantee}
-            </div>
-            <div className="text-xs sm:text-sm text-[#5C554E]">
-              {t.hero.guaranteeSub}
-            </div>
-          </div>
-
-          <div>
-            <div className="font-serif-display text-2xl sm:text-3xl font-semibold text-[#161412] mb-1">
-              {t.hero.ownership}
-            </div>
-            <div className="text-xs sm:text-sm text-[#5C554E]">
-              {t.hero.ownershipSub}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

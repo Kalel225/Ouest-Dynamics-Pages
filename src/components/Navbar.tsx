@@ -1,256 +1,298 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
-import { BrandLogo } from './BrandLogo';
-import { useLanguage } from '../context/LanguageContext';
+import React, { useState } from 'react';
+import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
+import { useLanguage, Language } from '../context/LanguageContext';
+import { useCurrency } from '../context/CurrencyContext';
+import { CurrencyCode } from '../utils/pricingEngine';
 
 interface NavbarProps {
-  onOpenProjectModal: (service?: string) => void;
+  onNavigateSection: (sectionId: string) => void;
+  onOpenConcierge: () => void;
+  isLegalView: boolean;
+  onExitLegalView: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenProjectModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onNavigateSection,
+  onOpenConcierge,
+  isLegalView,
+  onExitLegalView,
+}) => {
   const { language, setLanguage, t } = useLanguage();
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { currency, setCurrency } = useCurrency();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 16);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const currencies: CurrencyCode[] = ['XOF', 'EUR', 'USD'];
+  const languages: { code: Language; label: string }[] = [
+    { code: 'fr', label: 'FR' },
+    { code: 'en', label: 'EN' },
+  ];
 
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
+  const handleNav = (id: string) => {
+    setMobileOpen(false);
+    if (isLegalView) {
+      onExitLegalView();
+      setTimeout(() => {
+        onNavigateSection(id);
+      }, 60);
     } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
-
-  const scrollTo = (id: string) => {
-    setMobileMenuOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+      onNavigateSection(id);
     }
   };
 
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 border-b ${
-          scrolled
-            ? 'bg-[#F7F4EE]/95 backdrop-blur-md border-[#E2DDD5] py-3.5'
-            : 'bg-[#F7F4EE]/85 backdrop-blur-sm border-transparent py-4 sm:py-5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-8">
-          {/* Zone 1: Single Text Element Wordmark */}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
+    <header className="sticky top-0 z-50 bg-[#0B0D12]/92 backdrop-blur-md border-b border-[#D4AF37]/18">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-6">
+        {/* Zone 1: Sovereign Geometric SVG Logo + Single-Line Wordmark */}
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (isLegalView) {
+              onExitLegalView();
+            } else {
               window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#A64B2A]"
-            title="Ouest Dynamics"
+            }
+          }}
+          className="inline-flex items-center gap-3 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#D4AF37] group"
+        >
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 36 36"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="shrink-0"
           >
-            <BrandLogo idPrefix="nav" size="md" variant="dark" />
-          </a>
+            <rect
+              x="1"
+              y="1"
+              width="34"
+              height="34"
+              rx="6"
+              fill="#141821"
+              stroke="#D4AF37"
+              strokeWidth="1.25"
+            />
+            <path
+              d="M9 18L18 9L27 18L18 27L9 18Z"
+              stroke="#D4AF37"
+              strokeWidth="1.5"
+            />
+            <circle cx="18" cy="18" r="3.5" fill="#D4AF37" />
+          </svg>
+          <span className="font-display font-bold text-lg sm:text-xl tracking-tight text-[#F4F4F6] group-hover:text-[#D4AF37] transition-colors duration-180">
+            Ouest Dynamics
+          </span>
+        </a>
 
-          {/* Zone 2: Clean Single-Line Text Navigation Links */}
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#5C554E]">
+        {/* Zone 2: Clean Single-Line Text Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#A1A7B5]">
+          <button
+            type="button"
+            onClick={() => handleNav('poles')}
+            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
+          >
+            {t.nav.poles}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('governance')}
+            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
+          >
+            {t.nav.methodology}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('portfolio')}
+            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
+          >
+            {t.nav.portfolio}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNav('configurator')}
+            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
+          >
+            {t.nav.configurator}
+          </button>
+          <button
+            type="button"
+            onClick={onOpenConcierge}
+            className="inline-flex items-center gap-1.5 text-[#D4AF37] hover:text-[#E3C358] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{t.nav.concierge}</span>
+          </button>
+        </nav>
+
+        {/* Zone 3: Compact Language (FR|EN) + Currency (XOF|EUR|USD) + Golden Primary CTA */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Compact Language Switcher */}
+          <div
+            className="hidden sm:inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5"
+            role="group"
+            aria-label="Language selector"
+          >
+            {languages.map((lang) => {
+              const active = language === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLanguage(lang.code)}
+                  className={`px-2 py-1 text-xs font-mono-code font-medium rounded-[4px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0 ${
+                    active
+                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
+                      : 'text-[#A1A7B5] hover:text-[#F4F4F6]'
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Compact Real-Time Multi-Currency Switcher */}
+          <div
+            className="hidden md:inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5"
+            role="group"
+            aria-label="Currency selector"
+          >
+            {currencies.map((curr) => {
+              const active = currency === curr;
+              return (
+                <button
+                  key={curr}
+                  type="button"
+                  onClick={() => setCurrency(curr)}
+                  className={`px-2 py-1 text-xs font-mono-code font-medium rounded-[4px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0 ${
+                    active
+                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
+                      : 'text-[#A1A7B5] hover:text-[#F4F4F6]'
+                  }`}
+                >
+                  {curr}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Primary Sovereign Gold CTA */}
+          <button
+            type="button"
+            onClick={() => handleNav('configurator')}
+            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#0B0D12] bg-[#D4AF37] hover:bg-[#E3C358] rounded-[6px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0"
+          >
+            <span>{t.nav.ctaStart}</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Mobile Drawer Toggle */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            className="lg:hidden min-h-[42px] min-w-[42px] flex items-center justify-center rounded-[6px] bg-[#141821] border border-[#D4AF37]/25 text-[#F4F4F6] hover:border-[#D4AF37] cursor-pointer"
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden bg-[#0B0D12] border-b border-[#D4AF37]/20 px-4 pt-4 pb-6 space-y-5">
+          {/* Language & Currency Controls on Mobile */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#D4AF37]/15">
+            <div className="inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLanguage(lang.code)}
+                  className={`px-3 py-1.5 text-xs font-mono-code font-medium rounded-[4px] cursor-pointer ${
+                    language === lang.code
+                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
+                      : 'text-[#A1A7B5]'
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5">
+              {currencies.map((curr) => (
+                <button
+                  key={curr}
+                  type="button"
+                  onClick={() => setCurrency(curr)}
+                  className={`px-2.5 py-1.5 text-xs font-mono-code font-medium rounded-[4px] cursor-pointer ${
+                    currency === curr
+                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
+                      : 'text-[#A1A7B5]'
+                  }`}
+                >
+                  {curr}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <nav className="flex flex-col space-y-2">
             <button
-              onClick={() => scrollTo('expertises')}
-              className="hover:text-[#161412] transition-colors duration-150 cursor-pointer py-1 whitespace-nowrap shrink-0 border-b border-transparent hover:border-[#A64B2A]"
+              type="button"
+              onClick={() => handleNav('poles')}
+              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
             >
-              {t.nav.expertises}
+              01. {t.nav.poles}
             </button>
             <button
-              onClick={() => scrollTo('portfolio')}
-              className="hover:text-[#161412] transition-colors duration-150 cursor-pointer py-1 whitespace-nowrap shrink-0 border-b border-transparent hover:border-[#A64B2A]"
+              type="button"
+              onClick={() => handleNav('governance')}
+              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
             >
-              {t.nav.portfolio}
+              02. {t.nav.methodology}
             </button>
             <button
-              onClick={() => scrollTo('methodologie')}
-              className="hover:text-[#161412] transition-colors duration-150 cursor-pointer py-1 whitespace-nowrap shrink-0 border-b border-transparent hover:border-[#A64B2A]"
+              type="button"
+              onClick={() => handleNav('portfolio')}
+              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
             >
-              {t.nav.methodology}
+              03. {t.nav.portfolio}
             </button>
             <button
-              onClick={() => scrollTo('faq')}
-              className="hover:text-[#161412] transition-colors duration-150 cursor-pointer py-1 whitespace-nowrap shrink-0 border-b border-transparent hover:border-[#A64B2A]"
+              type="button"
+              onClick={() => handleNav('configurator')}
+              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
             >
-              FAQ
+              04. {t.nav.configurator}
             </button>
             <button
-              onClick={() => scrollTo('contact')}
-              className="hover:text-[#161412] transition-colors duration-150 cursor-pointer py-1 whitespace-nowrap shrink-0 border-b border-transparent hover:border-[#A64B2A]"
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                onOpenConcierge();
+              }}
+              className="text-left py-2.5 text-base font-medium text-[#D4AF37] inline-flex items-center gap-2"
             >
-              {t.nav.contact}
+              <Sparkles className="w-4 h-4" />
+              <span>{t.nav.concierge}</span>
             </button>
           </nav>
 
-          {/* Zone 3: 1 Primary Action (Desktop) / Menu Toggle (Mobile) */}
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => onOpenProjectModal()}
-              className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-[#F7F4EE] bg-[#161412] hover:bg-[#A64B2A] rounded-lg transition-colors duration-150 cursor-pointer whitespace-nowrap shrink-0"
-            >
-              <span>{t.nav.launchProject}</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-[#E2DDD5] bg-white/80 text-[#161412] hover:border-[#A64B2A] transition-colors cursor-pointer"
-              aria-label={mobileMenuOpen ? t.nav.close : t.nav.menu}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Full-Screen Architectural Mobile & Tablet Menu Drawer */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden bg-[#F7F4EE] pt-20 pb-8 px-6 flex flex-col justify-between overflow-y-auto">
-          <div className="space-y-6">
-            {/* Language Switcher in Mobile Drawer */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#E2DDD5]">
-              <span className="text-xs font-medium text-[#5C554E]">
-                {language === 'fr' ? 'Langue d’affichage' : 'Display Language'}
-              </span>
-              <div className="inline-flex items-center p-1 bg-[#EFECE6] rounded-lg border border-[#E2DDD5]">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    language === 'en'
-                      ? 'bg-[#161412] text-[#F7F4EE]'
-                      : 'text-[#5C554E] hover:text-[#161412]'
-                  }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => setLanguage('fr')}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    language === 'fr'
-                      ? 'bg-[#161412] text-[#F7F4EE]'
-                      : 'text-[#5C554E] hover:text-[#161412]'
-                  }`}
-                >
-                  Français
-                </button>
-              </div>
-            </div>
-
-            {/* Editorial Numbered Navigation Links */}
-            <nav className="flex flex-col divide-y divide-[#E2DDD5]">
-              <button
-                onClick={() => scrollTo('expertises')}
-                className="text-left py-4 text-xl font-serif-display font-medium text-[#161412] hover:text-[#A64B2A] transition-colors flex items-center justify-between min-h-[52px]"
-              >
-                <span>01. {t.nav.expertises}</span>
-                <ArrowUpRight className="w-4 h-4 text-[#A64B2A]" />
-              </button>
-              <button
-                onClick={() => scrollTo('portfolio')}
-                className="text-left py-4 text-xl font-serif-display font-medium text-[#161412] hover:text-[#A64B2A] transition-colors flex items-center justify-between min-h-[52px]"
-              >
-                <span>02. {t.nav.portfolio}</span>
-                <ArrowUpRight className="w-4 h-4 text-[#A64B2A]" />
-              </button>
-              <button
-                onClick={() => scrollTo('methodologie')}
-                className="text-left py-4 text-xl font-serif-display font-medium text-[#161412] hover:text-[#A64B2A] transition-colors flex items-center justify-between min-h-[52px]"
-              >
-                <span>03. {t.nav.methodology}</span>
-                <ArrowUpRight className="w-4 h-4 text-[#A64B2A]" />
-              </button>
-              <button
-                onClick={() => scrollTo('faq')}
-                className="text-left py-4 text-xl font-serif-display font-medium text-[#161412] hover:text-[#A64B2A] transition-colors flex items-center justify-between min-h-[52px]"
-              >
-                <span>04. FAQ</span>
-                <ArrowUpRight className="w-4 h-4 text-[#A64B2A]" />
-              </button>
-              <button
-                onClick={() => scrollTo('contact')}
-                className="text-left py-4 text-xl font-serif-display font-medium text-[#161412] hover:text-[#A64B2A] transition-colors flex items-center justify-between min-h-[52px]"
-              >
-                <span>05. {t.nav.contact}</span>
-                <ArrowUpRight className="w-4 h-4 text-[#A64B2A]" />
-              </button>
-            </nav>
-
-            {/* Official Social Channels */}
-            <div className="pt-2">
-              <p className="text-xs text-[#5C554E] mb-3">
-                {language === 'fr' ? 'Canaux Officiels' : 'Official Channels'}
-              </p>
-              <div className="flex items-center gap-4 text-sm font-medium text-[#161412]">
-                <a
-                  href="https://www.tiktok.com/@ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#A64B2A] underline underline-offset-4 transition-colors"
-                >
-                  TikTok
-                </a>
-                <span className="text-[#E2DDD5]">·</span>
-                <a
-                  href="https://www.facebook.com/ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#A64B2A] underline underline-offset-4 transition-colors"
-                >
-                  Facebook
-                </a>
-                <span className="text-[#E2DDD5]">·</span>
-                <a
-                  href="https://www.instagram.com/ouestdynamics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#A64B2A] underline underline-offset-4 transition-colors"
-                >
-                  Instagram
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Primary Mobile CTA */}
-          <div className="pt-6 border-t border-[#E2DDD5]">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenProjectModal();
-              }}
-              className="w-full min-h-[52px] px-6 py-3.5 rounded-lg bg-[#A64B2A] text-[#F7F4EE] font-semibold text-sm flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
-            >
-              <span>{t.nav.launchProject}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleNav('configurator')}
+            className="w-full py-3 px-5 rounded-[6px] bg-[#D4AF37] text-[#0B0D12] font-semibold text-sm flex items-center justify-center gap-2"
+          >
+            <span>{t.nav.ctaStart}</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </button>
         </div>
       )}
-    </>
+    </header>
   );
 };

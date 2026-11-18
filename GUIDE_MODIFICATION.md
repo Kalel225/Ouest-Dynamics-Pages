@@ -1,56 +1,30 @@
-# Guide Pratique de Modification & Maintenance — Ouest Dynamics
+# GUIDE DE MODIFICATION & MAINTENANCE — OUEST DYNAMICS V2
 
-Ce guide explique comment personnaliser, enrichir et maintenir chaque élément du site **Ouest Dynamics**.
+## 1. Modifier la Grille Tarifaire & les Taux de Change (`src/utils/pricingEngine.ts`)
+- **Parités Officielles** :
+  - `XOF` : Devise pivot (`1`)
+  - `EUR` : `1 EUR = 655.957 XOF` (parité fixe zone UEMOA)
+  - `USD` : `1 USD = 606.06 XOF`
+- **Fourchettes des 4 Pôles (en XOF)** :
+  - `BRANDING` : `950 000` – `2 400 000 XOF` (10–15 jours ouvrés)
+  - `WEB` : `1 500 000` – `4 500 000 XOF` (15–25 jours ouvrés)
+  - `MOBILE_DESKTOP` : `2 800 000` – `7 500 000 XOF` (25–40 jours ouvrés)
+  - `GROWTH` : `750 000` – `2 000 000 XOF` (7–14 jours ouvrés)
+- **Modificateurs & Remises** :
+  - `TRANSVERSE_DA` : `+20%`
+  - `TRANSVERSE_AI` : `+25%`
+  - `FAST_TRACK_48H` : `+15%`
+  - Remise multi-pôles : `-10%` automatique dès 2 pôles sélectionnés.
 
----
+## 2. Modifier les Traductions (`src/i18n/fr.ts` & `src/i18n/en.ts`)
+Les textes en français (langue par défaut) et en anglais sont centralisés et typés dans `src/i18n/fr.ts` et `src/i18n/en.ts`. Toute modification de titre, livrable, étude de cas ou texte légal se répercute immédiatement sur l'ensemble des composants.
 
-## 1. Modifier les Textes, Slogans et Traductions (FR / EN)
+## 3. Modifier les Jetons de Design (`design-tokens.json` & `src/index.css`)
+Les couleurs et typographies respectent le système **« Architecture Digitale Souveraine »** :
+- Fond principal : `#0B0D12` (`surface.obsidian`)
+- Cartes & surfaces : `#141821` (`surface.elevated`) et `#1B202C` (`surface.elevatedHover`)
+- Or souverain : `#D4AF37` (`accent.sovereignGold`) et `#E3C358` (`accent.goldLightHover`)
+- Portail légal clair : `#F8F6F1` (`surface.ivory`) avec accent `#8A6D1B` (`accent.goldAccessibleOnLight`)
 
-Tous les textes bilingues (Français & Anglais) sont centralisés dans :
-- **Fichier** : `src/translations.ts`
-
-Le slogan officiel est :
-- **Anglais** : `"Digital Excellence Engineered for Your Growth."`
-- **Français** : `"L'Excellence Numérique au Service de Votre Croissance."`
-
----
-
-## 2. Configurer le Chatbot IA (« Luxury Engineering Partner »)
-
-- **Interface Frontend** : `src/components/AIChatbot.tsx`
-- **Endpoint Backend Gemini** : `POST /api/chat` dans `server.ts` (SDK `@google/genai`, modèle `gemini-4-hydrogen`).
-- **Personnalisation du Prompt Système** :
-  - Dans `server.ts`, modifiez la variable `systemInstruction` (Français et Anglais) pour ajuster le ton *Luxury Engineering Partner*, les délais ou les arguments commerciaux présentés par l'assistant.
-  - La clé API Gemini est gérée automatiquement côté serveur via `process.env.GEMINI_API_KEY` (ne jamais l'exposer côté client).
-
----
-
-## 3. Personnaliser l'Animation de Chargement Lettre par Lettre
-
-- **Fichiers** : `src/components/LoadingScreen.tsx`, `src/components/BrandLogo.tsx` et `src/components/Navbar.tsx`
-- **Fonctionnement** :
-  - `BrandLogo.tsx` attribue un identifiant unique à chaque lettre du logo dans la barre de navigation (`nav-ouest-0` jusqu'à `nav-dot`).
-  - Pendant l'introduction, `Navbar.tsx` garde son logo invisible (`hideLogoDuringIntro={true}`) pour éviter tout doublon visuel.
-  - `LoadingScreen.tsx` mesure le vecteur centre-à-centre et le ratio exact de taille de police vers la barre de navigation, anime chaque lettre avec `motion/react`, puis déclenche `onHandoverLogo()` à l'atterrissage.
-
----
-
-## 4. Modifier la Section Processus (Chapitre 03) & la FAQ (Chapitre 04)
-
-- **Méthodologie (`src/components/Methodology.tsx`)** : Liste éditoriale en 3 lignes épurées dont les textes sont dans `src/translations.ts` (`methodology.steps`).
-- **FAQ (`src/components/FAQ.tsx`)** : Tableau `faqItems` bilingue avec 6 questions-réponses claires et accordéon animé via `AnimatePresence`.
-
----
-
-## 5. Modifier les Pages Légales (Politique de Confidentialité & CGU)
-
-1. **Page Politique de Confidentialité** : `src/components/PrivacyPolicyPage.tsx` (`/#politique-de-confidentialite` ou `/privacy`).
-2. **Page Conditions Générales d'Utilisation (CGU)** : `src/components/TermsPage.tsx` (`/#cgu` ou `/terms`).
-3. **Modale de Confidentialité Post-Formulaire** : `src/components/PrivacyPolicyModal.tsx`.
-
----
-
-## 6. Modifier la Validation du Formulaire & l'Anti-Spam
-
-- **Côté Client (`src/components/ContactForm.tsx`)** : Validation temps réel (`validateField`), champ Honeypot caché (`company_website_url`), délai minimum de soumission (`1200ms`) et défi mathématique humain.
-- **Côté Serveur (`server.ts`)** : Vérifie `_honeypot`, `_elapsedMs` (`< 1000ms` rejeté) et limite chaque adresse IP à 8 requêtes par tranche de 10 minutes.
+## 4. Modifier le Concierge IA (`ai-studio-manifest.json` & `server.ts`)
+La route serveur `POST /api/chat` dans `server.ts` lit et applique directement le schéma JSON structuré (`response_schema`) et l'instruction système définis dans `/ai-studio-manifest.json`.

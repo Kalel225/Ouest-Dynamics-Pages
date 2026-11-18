@@ -1,267 +1,243 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { LanguageProvider } from './context/LanguageContext';
-import { CurrencyProvider } from './context/CurrencyContext';
+import React, { useState, useCallback } from 'react';
+import { Sparkles } from 'lucide-react';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { Services } from './components/Services';
-import { Portfolio } from './components/Portfolio';
+import { PolesMatrix } from './components/PolesMatrix';
 import { Methodology } from './components/Methodology';
-import { FAQ } from './components/FAQ';
-import { CTABanner } from './components/CTABanner';
-import { ContactForm } from './components/ContactForm';
+import { PortfolioSection } from './components/PortfolioSection';
+import { BriefConfigurator } from './components/BriefConfigurator';
+import {
+  AIConciergeDrawer,
+  StructuredConciergeDiagnostic,
+} from './components/AIConciergeDrawer';
+import { LegalPortal, LegalTab } from './components/LegalPortal';
+import { CookieConsentBanner } from './components/CookieConsentBanner';
 import { Footer } from './components/Footer';
-import { ProjectModal } from './components/ProjectModal';
-import { LoadingScreen } from './components/LoadingScreen';
-import { NotFoundPage } from './components/NotFoundPage';
-import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
-import { TermsPage } from './components/TermsPage';
-import { CookieBanner } from './components/CookieBanner';
-import { LanguagePromptBanner } from './components/LanguagePromptBanner';
-import { MobileBottomBar } from './components/MobileBottomBar';
-import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
-import { AIChatbot } from './components/AIChatbot';
+import {
+  PoleId,
+  TransverseModifierId,
+  UrgencyTier,
+} from './utils/pricingEngine';
 
-type ViewMode = 'home' | 'privacy' | 'terms' | '404';
+function PlatformShell() {
+  const { t, setLanguage } = useLanguage();
+  const { setCurrency } = useCurrency();
 
-function resolveViewModeFromLocation(): ViewMode {
-  const path = window.location.pathname.toLowerCase();
-  const hash = window.location.hash.toLowerCase();
+  // Brief Configurator State (Shared with PolesMatrix, Portfolio & AI Concierge)
+  const [selectedPoles, setSelectedPoles] = useState<PoleId[]>(['WEB']);
+  const [selectedModifiers, setSelectedModifiers] = useState<TransverseModifierId[]>([]);
+  const [urgency, setUrgency] = useState<UrgencyTier>('STANDARD');
+  const [projectSummary, setProjectSummary] = useState<string>('');
+  const [configuratorStep, setConfiguratorStep] = useState<number>(1);
+  const [aiPrefilled, setAiPrefilled] = useState<boolean>(false);
 
-  if (
-    hash === '#privacy' ||
-    hash === '#/privacy' ||
-    hash === '#politique-de-confidentialite' ||
-    path === '/privacy' ||
-    path === '/politique-de-confidentialite'
-  ) {
-    return 'privacy';
-  }
+  // Navigation & Overlays
+  const [conciergeOpen, setConciergeOpen] = useState<boolean>(false);
+  const [legalView, setLegalView] = useState<LegalTab | null>(null);
+  const [forceCookieModal, setForceCookieModal] = useState<boolean>(false);
 
-  if (
-    hash === '#terms' ||
-    hash === '#/terms' ||
-    hash === '#cgu' ||
-    hash === '#/cgu' ||
-    path === '/terms' ||
-    path === '/cgu'
-  ) {
-    return 'terms';
-  }
-
-  if (hash === '#404' || hash === '#/404') {
-    return '404';
-  }
-
-  if (path !== '/' && path !== '/index.html') {
-    return '404';
-  }
-
-  return 'home';
-}
-
-function MainApp() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState('web');
-  const [viewMode, setViewMode] = useState<ViewMode>(resolveViewModeFromLocation);
-  const [showLoading, setShowLoading] = useState<boolean>(
-    () => resolveViewModeFromLocation() === 'home'
-  );
-
-  useEffect(() => {
-    const syncRouteState = () => {
-      setViewMode(resolveViewModeFromLocation());
-    };
-    window.addEventListener('popstate', syncRouteState);
-    window.addEventListener('hashchange', syncRouteState);
-    return () => {
-      window.removeEventListener('popstate', syncRouteState);
-      window.removeEventListener('hashchange', syncRouteState);
-    };
+  const scrollToSection = useCallback((sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 84;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   }, []);
 
-  const handleReturnHome = useCallback(() => {
-    window.history.pushState({}, '', '/');
-    setViewMode('home');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const handleOpenPrivacyPage = useCallback(() => {
-    window.history.pushState({}, '', '/#politique-de-confidentialite');
-    setViewMode('privacy');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const handleOpenTermsPage = useCallback(() => {
-    window.history.pushState({}, '', '/#cgu');
-    setViewMode('terms');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const handleNavigateSectionFrom404 = useCallback((sectionId: string) => {
-    window.history.pushState({}, '', `/#${sectionId}`);
-    setViewMode('home');
-    setTimeout(() => {
-      const target = document.getElementById(sectionId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
+  const handleTogglePole = useCallback((poleId: PoleId) => {
+    setSelectedPoles((prev) => {
+      if (prev.includes(poleId)) {
+        return prev.length > 1 ? prev.filter((p) => p !== poleId) : prev;
       }
-    }, 80);
+      return [...prev, poleId];
+    });
   }, []);
 
-  const handleOpenProjectModal = (serviceKey?: string) => {
-    if (serviceKey) {
-      setSelectedService(serviceKey);
-    }
-    setModalOpen(true);
-  };
+  const handleToggleModifier = useCallback((modId: TransverseModifierId) => {
+    setSelectedModifiers((prev) =>
+      prev.includes(modId) ? prev.filter((m) => m !== modId) : [...prev, modId]
+    );
+  }, []);
 
-  const handleSelectServiceFromCard = (serviceKey: string) => {
-    setSelectedService(serviceKey);
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleExploreServices = () => {
-    const servicesSection = document.getElementById('expertises');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleScrollToContact = useCallback(() => {
-    if (viewMode !== 'home') {
-      window.history.pushState({}, '', '/#contact');
-      setViewMode('home');
-      setTimeout(() => {
-        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-      }, 80);
-      return;
-    }
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [viewMode]);
-
-  const handleNavigateFromModal = useCallback(
-    (serviceKey: string) => {
-      setSelectedService(serviceKey);
-      if (viewMode !== 'home') {
-        window.history.pushState({}, '', '/#contact');
-        setViewMode('home');
-        setTimeout(() => {
-          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-        }, 80);
-        return;
-      }
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth' });
-      }
+  const handleTogglePoleAndScroll = useCallback(
+    (poleId: PoleId) => {
+      setSelectedPoles((prev) =>
+        prev.includes(poleId) ? prev : [...prev, poleId]
+      );
+      setConfiguratorStep(1);
+      scrollToSection('configurator');
     },
-    [viewMode]
+    [scrollToSection]
   );
+
+  const handleToggleModifierAndScroll = useCallback(
+    (modId: TransverseModifierId) => {
+      setSelectedModifiers((prev) =>
+        prev.includes(modId) ? prev : [...prev, modId]
+      );
+      setConfiguratorStep(2);
+      scrollToSection('configurator');
+    },
+    [scrollToSection]
+  );
+
+  const handleSelectPoleFromPortfolio = useCallback(
+    (poleId: PoleId) => {
+      setSelectedPoles([poleId]);
+      setConfiguratorStep(1);
+      scrollToSection('configurator');
+    },
+    [scrollToSection]
+  );
+
+  // US-02: Apply Structured AI Concierge Diagnostic directly into the 4-Step Brief Configurator
+  const handleApplyConciergeDiagnostic = useCallback(
+    (diag: StructuredConciergeDiagnostic) => {
+      if (Array.isArray(diag.recommended_poles) && diag.recommended_poles.length > 0) {
+        setSelectedPoles(diag.recommended_poles);
+      }
+      if (Array.isArray(diag.recommended_modifiers)) {
+        setSelectedModifiers(diag.recommended_modifiers);
+      }
+      if (diag.urgency_tier === 'FAST_TRACK_48H' || diag.urgency_tier === 'STANDARD') {
+        setUrgency(diag.urgency_tier);
+      }
+      if (
+        diag.suggested_currency === 'XOF' ||
+        diag.suggested_currency === 'EUR' ||
+        diag.suggested_currency === 'USD'
+      ) {
+        setCurrency(diag.suggested_currency);
+      }
+      if (diag.detected_language === 'fr' || diag.detected_language === 'en') {
+        setLanguage(diag.detected_language);
+      }
+      if (diag.synthesized_project_summary) {
+        setProjectSummary(diag.synthesized_project_summary);
+      }
+
+      setAiPrefilled(true);
+      setConciergeOpen(false);
+      setLegalView(null);
+      setConfiguratorStep(3);
+
+      setTimeout(() => {
+        scrollToSection('configurator');
+      }, 80);
+    },
+    [scrollToSection, setCurrency, setLanguage]
+  );
+
+  const handleOpenLegalTab = useCallback((tab: LegalTab) => {
+    setLegalView(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#F7F4EE] text-[#161412] selection:bg-[#A64B2A] selection:text-[#F7F4EE] relative overflow-x-hidden w-full pb-16 sm:pb-0">
-      {/* Architectural Letter-by-Letter Logo Transition Loading Screen */}
-      {showLoading && viewMode === 'home' && (
-        <LoadingScreen onComplete={() => setShowLoading(false)} />
-      )}
+    <div className="min-h-screen bg-[#0B0D12] text-[#F4F4F6] selection:bg-[#D4AF37] selection:text-[#0B0D12] relative overflow-x-hidden">
+      {/* 1. Unified Top Bar Navigation */}
+      <Navbar
+        onNavigateSection={scrollToSection}
+        onOpenConcierge={() => setConciergeOpen(true)}
+        isLegalView={legalView !== null}
+        onExitLegalView={() => setLegalView(null)}
+      />
 
-      {viewMode === '404' ? (
-        <NotFoundPage
-          onReturnHome={handleReturnHome}
-          onNavigateSection={handleNavigateSectionFrom404}
-          onOpenProjectModal={() => handleOpenProjectModal()}
-        />
-      ) : viewMode === 'privacy' ? (
-        <PrivacyPolicyPage
-          onReturnHome={handleReturnHome}
-          onNavigateTerms={handleOpenTermsPage}
-        />
-      ) : viewMode === 'terms' ? (
-        <TermsPage
-          onReturnHome={handleReturnHome}
-          onNavigatePrivacy={handleOpenPrivacyPage}
-        />
+      {legalView !== null ? (
+        /* 8. Unified Legal Portal on Editorial Ivory Surface (#F8F6F1) */
+        <main>
+          <LegalPortal
+            activeTab={legalView}
+            onChangeTab={setLegalView}
+            onBackToMain={() => {
+              setLegalView(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </main>
       ) : (
-        <>
-          {/* Device Language Translation Prompt (Delayed & Non-Intrusive) */}
-          <LanguagePromptBanner />
-
-          {/* Top Bar Contract Navigation */}
-          <Navbar onOpenProjectModal={() => handleOpenProjectModal()} />
-
-          <main>
-            {/* Section 1 : Architectural Split Hero & 4-Column Quantitative Proof */}
-            <Hero
-              onOpenProjectModal={() => handleOpenProjectModal()}
-              onExploreServices={handleExploreServices}
-            />
-
-            {/* Section 2 : Asymmetric Bento Grid — 4 Core Capabilities */}
-            <Services onSelectService={handleSelectServiceFromCard} />
-
-            {/* Section 3 : Interactive Horizontal Scroll Portfolio Monograph */}
-            <Portfolio onSelectService={handleSelectServiceFromCard} />
-
-            {/* Section 4 : Simplified 3-Row Editorial Methodology & Guarantees */}
-            <Methodology />
-
-            {/* Section 5 : Plain-Language Accordion FAQ */}
-            <FAQ onScrollToContact={handleScrollToContact} />
-
-            {/* Section 6 : High-Impact Architectural Call To Action (CTA) */}
-            <CTABanner
-              onOpenProjectModal={() => handleOpenProjectModal()}
-              onScrollToContact={handleScrollToContact}
-            />
-
-            {/* Section 7 : Validated Consultation, Anti-Spam & Auto-Adapted Regional Currency Form */}
-            <ContactForm
-              preselectedService={selectedService}
-              onOpenPrivacyPage={handleOpenPrivacyPage}
-              onOpenTermsPage={handleOpenTermsPage}
-            />
-          </main>
-
-          {/* Footer with Official Social Channels, Privacy Policy Page & CGU Links */}
-          <Footer
-            onOpenPrivacyPolicy={() => setPrivacyModalOpen(true)}
-            onOpenPrivacyPage={handleOpenPrivacyPage}
-            onOpenTermsPage={handleOpenTermsPage}
+        <main>
+          {/* 2. Sovereign Digital Architecture Hero Section */}
+          <Hero
+            onConfigureBrief={() => scrollToSection('configurator')}
+            onOpenConcierge={() => setConciergeOpen(true)}
           />
 
-          {/* Compact Mobile Bottom Action Bar */}
-          <MobileBottomBar onOpenProjectModal={() => handleOpenProjectModal()} />
-        </>
+          {/* 3. Matrix of 4 Execution Poles + 2 Transverse Engines */}
+          <PolesMatrix
+            selectedPoles={selectedPoles}
+            selectedModifiers={selectedModifiers}
+            onTogglePoleAndScroll={handleTogglePoleAndScroll}
+            onToggleModifierAndScroll={handleToggleModifierAndScroll}
+          />
+
+          {/* 4. Core & Elastic Guilds Methodology & 4 Governance Clauses */}
+          <Methodology />
+
+          {/* 5. Sector Case Studies Portfolio (Filterable by Pole) */}
+          <PortfolioSection onSelectPoleForBrief={handleSelectPoleFromPortfolio} />
+
+          {/* 6. 4-Step Brief Configurator & Multi-Currency Budget Estimator */}
+          <BriefConfigurator
+            selectedPoles={selectedPoles}
+            onTogglePole={handleTogglePole}
+            selectedModifiers={selectedModifiers}
+            onToggleModifier={handleToggleModifier}
+            urgency={urgency}
+            onChangeUrgency={setUrgency}
+            projectSummary={projectSummary}
+            onChangeProjectSummary={setProjectSummary}
+            aiPrefilled={aiPrefilled}
+            activeStep={configuratorStep}
+            onChangeStep={setConfiguratorStep}
+            onOpenConcierge={() => setConciergeOpen(true)}
+          />
+        </main>
       )}
 
-      {/* AI-Powered Interactive Chatbot Advisor */}
-      <AIChatbot
-        onOpenProjectModal={() => handleOpenProjectModal()}
-        onScrollToContact={handleScrollToContact}
+      {/* Footer with Unified Legal Portal & CMP Consent Mode v2 Access */}
+      <Footer
+        onNavigateSection={(id) => {
+          if (legalView !== null) {
+            setLegalView(null);
+            setTimeout(() => scrollToSection(id), 60);
+          } else {
+            scrollToSection(id);
+          }
+        }}
+        onOpenLegalTab={handleOpenLegalTab}
+        onOpenCookiePreferences={() => setForceCookieModal(true)}
+        onOpenConcierge={() => setConciergeOpen(true)}
       />
 
-      {/* Cookie Consent Banner (GDPR / CCPA) */}
-      <CookieBanner onOpenPrivacyPage={handleOpenPrivacyPage} />
+      {/* Floating Executive AI Concierge Trigger Button */}
+      <div className="fixed bottom-5 right-5 z-40">
+        <button
+          type="button"
+          onClick={() => setConciergeOpen(true)}
+          className="h-12 px-5 rounded-full bg-[#141821] hover:bg-[#1B202C] text-[#F4F4F6] border border-[#D4AF37] shadow-xl inline-flex items-center gap-2.5 transition-colors duration-180 cursor-pointer"
+        >
+          <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+          <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
+            {t.nav.concierge}
+          </span>
+        </button>
+      </div>
 
-      {/* Project Scoping Modal */}
-      <ProjectModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onNavigateToForm={handleNavigateFromModal}
-        initialService={selectedService}
+      {/* 7. Lateral Executive AI Concierge Drawer */}
+      <AIConciergeDrawer
+        isOpen={conciergeOpen}
+        onClose={() => setConciergeOpen(false)}
+        onApplyDiagnostic={handleApplyConciergeDiagnostic}
       />
 
-      {/* Global Privacy Policy & NDA Charter Modal */}
-      <PrivacyPolicyModal
-        isOpen={privacyModalOpen}
-        onClose={() => setPrivacyModalOpen(false)}
+      {/* 8. Granular CMP Consent Mode v2 Cookie Banner */}
+      <CookieConsentBanner
+        forceOpen={forceCookieModal}
+        onCloseForceOpen={() => setForceCookieModal(false)}
+        onOpenLegalPrivacy={() => handleOpenLegalTab('privacy')}
       />
     </div>
   );
@@ -271,7 +247,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <CurrencyProvider>
-        <MainApp />
+        <PlatformShell />
       </CurrencyProvider>
     </LanguageProvider>
   );
