@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LegalTab } from './LegalPortal';
 
@@ -6,128 +7,90 @@ interface FooterProps {
   onNavigateSection: (sectionId: string) => void;
   onOpenLegalTab: (tab: LegalTab) => void;
   onOpenCookiePreferences: () => void;
-  onOpenConcierge: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onNavigateSection,
   onOpenLegalTab,
   onOpenCookiePreferences,
-  onOpenConcierge,
 }) => {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#0B0D12] text-[#A1A7B5] border-t border-[#D4AF37]/18 pt-14 pb-12 px-4 sm:px-8">
-      <div className="max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-[#D4AF37]/15">
-          {/* Col 1: Sovereign Brand Identity */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="inline-flex items-center gap-3">
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 36 36"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
+    <footer className="bg-white text-[#50645D] pt-16 pb-12 px-5 sm:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-[#DCE4E0]">
+          <div className="md:col-span-5 space-y-4">
+            <h3 className="title text-2xl sm:text-3xl text-[#0B241D]">{t.footer.pitch}</h3>
+            <button
+              type="button"
+              onClick={() => onNavigateSection('estimate')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#F77F00] hover:bg-[#E07100] text-[#0B241D] text-xs font-semibold press cursor-pointer"
+            >
+              <span>{t.footer.pitchCta}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <p className="text-xs text-[#50645D] pt-1">
+              {t.footer.write}{' '}
+              <a
+                href={`mailto:${t.footer.email}`}
+                className="text-[#0B241D] font-medium hover:underline"
               >
-                <rect
-                  x="1"
-                  y="1"
-                  width="34"
-                  height="34"
-                  rx="6"
-                  fill="#141821"
-                  stroke="#D4AF37"
-                  strokeWidth="1.25"
-                />
-                <path
-                  d="M9 18L18 9L27 18L18 27L9 18Z"
-                  stroke="#D4AF37"
-                  strokeWidth="1.5"
-                />
-                <circle cx="18" cy="18" r="3.5" fill="#D4AF37" />
-              </svg>
-              <span className="font-display font-bold text-lg text-[#F4F4F6]">
-                Ouest Dynamics
-              </span>
-            </div>
-
-            <p className="text-xs sm:text-sm text-[#A1A7B5] leading-relaxed">
-              {t.footer.tagline}
+                {t.footer.email}
+              </a>
             </p>
-
-            <div className="text-xs font-mono-code text-[#D4AF37]">
-              Abidjan, Côte d’Ivoire · UEMOA · International
-            </div>
           </div>
 
-          {/* Col 2: Platform Navigation */}
-          <div className="lg:col-span-2 space-y-3">
-            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
-              {t.footer.navigationTitle}
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
+          <div className="md:col-span-2 space-y-3 text-xs sm:text-sm">
+            <div className="font-semibold text-[#0B241D]">{t.footer.explore}</div>
+            <ul className="space-y-2">
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigateSection('poles')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                  onClick={() => onNavigateSection('services')}
+                  className="hover:text-[#0B241D] cursor-pointer"
                 >
-                  {t.nav.poles}
+                  {t.nav.services}
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigateSection('governance')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                  onClick={() => onNavigateSection('work')}
+                  className="hover:text-[#0B241D] cursor-pointer"
                 >
-                  {t.nav.methodology}
+                  {t.nav.work}
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigateSection('portfolio')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                  onClick={() => onNavigateSection('process')}
+                  className="hover:text-[#0B241D] cursor-pointer"
                 >
-                  {t.nav.portfolio}
+                  {t.nav.process}
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigateSection('configurator')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer"
+                  onClick={() => onNavigateSection('estimate')}
+                  className="hover:text-[#0B241D] cursor-pointer"
                 >
-                  {t.nav.configurator}
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={onOpenConcierge}
-                  className="text-[#D4AF37] hover:text-[#E3C358] transition-colors cursor-pointer"
-                >
-                  {t.nav.concierge}
+                  {t.nav.estimate}
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Unified Legal Portal Links (Zero Modal Duplication) */}
-          <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
-              {t.footer.legalTitle}
-            </h4>
-            <ul className="space-y-2 text-xs sm:text-sm">
+          <div className="md:col-span-3 space-y-3 text-xs sm:text-sm">
+            <div className="font-semibold text-[#0B241D]">{t.footer.legal}</div>
+            <ul className="space-y-2">
               <li>
                 <button
                   type="button"
                   onClick={() => onOpenLegalTab('privacy')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
+                  className="hover:text-[#0B241D] cursor-pointer text-left"
                 >
                   {t.legal.tabs.privacy}
                 </button>
@@ -136,7 +99,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenLegalTab('terms')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
+                  className="hover:text-[#0B241D] cursor-pointer text-left"
                 >
                   {t.legal.tabs.terms}
                 </button>
@@ -145,7 +108,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenLegalTab('notices')}
-                  className="hover:text-[#D4AF37] transition-colors cursor-pointer text-left"
+                  className="hover:text-[#0B241D] cursor-pointer text-left"
                 >
                   {t.legal.tabs.notices}
                 </button>
@@ -154,42 +117,28 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   type="button"
                   onClick={onOpenCookiePreferences}
-                  className="hover:text-[#D4AF37] underline underline-offset-4 transition-colors cursor-pointer text-left"
+                  className="hover:text-[#0B241D] cursor-pointer text-left"
                 >
-                  {t.footer.manageCookies}
+                  {t.footer.cookies}
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Contractual Governance Commitments */}
-          <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-mono-code text-xs font-semibold text-[#F4F4F6]">
-              {t.footer.governanceTitle}
-            </h4>
-            <ul className="space-y-2 text-xs text-[#A1A7B5]">
-              {t.footer.governanceBullets.map((b, idx) => (
-                <li key={idx}>· {b}</li>
-              ))}
-            </ul>
+          <div className="md:col-span-2 space-y-2 text-xs sm:text-sm">
+            <div className="font-semibold text-[#0B241D]">{t.footer.studio}</div>
+            <p>{t.footer.place}</p>
+            <p>{t.footer.country}</p>
           </div>
         </div>
 
-        {/* Bottom Copyright & Technical Links */}
-        <div className="pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-[#A1A7B5]">
-          <span>{t.footer.copyright}</span>
-          <div className="flex items-center gap-4 font-mono-code">
-            <a
-              href="/sitemap.xml"
-              className="hover:text-[#D4AF37] transition-colors"
-            >
+        <div className="pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-[#50645D]">
+          <span>{t.footer.rights}</span>
+          <div className="flex items-center gap-4">
+            <a href="/sitemap.xml" className="hover:text-[#0B241D]">
               sitemap.xml
             </a>
-            <span aria-hidden="true">·</span>
-            <a
-              href="/robots.txt"
-              className="hover:text-[#D4AF37] transition-colors"
-            >
+            <a href="/robots.txt" className="hover:text-[#0B241D]">
               robots.txt
             </a>
           </div>

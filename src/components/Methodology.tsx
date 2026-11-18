@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const Methodology: React.FC = () => {
@@ -7,89 +7,42 @@ export const Methodology: React.FC = () => {
 
   return (
     <section
-      id="governance"
-      className="py-16 sm:py-24 px-4 sm:px-8 bg-[#0B0D12] border-b border-[#D4AF37]/18"
+      id="process"
+      className="py-20 sm:py-28 px-5 sm:px-8 bg-[#0E3A2F] text-white on-dark"
     >
-      <div className="max-w-[1280px] mx-auto">
-        {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
-          <p className="text-xs sm:text-[13px] font-mono-code font-semibold text-[#D4AF37] mb-3">
-            {t.methodology.sectionKicker}
-          </p>
-          <h2 className="font-display text-[clamp(1.75rem,3vw,2.75rem)] font-bold text-[#F4F4F6] leading-[1.12] tracking-tight mb-4 [text-wrap:balance]">
-            {t.methodology.title}
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-2xl mb-14">
+          <h2 className="title text-[clamp(2rem,4vw,3.25rem)] text-white">
+            {t.process.title}
           </h2>
-          <p className="text-base text-[#A1A7B5] leading-relaxed">
-            {t.methodology.subtitle}
-          </p>
         </div>
 
-        {/* Part 1: Core & Elastic Guilds 3-Row Progression */}
-        <div className="mb-14">
-          <h3 className="text-xs sm:text-[13px] font-mono-code font-semibold text-[#D4AF37] mb-5">
-            {t.methodology.guildModelTitle}
-          </h3>
-
-          <div className="divide-y divide-[#D4AF37]/18 border-y border-[#D4AF37]/18">
-            {t.methodology.guildSteps.map((item) => (
-              <div
-                key={item.step}
-                className="py-7 sm:py-8 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-baseline"
-              >
-                <div className="md:col-span-3 flex items-baseline gap-3">
-                  <span className="font-mono-code text-2xl sm:text-3xl font-bold text-[#D4AF37]">
-                    {item.step}
-                  </span>
-                  <span className="font-mono-code text-xs text-[#A1A7B5]">
-                    · {item.duration}
-                  </span>
-                </div>
-
-                <div className="md:col-span-6">
-                  <h4 className="font-display text-lg sm:text-xl font-bold text-[#F4F4F6] mb-1.5">
-                    {item.title}
-                  </h4>
-                  <p className="text-sm text-[#A1A7B5] leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-
-                <div className="md:col-span-3 md:text-right">
-                  <span className="text-xs font-mono-code text-[#D4AF37] block">
-                    {item.deliverable}
-                  </span>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-16 border-b border-white/15">
+          {t.process.steps.map((step, idx) => (
+            <div key={idx} className="space-y-3">
+              <div className="flex items-baseline justify-between gap-2 text-xs text-white/60 tnum">
+                <span className="font-semibold text-[#F77F00]">0{idx + 1}</span>
+                <span>{step.duration}</span>
               </div>
-            ))}
-          </div>
+              <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                {step.title}
+              </h3>
+              <p className="text-sm sm:text-base text-white/75 leading-relaxed">
+                {step.text}
+              </p>
+            </div>
+          ))}
         </div>
 
-        {/* Part 2: The 4 Contractual Governance Clauses */}
-        <div>
-          <div className="flex items-center gap-2 mb-6">
-            <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
-            <h3 className="text-xs sm:text-[13px] font-mono-code font-semibold text-[#F4F4F6]">
-              {t.methodology.guaranteesTitle}
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {t.methodology.guarantees.map((clause) => (
-              <div
-                key={clause.code}
-                className="rounded-[12px] bg-[#141821] border border-[#D4AF37]/18 p-6 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-mono-code text-xs font-semibold text-[#D4AF37] block mb-3">
-                    {clause.code}
-                  </span>
-                  <h4 className="font-display text-base sm:text-lg font-bold text-[#F4F4F6] mb-2.5">
-                    {clause.title}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-[#A1A7B5] leading-relaxed">
-                    {clause.description}
-                  </p>
-                </div>
+        <div className="pt-12">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#F77F00] mb-6">
+            {t.process.guaranteesTitle}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {t.process.guarantees.map((item, idx) => (
+              <div key={idx} className="flex items-start gap-2.5 text-sm text-white/85 leading-relaxed">
+                <Check className="w-4 h-4 text-[#F77F00] shrink-0 mt-1" />
+                <span>{item}</span>
               </div>
             ))}
           </div>

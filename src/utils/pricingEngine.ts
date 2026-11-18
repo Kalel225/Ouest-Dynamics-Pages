@@ -188,3 +188,74 @@ export function calculateBriefPricing(
     estimatedMaxDays,
   };
 }
+
+/* ------------------------------------------------------------------ */
+/* Locale-aware money formatting (Intl, no repeated currency in ranges) */
+/* ------------------------------------------------------------------ */
+
+export type DisplayLang = 'fr' | 'en';
+
+const localeOf = (lang: DisplayLang) => (lang === 'fr' ? 'fr-FR' : 'en-US');
+
+const symbolOf = (currency: CurrencyCode) =>
+  currency === 'EUR' ? '€' : currency === 'USD' ? '$' : 'FCFA';
+
+export const CURRENCY_LABELS: Record<CurrencyCode, string> = {
+  XOF: 'FCFA',
+  EUR: 'EUR',
+  USD: 'USD',
+};
+
+/** Single amount, e.g. "950 000 FCFA", "1 448 €", "$1,567". */
+export function formatMoney(amountXof: number, currency: CurrencyCode, lang: DisplayLang): string {
+  const value = convertFromXof(amountXof, currency);
+  const n = new Intl.NumberFormat(localeOf(lang), { maximumFractionDigits: 0 }).format(value);
+  if (currency === 'XOF') return `${n}\u00A0FCFA`;
+  return lang === 'fr' ? `${n}\u00A0${symbolOf(currency)}` : `${symbolOf(currency)}${n}`;
+}
+
+export interface MoneyRangeParts {
+  low: string;
+  high: string;
+  unit: string;
+}
+
+/**
+ * Range split into wrap-safe parts. Large FCFA amounts are expressed in millions
+ * ("1,35 – 4,05 millions FCFA") so the figure stays readable at display size.
+ */
+export function moneyRangeParts(
+  minXof: number,
+  maxXof: number,
+  currency: CurrencyCode,
+  lang: DisplayLang
+): MoneyRangeParts {
+  const locale = localeOf(lang);
+
+  if (currency === 'XOF' && maxXof >= 1_000_000) {
+    const f = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
+    return {
+      low: f.format(minXof / 1_000_000),
+      high: f.format(maxXof / 1_000_000),
+      unit: lang === 'fr' ? 'millions FCFA' : 'million FCFA',
+    };
+  }
+
+  const f = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+  const low = f.format(convertFromXof(minXof, currency));
+  const high = f.format(convertFromXof(maxXof, currency));
+
+  if (currency === 'XOF') return { low, high, unit: 'FCFA' };
+  if (lang === 'fr') return { low, high, unit: symbolOf(currency) };
+  return { low: `${symbolOf(currency)}${low}`, high: `${symbolOf(currency)}${high}`, unit: '' };
+}
+
+export function formatMoneyRange(
+  minXof: number,
+  maxXof: number,
+  currency: CurrencyCode,
+  lang: DisplayLang
+): string {
+  const p = moneyRangeParts(minXof, maxXof, currency, lang);
+  return `${p.low} – ${p.high}${p.unit ? `\u00A0${p.unit}` : ''}`;
+}

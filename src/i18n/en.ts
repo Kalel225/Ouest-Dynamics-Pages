@@ -1,557 +1,392 @@
-import { Dictionary } from './fr';
+import { Dictionary, CaseStudy, LegalDoc } from './fr';
+import { PoleId, TransverseModifierId } from '../utils/pricingEngine';
 
 export const en: Dictionary = {
-  meta: {
-    lang: 'en',
-  },
   nav: {
-    poles: 'Practices & Engines',
-    methodology: 'Governance',
-    portfolio: 'Case Studies',
-    configurator: 'Brief Configurator',
-    concierge: 'AI Concierge',
-    ctaStart: 'Start a Project',
+    services: 'Services',
+    work: 'Work',
+    process: 'Process',
+    estimate: 'Estimate',
+    start: 'Start a project',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    language: 'Language',
+    home: 'Ouest Dynamics, back to top',
   },
+
   hero: {
-    kicker: 'Abidjan · West Africa & International · Sovereign Digital Architecture',
-    title: 'Sovereign Digital Engineering, Executive Art Direction & 360° AI Automation.',
+    clock: (time: string) => `It’s ${time} in Abidjan`,
+    title: 'Brands, websites and apps. Built in Abidjan.',
     subtitle:
-      'We architect, engineer, and scale mission-critical platforms for ambitious organizations: sovereign brand identities, high-performance Web & SaaS ecosystems, Offline-First Mobile/Desktop applications, and AI-driven growth infrastructure.',
-    ctaPrimary: 'Configure My Brief',
-    ctaSecondary: 'Speak to AI Concierge',
-    governanceMetrics: [
+      'For companies across West Africa and those expanding into it. One senior team, pricing shown upfront, and everything is yours at handover.',
+    primary: 'Estimate my project',
+    secondary: 'Describe my project to the assistant',
+  },
+
+  services: {
+    title: 'Four disciplines, one team.',
+    intro: 'Select what you need. The estimate below updates as you go.',
+    from: (price: string) => `from ${price}`,
+    currency: 'Currency',
+    seeEstimate: (n: number) =>
+      n > 1 ? `See estimate for ${n} services` : 'See estimate',
+    items: [
       {
-        value: '100%',
-        label: 'Client Asset Ownership & Full IP Transfer',
-        detail: 'Domains, cloud servers, Store accounts, and source code in your name',
+        id: 'BRANDING' as PoleId,
+        name: 'Brand identity',
+        line: 'Naming, logo, visual system and print collateral that make your company unmistakable.',
       },
       {
-        value: '5 Days',
-        label: 'Structured Milestone Review Window',
-        detail: 'Agile contractual cadence with 5-business-day milestone sign-off',
+        id: 'WEB' as PoleId,
+        name: 'Websites & platforms',
+        line: 'Corporate sites, e-commerce stores and custom web platforms, fast and simple to run.',
       },
       {
-        value: '40 / 30 / 30',
-        label: 'Transparent Contractual Payment Schedule',
-        detail: '40% kickoff · 30% design/architecture sign-off · 30% final delivery',
+        id: 'MOBILE_DESKTOP' as PoleId,
+        name: 'Applications',
+        line: 'iOS, Android and desktop apps engineered to keep working when the network drops.',
       },
       {
-        value: 'ARTCI & GDPR',
-        label: 'Compliance & Zero-Data Retention',
-        detail: 'Côte d’Ivoire Law n°2013-450, EU GDPR & strict AI context isolation',
+        id: 'GROWTH' as PoleId,
+        name: 'Growth',
+        line: 'Paid acquisition, search visibility and conversion tracking, from first click to signed deal.',
       },
     ],
   },
-  polesMatrix: {
-    sectionKicker: '01. 360° Operational Architecture',
-    title: '4 Specialized Execution Poles Powered by 2 Transverse Engines.',
-    subtitle:
-      'Every engagement is governed by our Executive Art Direction and AI Engineering engines, ensuring uncompromising aesthetic and technical cohesion across your entire digital ecosystem.',
-    transverseHeader: 'Transverse Authority Engines (Available Across All 4 Poles)',
-    transverseEngines: [
+
+  options: {
+    items: [
       {
-        id: 'TRANSVERSE_DA',
-        code: 'TRANSVERSE ENGINE A · +20%',
-        title: 'Executive Art Direction & W3C Design Tokens',
-        description:
-          'Sovereign design systems, authoritative typography, high-fidelity interactive prototypes, and W3C design tokens (design-tokens.json) validated prior to engineering.',
-        specs: ['W3C Design System', 'WCAG AAA Contrast', 'High-Fidelity Prototypes'],
+        id: 'TRANSVERSE_DA' as TransverseModifierId,
+        name: 'Dedicated art direction',
+        line: 'A senior art director oversees every screen, token and print touchpoint.',
+        rate: '+20%',
       },
       {
-        id: 'TRANSVERSE_AI',
-        code: 'TRANSVERSE ENGINE B · +25%',
-        title: 'AI Engineering (Gemini) & n8n Automation (ZDR)',
-        description:
-          'Integration of structured-output Gemini AI qualification agents, n8n business workflow automation, and data pipelines governed by a strict Zero-Data Retention policy.',
-        specs: ['Gemini Structured JSON', 'n8n / API Orchestration', 'Zero-Data Retention'],
+        id: 'TRANSVERSE_AI' as TransverseModifierId,
+        name: 'Artificial intelligence',
+        line: 'Custom assistants and workflow automations connected to your existing tools.',
+        rate: '+25%',
       },
     ],
-    polesHeader: 'The 4 Specialized Production Poles',
-    selectInConfigurator: 'Select in Configurator',
-    selectedInConfigurator: 'Selected in Your Brief',
-    indicativeRangeLabel: 'Indicative range:',
-    deliveryLabel: 'Typical timeline:',
-    daysUnit: 'business days',
-    poles: [
-      {
-        id: 'BRANDING',
-        number: 'POLE 01',
-        title: '360° Identity & Branding',
-        subtitle: 'Brand strategy, institutional Brand Book, Design Tokens & Packaging',
-        description:
-          'Crafting high-authority, sovereign brand identities for corporate groups, financial institutions, and scale-ups operating across West Africa and global markets.',
-        deliverables: [
-          'Brand platform, narrative architecture & executive positioning',
-          'Full vector identity system & standardized institutional Brand Book',
-          'UI/UX design system & W3C token specification (design-tokens.json)',
-          'Physical collateral, architectural signage, annual reports & luxury packaging',
-        ],
-      },
-      {
-        id: 'WEB',
-        number: 'POLE 02',
-        title: 'High-Performance Web Engineering',
-        subtitle: 'Institutional platforms, multi-currency E-Commerce, SaaS & SEO/GEO',
-        description:
-          'Modern web engineering (React / Next.js App Router / TypeScript) calibrated for instant load speeds (LCP < 1.8s), B2B/B2C conversion, and Generative Engine Optimization.',
-        deliverables: [
-          'Executive corporate websites & high-security institutional portals',
-          'Multi-currency E-Commerce platforms (XOF / Mobile Money / EUR / USD)',
-          'Custom Web SaaS applications & client portals on PostgreSQL / RLS',
-          'Technical SEO architecture, Schema.org JSON-LD & AI Search (GEO)',
-        ],
-      },
-      {
-        id: 'MOBILE_DESKTOP',
-        number: 'POLE 03',
-        title: 'Mobile & Desktop Applications',
-        subtitle: 'iOS, Android, Windows/macOS & Resilient Offline-First Architecture',
-        description:
-          'Native and cross-platform applications engineered to operate seamlessly even under intermittent network connectivity, with encrypted local-to-cloud synchronization.',
-        deliverables: [
-          'iOS (Apple App Store) & Android (Google Play Store) mobile applications',
-          'Mission-critical Desktop software (Windows / macOS) for field operations',
-          'Offline-First local synchronization engine & resilient transaction queue',
-          'Direct deployment onto your organization’s own Apple & Google developer accounts',
-        ],
-      },
-      {
-        id: 'GROWTH',
-        number: 'POLE 04',
-        title: 'Growth, Paid Media & Visibility',
-        subtitle: 'Meta / TikTok / Google Ads, Server-Side CAPI Tracking & CRO',
-        description:
-          'Measurable, ARTCI/GDPR-compliant acquisition infrastructure connecting your advertising spend directly to verified pipeline and revenue inside your CRM.',
-        deliverables: [
-          'Server-Side Tracking Architecture (Conversions API, GTM Server, Consent Mode v2)',
-          'Paid Media acquisition campaigns (LinkedIn, Meta, Google, TikTok)',
-          'Conversion Rate Optimization (CRO) & B2B qualification funnels',
-          'Real-time ROAS / CAC / LTV executive dashboards in XOF, EUR, and USD',
-        ],
-      },
-    ],
-  },
-  methodology: {
-    sectionKicker: '02. Operating Model & Contractual Governance',
-    title: '“Core & Elastic Guilds” Architecture & Sovereign Guarantees.',
-    subtitle:
-      'We combine the strategic rigor of an internal executive Core in Abidjan with the velocity of senior engineering and creative Guilds deployable within 48 hours.',
-    guildModelTitle: 'How Core & Elastic Guilds Operate',
-    guildSteps: [
-      {
-        step: '01',
-        title: 'Internal Executive Core (Architecture & Art Direction)',
-        duration: 'Days 1 to 5',
-        description:
-          'Strategic scoping, technical architecture, Executive Art Direction, and W3C Design Token definition led directly by our Managing Partners.',
-        deliverable: 'Architecture blueprint, high-fidelity mockups & milestone contract',
-      },
-      {
-        step: '02',
-        title: 'Senior Elastic Guild Mobilization (Within 48h)',
-        duration: 'Agile Production',
-        description:
-          'Rapid deployment of specialized senior squads (Web, Offline-First Mobile, AI/n8n, Growth CAPI) under strict architectural and QA supervision.',
-        deliverable: 'Private staging environment & weekly executive sprint reviews',
-      },
-      {
-        step: '03',
-        title: 'Final QA, Sovereign Handover & Documentation',
-        duration: 'Launch & Handover',
-        description:
-          'Security audit, load testing, complete handover of credentials (Git repositories, cloud servers, Store accounts), and live team training.',
-        deliverable: '100% assigned source code + operational runbook',
-      },
-    ],
-    guaranteesTitle: 'The 4 Governance Clauses Enforced in Every Contract',
-    guarantees: [
-      {
-        code: 'CLAUSE 01',
-        title: 'Full Independence of Client Assets',
-        description:
-          'Domain names, Cloud/Supabase hosting, Apple Developer / Google Play accounts, and Ad Business Managers are registered and remain exclusively under your company’s name.',
-      },
-      {
-        code: 'CLAUSE 02',
-        title: '100% Intellectual Property Assignment',
-        description:
-          'Upon final milestone settlement, 100% of intellectual property rights covering custom source code, Figma files, design tokens, and AI workflows transfer unconditionally to you.',
-      },
-      {
-        code: 'CLAUSE 03',
-        title: '5-Business-Day Structured Milestone Approval',
-        description:
-          'To protect delivery velocity, each submitted milestone includes a clear 5-business-day review window, preventing timeline drift and bottlenecks.',
-      },
-      {
-        code: 'CLAUSE 04',
-        title: '40 / 30 / 30 Payment Schedule & Zero-Data Retention',
-        description:
-          'Balanced milestone billing (40% upon signature, 30% upon design/architecture sign-off, 30% upon final acceptance) and strict Zero-Data Retention AI processing.',
-      },
-    ],
-  },
-  portfolio: {
-    sectionKicker: '03. Sector Case Studies',
-    title: 'Measured ROI Impact & Deployed Architectures.',
-    subtitle:
-      'Four representative engagements illustrating our execution method: Business Challenge, Architecture & Art Direction, and Verified ROI Impact.',
-    filters: {
-      ALL: 'All Poles',
-      BRANDING: 'Pole 1 · Branding',
-      WEB: 'Pole 2 · Web & SaaS',
-      MOBILE_DESKTOP: 'Pole 3 · Mobile & Offline',
-      GROWTH: 'Pole 4 · Growth & CAPI',
+    fastTrack: {
+      name: '48-hour kickoff',
+      line: 'Senior team mobilized in two days with delivery timelines compressed by roughly a quarter.',
+      rate: '+15%',
     },
-    labels: {
-      challenge: 'Business Challenge',
-      architecture: 'Architecture & Art Direction',
-      impact: 'Measured ROI Impact',
-      inspectCase: 'Inspect Technical Case Study',
-      configureSimilar: 'Configure a Similar Project',
-      closeModal: 'Close Case Study',
-      deliverablesTitle: 'Delivered Assets & Technical Stack',
-    },
+  },
+
+  work: {
+    title: 'Recent work.',
+    intro: 'Four engagements, four measured outcomes.',
+    read: 'Read case study',
+    similar: 'Estimate a similar project',
+    challenge: 'The challenge',
+    solution: 'What we built',
+    result: 'The outcome',
+    close: 'Close',
     cases: [
       {
         id: 'fintech-uemoa',
         pole: 'MOBILE_DESKTOP',
-        poleLabel: 'Pole 3 · Offline-First Mobile & Desktop',
-        sector: 'FinTech & Cross-Border UEMOA Payments',
-        location: 'Abidjan · Dakar · Paris',
-        title: 'Kauri Settlement — Offline-First B2B Wallet & Merchant POS Terminal',
-        clientType: 'Regional Electronic Money Institution',
+        client: 'Kauri Settlement',
+        sector: 'Mobile payments',
+        city: 'Abidjan & Dakar',
+        metric: { value: '+215%', label: 'transaction volume in six months' },
+        summary:
+          'A merchant checkout app that keeps processing sales even when connectivity drops.',
         challenge:
-          'Guarantee merchant payment acceptance and interbank reconciliation across the UEMOA region despite intermittent network drops, while meeting strict BCEAO compliance.',
-        architectureAndDa:
-          'iOS/Android mobile app and Desktop POS terminal built on a locally encrypted transaction queue (SQLite Offline-First) paired with a high-contrast sovereign interface.',
-        roiImpact:
-          '+215% transaction volume in 6 months, 99.98% field availability, and a 64% reduction in merchant onboarding time.',
-        metrics: [
-          { label: 'Transaction Volume', value: '+215%' },
-          { label: 'Field Availability', value: '99.98%' },
-          { label: 'Merchant Onboarding', value: '-64%' },
-        ],
-        stack: ['React Native', 'SQLite Offline-First', 'PostgreSQL RLS', 'W3C Design Tokens'],
-        deliverables: [
-          'Synchronized iOS, Android & Desktop POS applications',
-          'Sovereign design system & institutional Brand Book',
-          'Automated reconciliation API & real-time anomaly alerts',
+          'Merchants were losing sales during network outages, and bank reconciliation was still manual.',
+        solution:
+          'A mobile and desktop POS app that records payments offline locally and syncs automatically once back online.',
+        result:
+          'Transaction volume tripled in six months and merchant onboarding time dropped by more than half.',
+        figures: [
+          { value: '+215%', label: 'volume' },
+          { value: '99.98%', label: 'uptime' },
+          { value: '−64%', label: 'onboarding time' },
         ],
       },
       {
-        id: 'immobilier-prestige-abidjan',
+        id: 'immobilier-riviera',
         pole: 'BRANDING',
-        poleLabel: 'Pole 1 · 360° Identity & Branding',
-        title: 'Riviera Souveraine — Institutional Brand & Diaspora Investor Portal',
-        sector: 'Luxury Real Estate & Land Development',
-        location: 'Abidjan (Cocody Ambassades) · London · Dubai',
-        clientType: 'Premier Real Estate Developer',
+        client: 'Riviera Souveraine',
+        sector: 'Residential real estate',
+        city: 'Abidjan',
+        metric: { value: '100%', label: 'of units reserved in 11 weeks' },
+        summary:
+          'Identity and investor portal for a flagship residential development targeting diaspora buyers.',
         challenge:
-          'Position a flagship diplomatic residential development for institutional investors and the international diaspora with immediate architectural authority.',
-        architectureAndDa:
-          'Executive Art Direction (Sovereign Gold & Obsidian), comprehensive Brand Book, architectural signage system, and an encrypted multi-currency investor data-room (XOF/EUR/USD).',
-        roiImpact:
-          '100% of Phase 1 units reserved within 11 weeks and +180% qualified inbound inquiries from international diaspora investors.',
-        metrics: [
-          { label: 'Phase 1 Reserved', value: '100%' },
-          { label: 'Qualified Diaspora Leads', value: '+180%' },
-          { label: 'Sales Velocity', value: '11 wks' },
-        ],
-        stack: ['360° Brand Book', 'W3C Design Tokens', 'Next.js 15', 'Encrypted Data-Room'],
-        deliverables: [
-          'Complete visual identity, printed monograph & signage guidelines',
-          'Multi-currency investment portal (XOF, EUR, USD)',
-          'Automated investor dossier qualification workflow',
+          'A new development needed to earn immediate trust from buyers in London and Dubai without in-person visits.',
+        solution:
+          'A full visual identity, architectural signage and a multi-currency portal displaying units in XOF, EUR and USD.',
+        result:
+          'Phase one sold out in eleven weeks and qualified diaspora inquiries nearly tripled.',
+        figures: [
+          { value: '100%', label: 'phase 1 sold' },
+          { value: '+180%', label: 'diaspora leads' },
+          { value: '11', label: 'weeks' },
         ],
       },
       {
-        id: 'agro-industrie-export',
+        id: 'agro-export',
         pole: 'GROWTH',
-        poleLabel: 'Pole 4 · Growth, Paid Media & Visibility',
-        title: 'Ivoire Origin — International B2B Acquisition & Server-Side CAPI Tracking',
-        sector: 'Certified Agro-Industry & Export (Cocoa / Cashew)',
-        location: 'San-Pédro · Abidjan · Rotterdam',
-        clientType: 'Industrial Agro-Export Group',
+        client: 'Ivoire Origin',
+        sector: 'Cocoa & cashew export',
+        city: 'San-Pédro',
+        metric: { value: '−42%', label: 'acquisition cost per buyer' },
+        summary:
+          'B2B acquisition engine connecting certified West African producers with European and North American buyers.',
         challenge:
-          'Generate a predictable pipeline of wholesale B2B supply contracts across Europe and North America while complying with EUDR traceability and Consent Mode v2.',
-        architectureAndDa:
-          'Deployment of a Server-Side tracking infrastructure (GTM Server + CAPI), multilingual B2B SEO/GEO authority, and targeted LinkedIn/Search acquisition.',
-        roiImpact:
-          'B2B Customer Acquisition Cost (CAC) reduced by 42%, 38 new qualified importer accounts in one quarter, and 100% GDPR/ARTCI compliance.',
-        metrics: [
-          { label: 'B2B CAC Reduction', value: '-42%' },
-          { label: 'Importer Accounts', value: '+38' },
-          { label: 'CMP v2 Compliance', value: '100%' },
-        ],
-        stack: ['Server-Side CAPI', 'Consent Mode v2', 'B2B SEO / GEO', 'n8n Automation'],
-        deliverables: [
-          'GTM Server-Side architecture & ARTCI/GDPR consent governance',
-          'Automated lead enrichment and CRM routing pipeline via n8n',
-          'Multi-currency executive commercial pipeline dashboard',
+          'The exporter relied on a handful of brokers and had no visibility into which campaigns drove real contracts.',
+        solution:
+          'Server-side conversion tracking, multilingual search optimization and targeted campaigns for industrial buyers.',
+        result:
+          'Thirty-eight new importer accounts signed in one quarter at a 42% lower acquisition cost.',
+        figures: [
+          { value: '−42%', label: 'acquisition cost' },
+          { value: '+38', label: 'importers' },
+          { value: '1', label: 'quarter' },
         ],
       },
       {
-        id: 'saas-logistique-corridor',
+        id: 'saas-logistique',
         pole: 'WEB',
-        poleLabel: 'Pole 2 · High-Performance Web Engineering',
-        title: 'CorridorFlow — Fleet Management & AI-Automated Customs SaaS Platform',
-        sector: 'Port Logistics & Corridor Freight',
-        location: 'Abidjan Port · Ouagadougou · Tema',
-        clientType: 'Regional Logistics Operator',
+        client: 'CorridorFlow',
+        sector: 'Freight & logistics',
+        city: 'Abidjan & Ouagadougou',
+        metric: { value: '5×', label: 'faster customs document processing' },
+        summary:
+          'A web platform tracking 850 trucks and extracting customs manifests automatically.',
         challenge:
-          'Digitize real-time tracking for 850 freight trucks and automate customs manifest extraction that previously delayed port clearance and B2B billing.',
-        architectureAndDa:
-          'High-performance Web SaaS platform (1.1s LCP) paired with a Gemini Structured Output document extraction engine and automated n8n alert workflows.',
-        roiImpact:
-          'Customs document processing speed increased 5x, corridor fleet downtime reduced by 39%, and adopted by 140 partner freight forwarders.',
-        metrics: [
-          { label: 'Customs Processing', value: '5x Faster' },
-          { label: 'Fleet Downtime', value: '-39%' },
-          { label: 'Platform LCP', value: '1.1s' },
-        ],
-        stack: ['React 19 / Next.js', 'Gemini Structured JSON', 'n8n Workflows', 'Supabase RLS'],
-        deliverables: [
-          'Real-time multi-role Web SaaS portal with Row-Level Security',
-          'AI agent for customs manifest extraction and validation',
-          'Automated multi-currency invoicing (XOF / EUR / USD)',
+          'Manual manifest entry slowed down port clearance and delayed B2B invoicing.',
+        solution:
+          'A real-time fleet portal paired with an AI document extractor that validates customs manifests.',
+        result:
+          'Paperwork clears five times faster and fleet idle time along the corridor dropped by 39%.',
+        figures: [
+          { value: '5×', label: 'faster clearance' },
+          { value: '−39%', label: 'idle time' },
+          { value: '140', label: 'forwarders active' },
         ],
       },
-    ],
+    ] as CaseStudy[],
   },
-  configurator: {
-    sectionKicker: '04. Brief Configurator & Budget Estimator',
-    title: 'Calibrate Your Scope & Generate Your Contractual Estimate.',
-    subtitle:
-      'Select your execution Poles and transverse engines. Indicative budget ranges and the 40% / 30% / 30% payment schedule calculate instantaneously in your selected currency.',
-    aiPrefillBanner:
-      'AI Concierge diagnostic applied. Your recommended Poles, modifiers, and project summary have been pre-filled.',
+
+  process: {
+    title: 'How we work.',
     steps: [
-      { num: '01', label: 'Execution Poles' },
-      { num: '02', label: 'Engines & Urgency' },
-      { num: '03', label: 'Estimate & Schedule' },
-      { num: '04', label: 'Executive Sign-Off' },
+      {
+        title: 'Scoping',
+        duration: 'Week one',
+        text: 'We align on goals, budget and creative direction. Nothing enters production without your sign-off.',
+      },
+      {
+        title: 'Production',
+        duration: 'Project dependent',
+        text: 'A senior team assembled within 48 hours, weekly reviews and a live staging link you can test anytime.',
+      },
+      {
+        title: 'Handover',
+        duration: 'Final week',
+        text: 'Production launch, team training and complete transfer of all repositories, accounts and files.',
+      },
     ],
-    step1: {
-      title: 'Step 1 — Select One or More Execution Poles',
-      hint: 'An automatic -10% Multi-Pole Synergy discount is applied whenever 2 or more Poles are selected together.',
-      multiPoleBadge: 'Multi-Pole Synergy Discount (-10%) Active',
-    },
-    step2: {
-      title: 'Step 2 — Transverse Engines & Mobilization Cadence',
-      subtitle:
-        'Enable our transverse authority engines or request priority 48-hour Elastic Guild mobilization.',
-      urgencyTitle: 'Mobilization Cadence',
-      standardLabel: 'Standard — Regular Guild Schedule (0%)',
-      standardDesc: 'Standard kickoff and delivery timeline across your selected poles.',
-      fastTrackLabel: 'Fast-Track 48h Elastic Guild (+15%)',
-      fastTrackDesc:
-        'Priority mobilization of a dedicated senior guild within 48 business hours with a 25% timeline compression.',
-    },
-    step3: {
-      title: 'Step 3 — Budget Estimate & Contractual Schedule (40 / 30 / 30)',
-      currencySwitchLabel: 'Display & Billing Currency:',
-      totalRangeTitle: 'Estimated Investment Range (Excl. Tax)',
-      timelineTitle: 'Estimated Delivery Timeline',
-      baseSumLabel: 'Base sum of selected Poles',
-      multiPoleDiscountLabel: 'Multi-Pole Synergy Discount (-10%)',
-      modifiersAppliedLabel: 'Transverse Modifiers & Urgency',
-      scheduleTitle: 'Contractual Milestone Breakdown (40% / 30% / 30%)',
-      milestone1Title: 'Milestone 1 · 40% Upon Signature',
-      milestone1Desc: 'Project initialization, Core mobilization, and strategic discovery kickoff.',
-      milestone2Title: 'Milestone 2 · 30% Design & Architecture Sign-Off',
-      milestone2Desc: 'Upon formal approval of interactive mockups and technical blueprint.',
-      milestone3Title: 'Milestone 3 · 30% Final QA & Full IP Handover',
-      milestone3Desc: 'Upon production deployment and complete transfer of credentials and source code.',
-      governanceNote:
-        'Contractual guarantee: 100% client ownership, 5-business-day milestone review window, and Zero-Data Retention confidentiality.',
-    },
-    step4: {
-      title: 'Step 4 — Executive Contact Details & Brief Submission',
-      fullNameLabel: 'Full Name & Title *',
-      fullNamePlaceholder: 'e.g. Marc-Arthur Konan — Managing Director',
-      companyLabel: 'Company / Institution *',
-      companyPlaceholder: 'e.g. Kauri Financial Group',
-      emailLabel: 'Corporate Email *',
-      emailPlaceholder: 'm.konan@company.com',
-      phoneLabel: 'Phone Number (International E.164 Format) *',
-      phonePlaceholder: '+2250700000000 or +12125550199',
-      phoneHint: 'Required E.164 format: + followed by country code and subscriber number without spaces.',
-      summaryLabel: 'Project Summary & Business Objectives *',
-      summaryPlaceholder:
-        'Describe your business context, primary objectives, and target launch window...',
-      consentLabel:
-        'I agree that this information will be processed by Ouest Dynamics strictly to evaluate this brief, in accordance with Law n°2013-450 (ARTCI Côte d’Ivoire), EU GDPR, and the Zero-Data Retention policy. *',
-      submitBtn: 'Submit Official Project Brief',
-      submittingBtn: 'Encrypting & Registering Brief...',
+    guaranteesTitle: 'Written into every contract',
+    guarantees: [
+      'Domains, cloud servers and Store accounts are opened in your company’s name.',
+      'All source code and design files belong to you upon final payment.',
+      'Three-part schedule: 40% at kickoff, 30% on design sign-off, 30% on delivery.',
+      'Your data is handled under Côte d’Ivoire Law n°2013-450 (ARTCI) and EU GDPR.',
+    ],
+  },
+
+  estimate: {
+    title: 'Estimate your project.',
+    intro: 'An indicative range in seconds, no account required.',
+    services: 'Services',
+    options: 'Options',
+    currency: 'Currency',
+    result: 'Your estimate',
+    empty: 'Select at least one service to see an estimate.',
+    duration: (min: number, max: number) => `Delivered in ${min} to ${max} business days`,
+    discount: '10% multi-service discount included',
+    schedule: 'Payment schedule',
+    milestones: ['At kickoff, 40%', 'On design sign-off, 30%', 'On delivery, 30%'],
+    note: 'Excluding taxes. Final quote confirmed after a brief discovery call.',
+    next: 'Request a detailed proposal',
+    prefilled: 'The assistant prepared this estimate. Adjust anything you need.',
+    edit: 'Edit',
+    contact: {
+      title: 'Where should we send the proposal?',
+      intro: 'We reply within 24 business hours.',
+      back: 'Back to estimate',
+      name: 'Full name',
+      namePh: 'Awa Koné',
+      company: 'Company',
+      companyPh: 'Your organization',
+      email: 'Email',
+      emailPh: 'awa@company.com',
+      phone: 'Phone',
+      phonePh: '+225 07 00 00 00 00',
+      phoneHint: 'Include country code.',
+      message: 'About your project',
+      messagePh: 'Goals, timeline, what already exists…',
+      consentBefore: 'I agree that Ouest Dynamics may use this information to respond to my inquiry under its ',
+      consentLink: 'privacy policy',
+      consentAfter: '.',
+      submit: 'Send request',
+      submitting: 'Sending…',
       errors: {
-        poles: 'Please select at least one Execution Pole.',
-        fullName: 'Please enter your full name (minimum 2 characters).',
-        company: 'Please enter your organization name (minimum 2 characters).',
-        email: 'Please enter a valid corporate email address.',
-        phone:
-          'Please enter a valid international E.164 phone number (e.g. +2250708091011 or +33612345678).',
-        summary: 'Please provide a project summary (minimum 15 characters).',
-        consent: 'You must accept the ARTCI / GDPR compliance clause to submit your brief.',
-      },
-      confirmation: {
-        badge: 'DOSSIER REGISTERED · SOVEREIGN ARCHITECTURE',
-        title: 'Your Executive Brief Has Been Registered.',
-        subtitle:
-          'A Managing Partner at Ouest Dynamics is reviewing your configuration and will deliver your contractual proposal within 24 business hours.',
-        referenceLabel: 'Official Dossier Reference',
-        summaryTitle: 'Configuration Summary',
-        newBriefBtn: 'Configure Another Brief',
+        name: 'Please enter your name.',
+        company: 'Please enter your company name.',
+        email: 'Please enter a valid email address.',
+        phone: 'Please include your country code, e.g. +225 07 00 00 00 00.',
+        message: 'Please add a few details (at least 15 characters).',
+        consent: 'Please check this box to send your request.',
+        network: 'Could not send your request. Check your connection and try again.',
+        rateLimit: 'Too many requests sent. Please wait a few minutes.',
+        server: 'The request was rejected. Please review your details and try again.',
       },
     },
-    navButtons: {
-      prev: 'Previous Step',
-      next: 'Continue to Next Step',
+    done: {
+      title: (name: string) => (name ? `Thank you, ${name}.` : 'Thank you.'),
+      text: 'We received your request and will reply within 24 business hours.',
+      reference: 'Request reference',
+      again: 'Start a new estimate',
     },
   },
+
   concierge: {
-    drawerTitle: 'Executive AI Concierge',
-    drawerSubtitle: 'Structured qualification in 2–3 turns · Gemini Structured Output (ZDR)',
-    welcomeMessage:
-      'Welcome to Ouest Dynamics. I am your Executive AI Concierge. Describe your project in a few sentences (industry, goals, timeline): I will map it to our Execution Poles and pre-fill your Brief Configurator.',
-    inputPlaceholder:
-      'e.g. We are launching a fintech in Abidjan and need a brand identity, an iOS/Android mobile app, and a landing page...',
-    sendBtn: 'Analyze',
-    thinkingLabel: 'Performing architectural analysis & Pole mapping...',
-    promptsTitle: 'Quick diagnostic examples:',
-    samplePrompts: [
-      'We are launching a fintech in Abidjan and need a brand identity, an iOS/Android mobile app, and a landing page.',
-      'We want to rebuild our B2B e-commerce platform in EUR/XOF with AI agents and Server-Side CAPI tracking in 48h Fast-Track.',
-      'We need an executive Brand Book and an institutional web portal for a real estate group in Abidjan.',
+    open: 'Describe my project',
+    title: 'Describe your project',
+    intro:
+      'A couple of sentences is enough: your industry, what you want to build, your timeline. The assistant suggests the right services and prepares your estimate.',
+    placeholder: 'For example: a delivery app in Abidjan, launching in March…',
+    send: 'Send',
+    thinking: 'Thinking…',
+    examplesTitle: 'Or start from an example',
+    examples: [
+      'We are launching a fintech in Abidjan and need a brand, a mobile app and a website.',
+      'We want to rebuild our online store with XOF and EUR payments as fast as possible.',
+      'A logo and website for a real estate group selling to the diaspora.',
     ],
-    diagnosticCardTitle: 'Structured AI Concierge Diagnostic',
-    qualificationReadyBadge: 'Qualification Complete',
-    qualificationInProgressBadge: 'Qualification in Progress',
-    recommendedPolesLabel: 'Recommended Poles:',
-    recommendedModifiersLabel: 'Transverse Engines:',
-    urgencyLabel: 'Suggested Urgency:',
-    currencyLabel: 'Suggested Currency:',
-    summaryLabel: 'Synthesized Brief Ready for Configurator:',
-    followUpLabel: 'Follow-up Question:',
-    applyButton: 'Apply Diagnostic to Brief Configurator',
-    zdrNotice:
-      'Zero-Data Retention Policy (ARTCI / GDPR): No data from this conversation is used to train third-party models. Official estimates are calculated in the Brief Configurator.',
+    resultTitle: 'Assistant suggestion',
+    servicesLabel: 'Suggested services',
+    optionsLabel: 'Options',
+    followUp: 'To refine',
+    apply: 'Use this estimate',
+    unavailable: 'The assistant is currently unavailable.',
+    estimateDirect: 'Estimate manually',
+    privacy: 'Your messages are never used to train third-party AI models.',
+    close: 'Close assistant',
+    you: 'You',
   },
+
   legal: {
-    backToPlatform: 'Return to Main Platform',
-    portalKicker: 'Unified Legal & Regulatory Compliance Portal',
-    portalTitle: 'Legal Governance, Data Protection & Contractual Terms.',
-    portalSubtitle:
-      'Strict compliance with Ivorian Law n°2013-450 (ARTCI), the European Union General Data Protection Regulation (GDPR 2016/679), and international IP standards.',
+    title: 'Legal information',
+    close: 'Close',
     tabs: {
-      privacy: 'Privacy Policy (ARTCI & GDPR)',
-      terms: 'Terms & Conditions (CGV / CGU)',
-      notices: 'Legal Notices & Publisher',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      notices: 'Legal notices',
     },
     privacy: {
-      title: 'Privacy Policy & Personal Data Protection',
-      effectiveDate: 'Effective Date: January 2026 · ARTCI & GDPR Framework',
+      title: 'Privacy Policy',
+      updated: 'Updated January 2026',
       sections: [
         {
-          heading: '1. Dual Regulatory Framework: ARTCI (Côte d’Ivoire) & GDPR (European Union)',
-          body: 'Ouest Dynamics processes all personal and corporate data in strict compliance with Law n°2013-450 of June 19, 2013 relating to personal data protection in the Republic of Côte d’Ivoire (supervised by ARTCI) as well as Regulation (EU) 2016/679 (GDPR) for international clients and visitors.',
+          heading: 'Regulatory framework',
+          body: 'Ouest Dynamics processes personal data in compliance with Ivorian Law n°2013-450 of June 19, 2013 (supervised by ARTCI) and EU Regulation 2016/679 (GDPR) for international clients and visitors.',
         },
         {
-          heading: '2. PII Minimization & Exclusive Business Purpose',
-          body: 'We collect only the information strictly required to scope your B2B project brief and manage contractual engagements: executive name, legal entity, corporate email, E.164 phone number, and project summary. We never sell, rent, or share your data with advertising brokers.',
+          heading: 'What we collect',
+          body: 'Only what is needed to respond to your inquiry: your name, company, email address, phone number and project summary. This data is never sold or rented.',
         },
         {
-          heading: '3. AI Governance & Zero-Data Retention (ZDR) Policy',
-          body: 'Prompts submitted to the Executive AI Concierge are routed exclusively through our secure server proxy with strict context isolation. Under our Zero-Data Retention policy, no client inputs or trade secrets are retained to train public language models.',
+          heading: 'AI Assistant',
+          body: 'Messages sent to the assistant go through our own server and are not retained to train AI models.',
         },
         {
-          heading: '4. Data Retention, Security & Exercising Your Rights',
-          body: 'Consultation dossiers are encrypted and retained for a maximum of 24 months in the absence of a signed contract. You may exercise your right to access, rectify, export, or permanently erase your data at any time by contacting our Data Protection Officer (dpo@ouestdynamics.com).',
+          heading: 'Retention & your rights',
+          body: 'Without a signed contract, inquiry records are retained for at most 24 months. You can access, correct, export or erase your data by writing to dpo@ouestdynamics.com.',
         },
       ],
-    },
+    } as LegalDoc,
     terms: {
-      title: 'General Terms and Conditions of Sale & Use (CGV / CGU)',
-      effectiveDate: 'Contractual Version V2.0 · OHADA & International Commercial Law',
+      title: 'Terms & Conditions',
+      updated: 'Version 2.0, OHADA Law',
       sections: [
         {
-          heading: '1. Sovereign Independence of Client Assets',
-          body: 'Ouest Dynamics guarantees that all critical infrastructure assets—domain names, Cloud/Supabase hosting accounts, Apple Developer accounts, Google Play Console accounts, and ad managers (Meta/Google/TikTok Business Manager)—are registered directly in the Client’s name with zero vendor lock-in.',
+          heading: 'Your accounts stay yours',
+          body: 'Domains, hosting, Apple Developer and Google Play accounts, and ad managers are opened directly in the client’s name. Ouest Dynamics maintains zero vendor lock-in.',
         },
         {
-          heading: '2. Contractual Payment Schedule (40% / 30% / 30%)',
-          body: 'Unless otherwise specified in a statement of work, every project follows our three-stage milestone schedule: 40% deposit upon contract signature; 30% upon formal approval of the Executive Art Direction & Architecture milestone; 30% upon final QA acceptance and production launch.',
+          heading: 'Three-part payment schedule',
+          body: 'Unless otherwise agreed in writing, projects are billed in three installments: 40% upon signature, 30% on design and architecture sign-off, and 30% on final delivery.',
         },
         {
-          heading: '3. 5-Business-Day Milestone Approval Mechanism',
-          body: 'Upon delivery of each milestone (Brand Book, Figma mockups, functional staging prototype, or final release), the Client has five (5) business days to submit consolidated feedback. If no written feedback is issued within 5 business days, the milestone is deemed tacitly approved to protect the delivery schedule.',
+          heading: 'Five-day milestone review',
+          body: 'Upon each milestone delivery, the client has five business days to provide written feedback. Without feedback in that window, the milestone is deemed approved to keep delivery on track.',
         },
         {
-          heading: '4. Unconditional Intellectual Property Assignment',
-          body: 'Upon full settlement of the agreed contract price (100% across the 3 milestones), Ouest Dynamics assigns to the Client, on an exclusive, worldwide, and royalty-free basis, all intellectual property rights to custom source code, visual assets, Design Tokens, and technical documentation.',
+          heading: 'Intellectual property',
+          body: 'Upon full payment, Ouest Dynamics transfers exclusive, worldwide, perpetual rights to custom source code, visual deliverables and documentation to the client.',
         },
       ],
-    },
+    } as LegalDoc,
     notices: {
-      title: 'Legal Notices & Corporate Information',
-      effectiveDate: 'Headquarters: Abidjan, Republic of Côte d’Ivoire',
+      title: 'Legal Notices',
+      updated: 'Headquartered in Abidjan, Côte d’Ivoire',
       sections: [
         {
-          heading: '1. Platform Publisher',
-          body: 'Ouest Dynamics — Sovereign Digital Architecture, Executive Art Direction & 360° AI Engineering Practice. Operating Headquarters: Abidjan, Cocody, Republic of Côte d’Ivoire. Operations: UEMOA Region, West Africa, Europe & North America.',
+          heading: 'Publisher',
+          body: 'Ouest Dynamics, digital design and engineering studio. Headquarters: Cocody, Abidjan, Republic of Côte d’Ivoire.',
         },
         {
-          heading: '2. Publication Director & Official Contact',
-          body: 'Ouest Dynamics Executive Board. Official Contact: direction@ouestdynamics.com · Data Protection Officer (DPO / ARTCI): dpo@ouestdynamics.com.',
+          heading: 'Contact',
+          body: 'Editorial contact: direction@ouestdynamics.com. Data protection: dpo@ouestdynamics.com.',
         },
         {
-          heading: '3. Technical Architecture & Credits',
-          body: 'Engineered under the “Sovereign Digital Architecture” design system (W3C design-tokens.json), powered by React 19, strict TypeScript, Tailwind CSS, and Gemini Structured Output server infrastructure.',
+          heading: 'Technology',
+          body: 'Designed and engineered by Ouest Dynamics with React, TypeScript and Tailwind CSS.',
         },
       ],
-    },
+    } as LegalDoc,
   },
+
   cookies: {
-    title: 'Consent Governance (ARTCI & GDPR — Consent Mode v2)',
-    description:
-      'We enforce Google Consent Mode v2 and Law n°2013-450 (ARTCI). Select your authorized cookie categories below. A timestamped audit receipt is stored locally.',
-    acceptAll: 'Allow All',
-    essentialOnly: 'Essential Only',
+    text: 'We use a few cookies to measure site traffic. You can opt out.',
+    accept: 'Accept',
+    refuse: 'Decline',
     customize: 'Customize',
-    saveChoices: 'Save Preferences',
-    auditReceiptPrefix: 'Timestamped consent receipt:',
-    categories: {
-      essential: {
-        label: 'Essential & Security Cookies (Required)',
-        desc: 'Stores language (FR/EN), currency (XOF/EUR/USD), and Brief Configurator session integrity.',
-      },
-      analytics: {
-        label: 'Anonymized Performance Analytics',
-        desc: 'Aggregated Core Web Vitals metrics (LCP, INP, CLS) with zero individual profiling.',
-      },
-      marketing: {
-        label: 'Attribution & Paid Media (Consent Mode v2)',
-        desc: 'Server-Side CAPI attribution signals (denied by default without explicit opt-in).',
-      },
-      aiConcierge: {
-        label: 'AI Concierge Session Context (ZDR)',
-        desc: 'Preserves your AI diagnostic during your active session to pre-fill the Brief Configurator.',
-      },
+    save: 'Save choices',
+    policy: 'Learn more',
+    essential: {
+      label: 'Essential',
+      desc: 'Language, currency and core site operation. Always active.',
+    },
+    analytics: {
+      label: 'Analytics',
+      desc: 'Anonymous visit statistics.',
+    },
+    marketing: {
+      label: 'Marketing',
+      desc: 'Measuring campaign effectiveness.',
     },
   },
+
   footer: {
-    tagline:
-      '360° digital architecture and AI engineering agency based in Abidjan (Côte d’Ivoire) operating across West Africa and internationally. Core & Elastic Guilds model.',
-    navigationTitle: 'Architecture',
-    legalTitle: 'Unified Legal Portal',
-    governanceTitle: 'Sovereign Commitments',
-    governanceBullets: [
-      '100% Client Ownership & Full IP Transfer',
-      '5-business-day milestone sign-off window',
-      '40% / 30% / 30% milestone payment schedule',
-      'ARTCI (CI) & GDPR (EU) compliance',
-    ],
-    manageCookies: 'Manage Cookie Preferences (CMP v2)',
-    copyright: '© 2026 Ouest Dynamics. All rights reserved. Sovereign Digital Architecture.',
+    pitch: 'Have a project in mind?',
+    pitchCta: 'Estimate my project',
+    write: 'Or write to us:',
+    email: 'direction@ouestdynamics.com',
+    explore: 'Explore',
+    legal: 'Legal',
+    cookies: 'Cookies',
+    studio: 'Studio',
+    place: 'Cocody, Abidjan',
+    country: 'Côte d’Ivoire',
+    rights: '© 2026 Ouest Dynamics',
   },
 };

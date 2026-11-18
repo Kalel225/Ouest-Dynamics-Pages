@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { fr, Dictionary } from '../i18n/fr';
 import { en } from '../i18n/en';
 
@@ -15,24 +15,27 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const STORAGE_KEY = 'od_v2_lang';
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Default to French ('fr') per BUILD_PROMPT.md: "français par défaut et bascule instantanée sans bannière intrusive"
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'fr' || saved === 'en') return saved;
     } catch {
-      // ignore
+      // storage unavailable
     }
     return 'fr';
   });
+
+  // Keep <html lang> in sync from the first render (hyphenation, screen readers).
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     try {
       localStorage.setItem(STORAGE_KEY, lang);
-      document.documentElement.lang = lang;
     } catch {
-      // ignore
+      // storage unavailable
     }
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export type LegalTab = 'privacy' | 'terms' | 'notices';
@@ -27,90 +27,50 @@ export const LegalPortal: React.FC<LegalPortalProps> = ({
   return (
     <section
       id="legal"
-      className="min-h-[82vh] py-14 sm:py-20 px-4 sm:px-8 bg-[#F8F6F1] text-[#111318] border-b border-[#8A6D1B]/25"
+      className="min-h-[82vh] py-14 sm:py-20 px-5 sm:px-8 bg-white text-[#0B241D]"
     >
-      <div className="max-w-[1040px] mx-auto">
-        {/* Return to Main Platform Action */}
-        <div className="mb-8">
-          <button
-            type="button"
-            onClick={onBackToMain}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] bg-white border border-[#8A6D1B]/30 text-xs font-semibold text-[#111318] hover:border-[#8A6D1B] transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-[#8A6D1B]" />
-            <span>{t.legal.backToPlatform}</span>
-          </button>
-        </div>
+      <div className="max-w-3xl mx-auto space-y-8">
+        <button
+          type="button"
+          onClick={onBackToMain}
+          className="inline-flex items-center gap-2 text-xs font-semibold text-[#0E3A2F] hover:text-[#F77F00] cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>{t.legal.close}</span>
+        </button>
 
-        {/* Editorial Header on Ivory Canvas (#F8F6F1) with Accessible Gold (#8A6D1B) */}
-        <div className="pb-8 mb-8 border-b border-[#8A6D1B]/25">
-          <div className="flex items-center gap-2 text-xs font-mono-code font-semibold text-[#8A6D1B] mb-2.5">
-            <ShieldCheck className="w-4 h-4" />
-            <span>{t.legal.portalKicker}</span>
-          </div>
-          <h1 className="font-display text-2xl sm:text-4xl font-bold text-[#111318] tracking-tight mb-3 [text-wrap:balance]">
-            {t.legal.portalTitle}
-          </h1>
-          <p className="text-sm sm:text-base text-[#111318]/75 leading-relaxed max-w-3xl">
-            {t.legal.portalSubtitle}
-          </p>
+        <div className="space-y-4 pb-6 border-b border-[#DCE4E0]">
+          <h1 className="title text-3xl sm:text-4xl text-[#0B241D]">{t.legal.title}</h1>
 
-          {/* Segmented Legal View Switcher */}
-          <div className="mt-7 inline-flex flex-wrap items-center gap-1.5 p-1 bg-white border border-[#8A6D1B]/25 rounded-[8px]">
-            <button
-              type="button"
-              onClick={() => onChangeTab('privacy')}
-              className={`px-4 py-2 rounded-[6px] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                activeTab === 'privacy'
-                  ? 'bg-[#8A6D1B] text-[#F8F6F1]'
-                  : 'text-[#111318]/80 hover:text-[#111318]'
-              }`}
-            >
-              {t.legal.tabs.privacy}
-            </button>
-            <button
-              type="button"
-              onClick={() => onChangeTab('terms')}
-              className={`px-4 py-2 rounded-[6px] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                activeTab === 'terms'
-                  ? 'bg-[#8A6D1B] text-[#F8F6F1]'
-                  : 'text-[#111318]/80 hover:text-[#111318]'
-              }`}
-            >
-              {t.legal.tabs.terms}
-            </button>
-            <button
-              type="button"
-              onClick={() => onChangeTab('notices')}
-              className={`px-4 py-2 rounded-[6px] text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                activeTab === 'notices'
-                  ? 'bg-[#8A6D1B] text-[#F8F6F1]'
-                  : 'text-[#111318]/80 hover:text-[#111318]'
-              }`}
-            >
-              {t.legal.tabs.notices}
-            </button>
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            {(['privacy', 'terms', 'notices'] as LegalTab[]).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => onChangeTab(tab)}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                  activeTab === tab
+                    ? 'bg-[#0E3A2F] text-white'
+                    : 'bg-[#EEF3F0] text-[#50645D] hover:text-[#0B241D]'
+                }`}
+              >
+                {t.legal.tabs[tab]}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Active Legal Document Content */}
-        <article className="bg-white rounded-[12px] border border-[#8A6D1B]/25 p-6 sm:p-10 space-y-6">
-          <div className="pb-5 border-b border-[#8A6D1B]/20">
-            <p className="font-mono-code text-xs font-semibold text-[#8A6D1B] mb-1">
-              {currentDoc.effectiveDate}
-            </p>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#111318]">
-              {currentDoc.title}
-            </h2>
+        <article className="space-y-6">
+          <div>
+            <p className="text-xs text-[#50645D] mb-1">{currentDoc.updated}</p>
+            <h2 className="text-2xl font-bold text-[#0B241D]">{currentDoc.title}</h2>
           </div>
 
           <div className="space-y-6">
             {currentDoc.sections.map((sec, idx) => (
-              <div key={idx} className="space-y-2">
-                <h3 className="font-display text-base sm:text-lg font-bold text-[#111318]">
-                  {sec.heading}
-                </h3>
-                <p className="text-sm sm:text-base text-[#111318]/80 leading-relaxed">
+              <div key={idx} className="space-y-1.5">
+                <h3 className="text-base font-semibold text-[#0B241D]">{sec.heading}</h3>
+                <p className="text-sm sm:text-base text-[#50645D] leading-relaxed">
                   {sec.body}
                 </p>
               </div>

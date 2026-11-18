@@ -1,18 +1,22 @@
 import React, { createContext, useContext, useState } from 'react';
 import {
   CurrencyCode,
-  EXCHANGE_RATES_TO_XOF,
-  convertFromXof,
-  formatCurrencyAmount,
+  MoneyRangeParts,
+  formatMoney,
+  formatMoneyRange,
+  moneyRangeParts,
 } from '../utils/pricingEngine';
+import { useLanguage } from './LanguageContext';
 
 interface CurrencyContextType {
   currency: CurrencyCode;
   setCurrency: (curr: CurrencyCode) => void;
-  formatFromXof: (amountXof: number) => string;
-  formatAmount: (amountInActiveCurrency: number) => string;
-  convertXof: (amountXof: number) => number;
-  parityLabel: string;
+  /** Single amount from an XOF value, in the active currency and language. */
+  formatPrice: (amountXof: number) => string;
+  /** Range string from XOF values, e.g. "1,35 – 4,05 millions FCFA". */
+  formatRange: (minXof: number, maxXof: number) => string;
+  /** Range split into wrap-safe parts for display typography. */
+  rangeParts: (minXof: number, maxXof: number) => MoneyRangeParts;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -20,15 +24,14 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 const STORAGE_KEY = 'od_v2_currency';
 
 export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Default to XOF (FCFA) as required by BUILD_PROMPT.md & AI_EXPORT_CONTEXT.md
+  const { language } = useLanguage();
+
   const [currency, setCurrencyState] = useState<CurrencyCode>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY) as CurrencyCode | null;
-      if (saved === 'XOF' || saved === 'EUR' || saved === 'USD') {
-        return saved;
-      }
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'XOF' || saved === 'EUR' || saved === 'USD') return saved;
     } catch {
-      // ignore storage errors
+      // storage unavailable
     }
     return 'XOF';
   });
@@ -38,42 +41,19 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       localStorage.setItem(STORAGE_KEY, curr);
     } catch {
-      // ignore storage errors
+      // storage unavailable
     }
   };
 
-  const convertXof = (amountXof: number) => convertFromXof(amountXof, currency);
-
-  const formatFromXof = (amountXof: number) => {
-    const converted = convertFromXof(amountXof, currency);
-    return formatCurrencyAmount(converted, currency);
+  const value: CurrencyContextType = {
+    currency,
+    setCurrency,
+    formatPrice: (amountXof) => formatMoney(amountXof, currency, language),
+    formatRange: (minXof, maxXof) => formatMoneyRange(minXof, maxXof, currency, language),
+    rangeParts: (minXof, maxXof) => moneyRangeParts(minXof, maxXof, currency, language),
   };
 
-  const formatAmount = (amountInActiveCurrency: number) => {
-    return formatCurrencyAmount(amountInActiveCurrency, currency);
-  };
-
-  const parityLabel =
-    currency === 'XOF'
-      ? 'Devise pivot UEMOA (FCFA)'
-      : currency === 'EUR'
-      ? `1 EUR = ${EXCHANGE_RATES_TO_XOF.EUR} XOF`
-      : `1 USD = ${EXCHANGE_RATES_TO_XOF.USD} XOF`;
-
-  return (
-    <CurrencyContext.Provider
-      value={{
-        currency,
-        setCurrency,
-        formatFromXof,
-        formatAmount,
-        convertXof,
-        parityLabel,
-      }}
-    >
-      {children}
-    </CurrencyContext.Provider>
-  );
+  return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
 };
 
 export const useCurrency = (): CurrencyContextType => {

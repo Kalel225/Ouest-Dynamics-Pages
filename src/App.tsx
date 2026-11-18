@@ -1,12 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { Sparkles } from 'lucide-react';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PolesMatrix } from './components/PolesMatrix';
-import { Methodology } from './components/Methodology';
 import { PortfolioSection } from './components/PortfolioSection';
+import { Methodology } from './components/Methodology';
 import { BriefConfigurator } from './components/BriefConfigurator';
 import {
   AIConciergeDrawer,
@@ -15,6 +14,7 @@ import {
 import { LegalPortal, LegalTab } from './components/LegalPortal';
 import { CookieConsentBanner } from './components/CookieConsentBanner';
 import { Footer } from './components/Footer';
+import { useLanguage } from './context/LanguageContext';
 import {
   PoleId,
   TransverseModifierId,
@@ -22,37 +22,31 @@ import {
 } from './utils/pricingEngine';
 
 function PlatformShell() {
-  const { t, setLanguage } = useLanguage();
+  const { setLanguage } = useLanguage();
   const { setCurrency } = useCurrency();
 
-  // Brief Configurator State (Shared with PolesMatrix, Portfolio & AI Concierge)
   const [selectedPoles, setSelectedPoles] = useState<PoleId[]>(['WEB']);
   const [selectedModifiers, setSelectedModifiers] = useState<TransverseModifierId[]>([]);
   const [urgency, setUrgency] = useState<UrgencyTier>('STANDARD');
-  const [projectSummary, setProjectSummary] = useState<string>('');
-  const [configuratorStep, setConfiguratorStep] = useState<number>(1);
-  const [aiPrefilled, setAiPrefilled] = useState<boolean>(false);
+  const [projectSummary, setProjectSummary] = useState('');
+  const [aiPrefilled, setAiPrefilled] = useState(false);
 
-  // Navigation & Overlays
-  const [conciergeOpen, setConciergeOpen] = useState<boolean>(false);
+  const [conciergeOpen, setConciergeOpen] = useState(false);
   const [legalView, setLegalView] = useState<LegalTab | null>(null);
-  const [forceCookieModal, setForceCookieModal] = useState<boolean>(false);
+  const [forceCookieModal, setForceCookieModal] = useState(false);
 
   const scrollToSection = useCallback((sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 84;
+      const top = el.getBoundingClientRect().top + window.scrollY - 72;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   }, []);
 
   const handleTogglePole = useCallback((poleId: PoleId) => {
-    setSelectedPoles((prev) => {
-      if (prev.includes(poleId)) {
-        return prev.length > 1 ? prev.filter((p) => p !== poleId) : prev;
-      }
-      return [...prev, poleId];
-    });
+    setSelectedPoles((prev) =>
+      prev.includes(poleId) ? prev.filter((p) => p !== poleId) : [...prev, poleId]
+    );
   }, []);
 
   const handleToggleModifier = useCallback((modId: TransverseModifierId) => {
@@ -61,38 +55,14 @@ function PlatformShell() {
     );
   }, []);
 
-  const handleTogglePoleAndScroll = useCallback(
-    (poleId: PoleId) => {
-      setSelectedPoles((prev) =>
-        prev.includes(poleId) ? prev : [...prev, poleId]
-      );
-      setConfiguratorStep(1);
-      scrollToSection('configurator');
-    },
-    [scrollToSection]
-  );
-
-  const handleToggleModifierAndScroll = useCallback(
-    (modId: TransverseModifierId) => {
-      setSelectedModifiers((prev) =>
-        prev.includes(modId) ? prev : [...prev, modId]
-      );
-      setConfiguratorStep(2);
-      scrollToSection('configurator');
-    },
-    [scrollToSection]
-  );
-
-  const handleSelectPoleFromPortfolio = useCallback(
+  const handleEstimateSimilar = useCallback(
     (poleId: PoleId) => {
       setSelectedPoles([poleId]);
-      setConfiguratorStep(1);
-      scrollToSection('configurator');
+      scrollToSection('estimate');
     },
     [scrollToSection]
   );
 
-  // US-02: Apply Structured AI Concierge Diagnostic directly into the 4-Step Brief Configurator
   const handleApplyConciergeDiagnostic = useCallback(
     (diag: StructuredConciergeDiagnostic) => {
       if (Array.isArray(diag.recommended_poles) && diag.recommended_poles.length > 0) {
@@ -121,11 +91,7 @@ function PlatformShell() {
       setAiPrefilled(true);
       setConciergeOpen(false);
       setLegalView(null);
-      setConfiguratorStep(3);
-
-      setTimeout(() => {
-        scrollToSection('configurator');
-      }, 80);
+      setTimeout(() => scrollToSection('estimate'), 80);
     },
     [scrollToSection, setCurrency, setLanguage]
   );
@@ -136,17 +102,19 @@ function PlatformShell() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0B0D12] text-[#F4F4F6] selection:bg-[#D4AF37] selection:text-[#0B0D12] relative overflow-x-hidden">
-      {/* 1. Unified Top Bar Navigation */}
+    <div className="min-h-screen bg-white text-[#0B241D] relative overflow-x-hidden">
       <Navbar
-        onNavigateSection={scrollToSection}
-        onOpenConcierge={() => setConciergeOpen(true)}
-        isLegalView={legalView !== null}
-        onExitLegalView={() => setLegalView(null)}
+        onNavigate={(id) => {
+          if (legalView !== null) {
+            setLegalView(null);
+            setTimeout(() => scrollToSection(id), 60);
+          } else {
+            scrollToSection(id);
+          }
+        }}
       />
 
       {legalView !== null ? (
-        /* 8. Unified Legal Portal on Editorial Ivory Surface (#F8F6F1) */
         <main>
           <LegalPortal
             activeTab={legalView}
@@ -159,27 +127,21 @@ function PlatformShell() {
         </main>
       ) : (
         <main>
-          {/* 2. Sovereign Digital Architecture Hero Section */}
           <Hero
-            onConfigureBrief={() => scrollToSection('configurator')}
+            onEstimate={() => scrollToSection('estimate')}
             onOpenConcierge={() => setConciergeOpen(true)}
           />
 
-          {/* 3. Matrix of 4 Execution Poles + 2 Transverse Engines */}
           <PolesMatrix
             selectedPoles={selectedPoles}
-            selectedModifiers={selectedModifiers}
-            onTogglePoleAndScroll={handleTogglePoleAndScroll}
-            onToggleModifierAndScroll={handleToggleModifierAndScroll}
+            onTogglePole={handleTogglePole}
+            onSeeEstimate={() => scrollToSection('estimate')}
           />
 
-          {/* 4. Core & Elastic Guilds Methodology & 4 Governance Clauses */}
+          <PortfolioSection onEstimateSimilar={handleEstimateSimilar} />
+
           <Methodology />
 
-          {/* 5. Sector Case Studies Portfolio (Filterable by Pole) */}
-          <PortfolioSection onSelectPoleForBrief={handleSelectPoleFromPortfolio} />
-
-          {/* 6. 4-Step Brief Configurator & Multi-Currency Budget Estimator */}
           <BriefConfigurator
             selectedPoles={selectedPoles}
             onTogglePole={handleTogglePole}
@@ -190,14 +152,12 @@ function PlatformShell() {
             projectSummary={projectSummary}
             onChangeProjectSummary={setProjectSummary}
             aiPrefilled={aiPrefilled}
-            activeStep={configuratorStep}
-            onChangeStep={setConfiguratorStep}
             onOpenConcierge={() => setConciergeOpen(true)}
+            onOpenPrivacy={() => handleOpenLegalTab('privacy')}
           />
         </main>
       )}
 
-      {/* Footer with Unified Legal Portal & CMP Consent Mode v2 Access */}
       <Footer
         onNavigateSection={(id) => {
           if (legalView !== null) {
@@ -209,31 +169,18 @@ function PlatformShell() {
         }}
         onOpenLegalTab={handleOpenLegalTab}
         onOpenCookiePreferences={() => setForceCookieModal(true)}
-        onOpenConcierge={() => setConciergeOpen(true)}
       />
 
-      {/* Floating Executive AI Concierge Trigger Button */}
-      <div className="fixed bottom-5 right-5 z-40">
-        <button
-          type="button"
-          onClick={() => setConciergeOpen(true)}
-          className="h-12 px-5 rounded-full bg-[#141821] hover:bg-[#1B202C] text-[#F4F4F6] border border-[#D4AF37] shadow-xl inline-flex items-center gap-2.5 transition-colors duration-180 cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-          <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
-            {t.nav.concierge}
-          </span>
-        </button>
-      </div>
-
-      {/* 7. Lateral Executive AI Concierge Drawer */}
       <AIConciergeDrawer
         isOpen={conciergeOpen}
         onClose={() => setConciergeOpen(false)}
         onApplyDiagnostic={handleApplyConciergeDiagnostic}
+        onEstimateDirect={() => {
+          setConciergeOpen(false);
+          scrollToSection('estimate');
+        }}
       />
 
-      {/* 8. Granular CMP Consent Mode v2 Cookie Banner */}
       <CookieConsentBanner
         forceOpen={forceCookieModal}
         onCloseForceOpen={() => setForceCookieModal(false)}

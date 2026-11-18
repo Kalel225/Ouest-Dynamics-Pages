@@ -1,62 +1,125 @@
 @import "tailwindcss";
 
+/*
+  Ouest Dynamics — « Le soleil de l'Ouest »
+  Palette abstracted from the Ivorian flag: lagoon green, sun orange, white.
+  One typeface (Archivo, variable width). Orange is reserved for the sun and the primary action.
+*/
+@theme {
+  --color-lagoon: #0E3A2F;
+  --color-lagoon-deep: #082820;
+  --color-sun: #F77F00;
+  --color-ink: #0B241D;
+  --color-muted: #50645D;
+  --color-line: #DCE4E0;
+  --color-mist: #EEF3F0;
+  --color-leaf: #00875A;
+  --color-danger: #B42318;
+
+  --font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @layer base {
-  :root {
-    --surface-obsidian: #0B0D12;
-    --surface-elevated: #141821;
-    --surface-elevated-hover: #1B202C;
-    --surface-ivory: #F8F6F1;
-    --accent-sovereign-gold: #D4AF37;
-    --accent-gold-hover: #E3C358;
-    --accent-gold-light: #8A6D1B;
-    --text-primary-dark: #F4F4F6;
-    --text-muted-dark: #A1A7B5;
-    --text-primary-light: #111318;
-    --border-gold-hairline: rgba(212, 175, 55, 0.18);
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #0B0D12;
-    color: #F4F4F6;
-    font-variant-numeric: tabular-nums;
-    text-rendering: optimizeLegibility;
+    font-family: var(--font-sans);
+    background-color: #ffffff;
+    color: var(--color-ink);
+    font-size: 1.0625rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, .font-display {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.02em;
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 
-  .font-body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  .on-dark :focus-visible {
+    outline-color: #ffffff;
   }
 
-  .font-mono-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-variant-numeric: tabular-nums;
+  ::selection {
+    background: var(--color-sun);
+    color: var(--color-ink);
   }
 }
 
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Type roles — tracking tightens as size grows, leading tightens with it */
+.display {
+  font-stretch: 125%;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+.title {
+  font-stretch: 125%;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
-::-webkit-scrollbar-track {
-  background: #0B0D12;
+
+.wide {
+  font-stretch: 112.5%;
 }
-::-webkit-scrollbar-thumb {
-  background: #1B202C;
-  border-radius: 3px;
+
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #D4AF37;
+
+/* Instant press feedback on pointer-down */
+.press {
+  transition:
+    transform 160ms var(--ease-sheet),
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+/* The single orchestrated moment: the sun settles on load */
+@keyframes sunrise {
+  from {
+    transform: translate3d(0, 16%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.sunrise {
+  animation: sunrise 1400ms var(--ease-out-soft) 120ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material {
+    backdrop-filter: none !important;
+    background-color: #ffffff !important;
+  }
 }

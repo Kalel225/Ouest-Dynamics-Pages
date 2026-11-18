@@ -1,295 +1,182 @@
 import React, { useState } from 'react';
-import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useLanguage, Language } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { CurrencyCode } from '../utils/pricingEngine';
 
 interface NavbarProps {
-  onNavigateSection: (sectionId: string) => void;
-  onOpenConcierge: () => void;
-  isLegalView: boolean;
-  onExitLegalView: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onNavigateSection,
-  onOpenConcierge,
-  isLegalView,
-  onExitLegalView,
-}) => {
+export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
   const { language, setLanguage, t } = useLanguage();
   const { currency, setCurrency } = useCurrency();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const currencies: CurrencyCode[] = ['XOF', 'EUR', 'USD'];
-  const languages: { code: Language; label: string }[] = [
-    { code: 'fr', label: 'FR' },
-    { code: 'en', label: 'EN' },
+  const languages: Language[] = ['fr', 'en'];
+
+  const links = [
+    { id: 'services', label: t.nav.services },
+    { id: 'work', label: t.nav.work },
+    { id: 'process', label: t.nav.process },
+    { id: 'estimate', label: t.nav.estimate },
   ];
 
   const handleNav = (id: string) => {
     setMobileOpen(false);
-    if (isLegalView) {
-      onExitLegalView();
-      setTimeout(() => {
-        onNavigateSection(id);
-      }, 60);
-    } else {
-      onNavigateSection(id);
-    }
+    onNavigate(id);
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B0D12]/92 backdrop-blur-md border-b border-[#D4AF37]/18">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-6">
-        {/* Zone 1: Sovereign Geometric SVG Logo + Single-Line Wordmark */}
+    <header className="sticky top-0 z-50 bg-white/85 material backdrop-blur-xl border-b border-[#DCE4E0]">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
         <a
           href="#"
+          aria-label={t.nav.home}
           onClick={(e) => {
             e.preventDefault();
-            if (isLegalView) {
-              onExitLegalView();
-            } else {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="inline-flex items-center gap-3 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-[#D4AF37] group"
+          className="inline-flex items-center gap-2.5 text-[#0B241D] font-semibold tracking-tight whitespace-nowrap shrink-0"
         >
-          <svg
-            width="34"
-            height="34"
-            viewBox="0 0 36 36"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            className="shrink-0"
-          >
-            <rect
-              x="1"
-              y="1"
-              width="34"
-              height="34"
-              rx="6"
-              fill="#141821"
-              stroke="#D4AF37"
-              strokeWidth="1.25"
-            />
-            <path
-              d="M9 18L18 9L27 18L18 27L9 18Z"
-              stroke="#D4AF37"
-              strokeWidth="1.5"
-            />
-            <circle cx="18" cy="18" r="3.5" fill="#D4AF37" />
-          </svg>
-          <span className="font-display font-bold text-lg sm:text-xl tracking-tight text-[#F4F4F6] group-hover:text-[#D4AF37] transition-colors duration-180">
-            Ouest Dynamics
-          </span>
+          <span className="w-3 h-3 rounded-full bg-[#F77F00]" aria-hidden="true" />
+          <span className="wide text-sm sm:text-[15px]">Ouest Dynamics</span>
         </a>
 
-        {/* Zone 2: Clean Single-Line Text Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#A1A7B5]">
-          <button
-            type="button"
-            onClick={() => handleNav('poles')}
-            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
-          >
-            {t.nav.poles}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('governance')}
-            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
-          >
-            {t.nav.methodology}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('portfolio')}
-            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
-          >
-            {t.nav.portfolio}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNav('configurator')}
-            className="hover:text-[#F4F4F6] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1 border-b border-transparent hover:border-[#D4AF37]"
-          >
-            {t.nav.configurator}
-          </button>
-          <button
-            type="button"
-            onClick={onOpenConcierge}
-            className="inline-flex items-center gap-1.5 text-[#D4AF37] hover:text-[#E3C358] transition-colors duration-180 whitespace-nowrap shrink-0 cursor-pointer py-1"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>{t.nav.concierge}</span>
-          </button>
+        <nav className="hidden md:flex items-center gap-7 text-sm text-[#50645D]">
+          {links.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => handleNav(item.id)}
+              className="hover:text-[#0B241D] transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
 
-        {/* Zone 3: Compact Language (FR|EN) + Currency (XOF|EUR|USD) + Golden Primary CTA */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Compact Language Switcher */}
           <div
-            className="hidden sm:inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5"
+            className="hidden sm:inline-flex items-center gap-1 text-xs font-medium text-[#50645D]"
             role="group"
-            aria-label="Language selector"
+            aria-label={t.nav.language}
           >
-            {languages.map((lang) => {
-              const active = language === lang.code;
-              return (
+            {languages.map((lang, i) => (
+              <React.Fragment key={lang}>
+                {i > 0 && <span className="text-[#DCE4E0]">/</span>}
                 <button
-                  key={lang.code}
                   type="button"
-                  onClick={() => setLanguage(lang.code)}
-                  className={`px-2 py-1 text-xs font-mono-code font-medium rounded-[4px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0 ${
-                    active
-                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
-                      : 'text-[#A1A7B5] hover:text-[#F4F4F6]'
+                  onClick={() => setLanguage(lang)}
+                  className={`px-1 py-0.5 uppercase cursor-pointer ${
+                    language === lang ? 'text-[#0B241D] font-semibold underline decoration-[#F77F00] decoration-2 underline-offset-4' : 'hover:text-[#0B241D]'
                   }`}
                 >
-                  {lang.label}
+                  {lang}
                 </button>
-              );
-            })}
+              </React.Fragment>
+            ))}
           </div>
 
-          {/* Compact Real-Time Multi-Currency Switcher */}
           <div
-            className="hidden md:inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5"
+            className="hidden lg:inline-flex items-center gap-1 text-xs font-medium text-[#50645D] pl-2 border-l border-[#DCE4E0]"
             role="group"
-            aria-label="Currency selector"
+            aria-label={t.services.currency}
           >
-            {currencies.map((curr) => {
-              const active = currency === curr;
-              return (
+            {currencies.map((curr, i) => (
+              <React.Fragment key={curr}>
+                {i > 0 && <span className="text-[#DCE4E0]">/</span>}
                 <button
-                  key={curr}
                   type="button"
                   onClick={() => setCurrency(curr)}
-                  className={`px-2 py-1 text-xs font-mono-code font-medium rounded-[4px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0 ${
-                    active
-                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
-                      : 'text-[#A1A7B5] hover:text-[#F4F4F6]'
+                  className={`px-1 py-0.5 cursor-pointer ${
+                    currency === curr ? 'text-[#0B241D] font-semibold underline decoration-[#F77F00] decoration-2 underline-offset-4' : 'hover:text-[#0B241D]'
                   }`}
                 >
                   {curr}
                 </button>
-              );
-            })}
+              </React.Fragment>
+            ))}
           </div>
 
-          {/* Primary Sovereign Gold CTA */}
           <button
             type="button"
-            onClick={() => handleNav('configurator')}
-            className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#0B0D12] bg-[#D4AF37] hover:bg-[#E3C358] rounded-[6px] transition-colors duration-180 cursor-pointer whitespace-nowrap shrink-0"
+            onClick={() => handleNav('estimate')}
+            className="hidden sm:inline-flex items-center px-4 py-2 rounded-full bg-[#0E3A2F] hover:bg-[#082820] text-white text-xs font-semibold press cursor-pointer whitespace-nowrap"
           >
-            <span>{t.nav.ctaStart}</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            {t.nav.start}
           </button>
 
-          {/* Mobile Drawer Toggle */}
           <button
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="lg:hidden min-h-[42px] min-w-[42px] flex items-center justify-center rounded-[6px] bg-[#141821] border border-[#D4AF37]/25 text-[#F4F4F6] hover:border-[#D4AF37] cursor-pointer"
-            aria-label="Toggle navigation menu"
+            className="md:hidden min-h-[38px] min-w-[38px] flex items-center justify-center rounded-full border border-[#DCE4E0] text-[#0B241D] cursor-pointer"
+            aria-label={mobileOpen ? t.nav.closeMenu : t.nav.openMenu}
             aria-expanded={mobileOpen}
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#0B0D12] border-b border-[#D4AF37]/20 px-4 pt-4 pb-6 space-y-5">
-          {/* Language & Currency Controls on Mobile */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#D4AF37]/15">
-            <div className="inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5">
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  type="button"
-                  onClick={() => setLanguage(lang.code)}
-                  className={`px-3 py-1.5 text-xs font-mono-code font-medium rounded-[4px] cursor-pointer ${
-                    language === lang.code
-                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
-                      : 'text-[#A1A7B5]'
-                  }`}
-                >
-                  {lang.label}
-                </button>
+        <div className="md:hidden bg-white border-b border-[#DCE4E0] px-5 py-5 space-y-5">
+          <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#DCE4E0] text-xs font-medium">
+            <div className="inline-flex items-center gap-2 text-[#50645D]">
+              {languages.map((lang, i) => (
+                <React.Fragment key={lang}>
+                  {i > 0 && <span className="text-[#DCE4E0]">/</span>}
+                  <button
+                    type="button"
+                    onClick={() => setLanguage(lang)}
+                    className={`uppercase cursor-pointer ${
+                      language === lang ? 'text-[#0B241D] font-semibold' : ''
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                </React.Fragment>
               ))}
             </div>
 
-            <div className="inline-flex items-center bg-[#141821] border border-[#D4AF37]/20 rounded-[6px] p-0.5">
-              {currencies.map((curr) => (
-                <button
-                  key={curr}
-                  type="button"
-                  onClick={() => setCurrency(curr)}
-                  className={`px-2.5 py-1.5 text-xs font-mono-code font-medium rounded-[4px] cursor-pointer ${
-                    currency === curr
-                      ? 'bg-[#D4AF37] text-[#0B0D12] font-semibold'
-                      : 'text-[#A1A7B5]'
-                  }`}
-                >
-                  {curr}
-                </button>
+            <div className="inline-flex items-center gap-2 text-[#50645D]">
+              {currencies.map((curr, i) => (
+                <React.Fragment key={curr}>
+                  {i > 0 && <span className="text-[#DCE4E0]">/</span>}
+                  <button
+                    type="button"
+                    onClick={() => setCurrency(curr)}
+                    className={`cursor-pointer ${
+                      currency === curr ? 'text-[#0B241D] font-semibold' : ''
+                    }`}
+                  >
+                    {curr}
+                  </button>
+                </React.Fragment>
               ))}
             </div>
           </div>
 
           <nav className="flex flex-col space-y-2">
-            <button
-              type="button"
-              onClick={() => handleNav('poles')}
-              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
-            >
-              01. {t.nav.poles}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleNav('governance')}
-              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
-            >
-              02. {t.nav.methodology}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleNav('portfolio')}
-              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
-            >
-              03. {t.nav.portfolio}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleNav('configurator')}
-              className="text-left py-2.5 text-base font-medium text-[#F4F4F6] hover:text-[#D4AF37]"
-            >
-              04. {t.nav.configurator}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                onOpenConcierge();
-              }}
-              className="text-left py-2.5 text-base font-medium text-[#D4AF37] inline-flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>{t.nav.concierge}</span>
-            </button>
+            {links.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNav(item.id)}
+                className="text-left py-2 text-base font-medium text-[#0B241D]"
+              >
+                {item.label}
+              </button>
+            ))}
           </nav>
 
           <button
             type="button"
-            onClick={() => handleNav('configurator')}
-            className="w-full py-3 px-5 rounded-[6px] bg-[#D4AF37] text-[#0B0D12] font-semibold text-sm flex items-center justify-center gap-2"
+            onClick={() => handleNav('estimate')}
+            className="w-full py-3 px-5 rounded-full bg-[#0E3A2F] text-white font-semibold text-sm press"
           >
-            <span>{t.nav.ctaStart}</span>
-            <ArrowUpRight className="w-4 h-4" />
+            {t.nav.start}
           </button>
         </div>
       )}
