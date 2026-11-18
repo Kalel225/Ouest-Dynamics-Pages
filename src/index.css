@@ -1,25 +1,13 @@
 @import "tailwindcss";
 
 /*
-  Ouest Dynamics — « Le soleil de l'Ouest »
-  Palette abstracted from the Ivorian flag: lagoon green, sun orange, white.
-  One typeface (Archivo, variable width). Orange is reserved for the sun and the primary action.
+  Ouest Dynamics — Warm Sand Minimalist Direction
+  Architectural beige (#EFECE6), stone surface (#E4DFD5), deep ink (#141311).
+  Space Grotesk for headings, DM Sans for body & UI. Borderless tactile buttons.
 */
 @theme {
-  --color-lagoon: #0E3A2F;
-  --color-lagoon-deep: #082820;
-  --color-sun: #F77F00;
-  --color-ink: #0B241D;
-  --color-muted: #50645D;
-  --color-line: #DCE4E0;
-  --color-mist: #EEF3F0;
-  --color-leaf: #00875A;
-  --color-danger: #B42318;
-
-  --font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
-
-  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'DM Sans', sans-serif;
 }
 
 @layer base {
@@ -29,81 +17,62 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #ffffff;
-    color: var(--color-ink);
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    background-color: #efece6;
+    color: #141311;
+    font-size: 1rem;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
-    border-radius: 6px;
-  }
-
-  .on-dark :focus-visible {
-    outline-color: #ffffff;
+    outline: 2px solid #141311;
+    outline-offset: 2px;
   }
 
   ::selection {
-    background: var(--color-sun);
-    color: var(--color-ink);
+    background: #141311;
+    color: #efece6;
   }
 }
 
-/* Type roles — tracking tightens as size grows, leading tightens with it */
-.display {
-  font-stretch: 125%;
-  font-weight: 800;
-  line-height: 0.95;
+.display-hero {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.02;
   letter-spacing: -0.035em;
 }
 
-.title {
-  font-stretch: 125%;
-  font-weight: 750;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.wide {
-  font-stretch: 112.5%;
+.display-section {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
-/* Instant press feedback on pointer-down */
-.press {
-  transition:
-    transform 160ms var(--ease-sheet),
-    background-color 160ms ease,
-    color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    opacity 160ms ease;
-}
-.press:active {
-  transform: scale(0.97);
+.font-mono-code {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
 }
 
-/* The single orchestrated moment: the sun settles on load */
-@keyframes sunrise {
-  from {
-    transform: translate3d(0, 16%, 0);
-    opacity: 0;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
+/* Sober tactile button feedback without harsh frames */
+.press {
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
 }
-.sunrise {
-  animation: sunrise 1400ms var(--ease-out-soft) 120ms both;
+.press:hover {
+  transform: translateY(-1px);
+}
+.press:active {
+  transform: scale(0.98);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -114,12 +83,5 @@
     animation-delay: 0ms !important;
     transition-duration: 1ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .material {
-    backdrop-filter: none !important;
-    background-color: #ffffff !important;
   }
 }

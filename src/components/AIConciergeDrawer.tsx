@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, ArrowRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
 import {
@@ -113,36 +113,35 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[75] bg-[#0B241D]/50 backdrop-blur-sm flex justify-end"
+      className="fixed inset-0 z-[75] bg-[#141311]/45 backdrop-blur-xs flex justify-end"
       onClick={onClose}
     >
       <aside
-        className="w-full max-w-lg bg-white h-full flex flex-col justify-between text-[#0B241D] shadow-2xl border-l border-[#DCE4E0]"
+        className="w-full max-w-md bg-[#EFECE6] h-full flex flex-col justify-between text-[#141311]"
         onClick={(e) => e.stopPropagation()}
         aria-label={t.concierge.title}
       >
-        <div className="px-6 py-5 border-b border-[#DCE4E0] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F77F00]" aria-hidden="true" />
-            <h2 className="text-lg font-bold text-[#0B241D]">{t.concierge.title}</h2>
-          </div>
+        <div className="px-6 py-4 border-b border-[#141311]/12 flex items-center justify-between gap-4">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-[#141311]">
+            {t.concierge.title}
+          </h2>
 
           <button
             type="button"
             onClick={onClose}
-            className="min-h-[36px] min-w-[36px] flex items-center justify-center rounded-full border border-[#DCE4E0] text-[#50645D] hover:text-[#0B241D] cursor-pointer"
+            className="min-h-[34px] min-w-[34px] flex items-center justify-center bg-[#E4DFD5] hover:bg-[#141311] hover:text-[#EFECE6] text-[#141311] transition-colors cursor-pointer"
             aria-label={t.concierge.close}
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-5">
-          <p className="text-sm text-[#50645D] leading-relaxed">{t.concierge.intro}</p>
+        <div className="flex-1 overflow-y-auto p-6 space-y-5 text-sm">
+          <p className="text-[#141311]/65 leading-relaxed">{t.concierge.intro}</p>
 
           {messages.length === 0 && (
-            <div className="space-y-2.5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#50645D]">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.08em] text-[#141311]/50">
                 {t.concierge.examplesTitle}
               </p>
               {t.concierge.examples.map((sample, idx) => (
@@ -150,7 +149,7 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => sendMessage(sample)}
-                  className="w-full text-left p-3.5 rounded-xl bg-[#EEF3F0]/60 hover:bg-[#EEF3F0] border border-[#DCE4E0] text-xs sm:text-sm text-[#0B241D] transition-colors cursor-pointer"
+                  className="w-full text-left p-3.5 bg-[#E4DFD5] hover:bg-[#D8D1C4] text-xs sm:text-sm text-[#141311] transition-colors cursor-pointer"
                 >
                   “{sample}”
                 </button>
@@ -161,32 +160,30 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
           {messages.map((msg) => (
             <div key={msg.id} className="space-y-3">
               {msg.role === 'user' ? (
-                <div className="ml-8 p-4 rounded-2xl bg-[#0E3A2F] text-white text-sm">
-                  {msg.text}
-                </div>
+                <div className="ml-8 p-3.5 bg-[#141311] text-[#EFECE6]">{msg.text}</div>
               ) : (
                 <div className="space-y-3">
-                  <div className="p-4 rounded-2xl bg-[#EEF3F0]/70 border border-[#DCE4E0] text-sm text-[#0B241D] leading-relaxed">
+                  <div className="p-3.5 bg-[#E4DFD5] text-[#141311] leading-relaxed">
                     {msg.text}
                   </div>
 
                   {msg.diagnostic && (
-                    <div className="p-5 rounded-2xl border border-[#0E3A2F]/30 bg-white space-y-4">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-[#0E3A2F]">
+                    <div className="p-4 bg-[#E4DFD5]/65 space-y-3">
+                      <div className="text-xs font-semibold uppercase tracking-[0.08em]">
                         {t.concierge.resultTitle}
                       </div>
 
-                      <div className="space-y-2 text-xs sm:text-sm">
+                      <div className="space-y-1 text-xs">
                         <div>
-                          <span className="text-[#50645D]">{t.concierge.servicesLabel} : </span>
-                          <span className="font-semibold text-[#0B241D]">
+                          <span className="text-[#141311]/55">{t.concierge.servicesLabel}: </span>
+                          <span className="font-semibold">
                             {msg.diagnostic.recommended_poles.map(poleName).join(', ')}
                           </span>
                         </div>
                         {msg.diagnostic.recommended_modifiers.length > 0 && (
                           <div>
-                            <span className="text-[#50645D]">{t.concierge.optionsLabel} : </span>
-                            <span className="font-medium text-[#0B241D]">
+                            <span className="text-[#141311]/55">{t.concierge.optionsLabel}: </span>
+                            <span>
                               {msg.diagnostic.recommended_modifiers.map(modName).join(', ')}
                             </span>
                           </div>
@@ -194,8 +191,8 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
                       </div>
 
                       {msg.diagnostic.next_follow_up_question && (
-                        <p className="text-xs text-[#50645D]">
-                          <strong className="text-[#0B241D]">{t.concierge.followUp} : </strong>
+                        <p className="text-xs text-[#141311]/70">
+                          <strong className="text-[#141311]">{t.concierge.followUp}: </strong>
                           {msg.diagnostic.next_follow_up_question}
                         </p>
                       )}
@@ -203,10 +200,9 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
                       <button
                         type="button"
                         onClick={() => onApplyDiagnostic(msg.diagnostic!)}
-                        className="w-full py-2.5 px-4 rounded-full bg-[#F77F00] hover:bg-[#E07100] text-[#0B241D] text-xs font-semibold inline-flex items-center justify-center gap-2 press cursor-pointer"
+                        className="w-full py-2.5 px-4 bg-[#141311] hover:bg-[#2C2925] text-[#EFECE6] text-xs uppercase tracking-[0.1em] press cursor-pointer"
                       >
-                        <span>{t.concierge.apply}</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        {t.concierge.apply}
                       </button>
                     </div>
                   )}
@@ -215,17 +211,15 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
             </div>
           ))}
 
-          {isLoading && (
-            <div className="text-xs text-[#50645D]">{t.concierge.thinking}</div>
-          )}
+          {isLoading && <div className="text-xs text-[#141311]/55">{t.concierge.thinking}</div>}
 
           {errorMsg && (
-            <div className="p-4 rounded-xl bg-[#EEF3F0] border border-[#DCE4E0] space-y-2 text-xs">
-              <p className="text-[#B42318]">{errorMsg}</p>
+            <div className="p-3.5 bg-[#E4DFD5] space-y-2 text-xs">
+              <p className="text-red-700">{errorMsg}</p>
               <button
                 type="button"
                 onClick={onEstimateDirect}
-                className="font-semibold text-[#0E3A2F] underline cursor-pointer"
+                className="font-medium text-[#141311] underline cursor-pointer"
               >
                 {t.concierge.estimateDirect}
               </button>
@@ -235,7 +229,7 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
           <div ref={endRef} />
         </div>
 
-        <div className="p-5 border-t border-[#DCE4E0] space-y-3 bg-white">
+        <div className="p-5 border-t border-[#141311]/12 space-y-3 bg-[#EFECE6]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -248,19 +242,18 @@ export const AIConciergeDrawer: React.FC<AIConciergeDrawerProps> = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t.concierge.placeholder}
-              className="flex-1 px-4 py-2.5 rounded-full bg-[#EEF3F0]/60 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none"
+              className="flex-1 px-3.5 py-2.5 bg-[#E4DFD5]/60 border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none"
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="px-4 py-2.5 rounded-full bg-[#0E3A2F] hover:bg-[#082820] disabled:opacity-40 text-white text-xs font-semibold inline-flex items-center gap-1.5 press cursor-pointer whitespace-nowrap"
+              className="px-4 py-2.5 bg-[#141311] hover:bg-[#2C2925] disabled:opacity-40 text-[#EFECE6] text-xs uppercase tracking-[0.1em] press cursor-pointer whitespace-nowrap"
             >
-              <span>{t.concierge.send}</span>
-              <Send className="w-3.5 h-3.5" />
+              {t.concierge.send}
             </button>
           </form>
 
-          <p className="text-[11px] text-[#50645D]">{t.concierge.privacy}</p>
+          <p className="text-[11px] text-[#141311]/50">{t.concierge.privacy}</p>
         </div>
       </aside>
     </div>

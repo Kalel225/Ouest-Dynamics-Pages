@@ -22,7 +22,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch {
       // storage unavailable
     }
-    return 'fr';
+    return 'en';
   });
 
   // Keep <html lang> in sync from the first render (hyphenation, screen readers).

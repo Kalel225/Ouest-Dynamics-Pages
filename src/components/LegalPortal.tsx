@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export type LegalTab = 'privacy' | 'terms' | 'notices';
@@ -27,31 +26,30 @@ export const LegalPortal: React.FC<LegalPortalProps> = ({
   return (
     <section
       id="legal"
-      className="min-h-[82vh] py-14 sm:py-20 px-5 sm:px-8 bg-white text-[#0B241D]"
+      className="min-h-[82vh] py-16 sm:py-24 px-5 sm:px-8 bg-[#EFECE6] text-[#141311]"
     >
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto space-y-8">
         <button
           type="button"
           onClick={onBackToMain}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[#0E3A2F] hover:text-[#F77F00] cursor-pointer"
+          className="px-3.5 py-1.5 bg-[#E4DFD5] hover:bg-[#D8D1C4] text-xs font-medium text-[#141311] press cursor-pointer"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>{t.legal.close}</span>
+          ← {t.legal.close}
         </button>
 
-        <div className="space-y-4 pb-6 border-b border-[#DCE4E0]">
-          <h1 className="title text-3xl sm:text-4xl text-[#0B241D]">{t.legal.title}</h1>
+        <div className="space-y-4 pb-6 border-b border-[#141311]/12">
+          <h1 className="display-section text-3xl text-[#141311]">{t.legal.title}</h1>
 
-          <div className="flex flex-wrap items-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             {(['privacy', 'terms', 'notices'] as LegalTab[]).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => onChangeTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                className={`px-3.5 py-1.5 text-xs font-medium cursor-pointer transition-colors ${
                   activeTab === tab
-                    ? 'bg-[#0E3A2F] text-white'
-                    : 'bg-[#EEF3F0] text-[#50645D] hover:text-[#0B241D]'
+                    ? 'bg-[#141311] text-[#EFECE6]'
+                    : 'bg-[#E4DFD5] hover:bg-[#D8D1C4] text-[#141311]'
                 }`}
               >
                 {t.legal.tabs[tab]}
@@ -62,17 +60,15 @@ export const LegalPortal: React.FC<LegalPortalProps> = ({
 
         <article className="space-y-6">
           <div>
-            <p className="text-xs text-[#50645D] mb-1">{currentDoc.updated}</p>
-            <h2 className="text-2xl font-bold text-[#0B241D]">{currentDoc.title}</h2>
+            <p className="text-xs text-[#141311]/55 mb-1">{currentDoc.updated}</p>
+            <h2 className="text-xl font-semibold text-[#141311]">{currentDoc.title}</h2>
           </div>
 
           <div className="space-y-6">
             {currentDoc.sections.map((sec, idx) => (
               <div key={idx} className="space-y-1.5">
-                <h3 className="text-base font-semibold text-[#0B241D]">{sec.heading}</h3>
-                <p className="text-sm sm:text-base text-[#50645D] leading-relaxed">
-                  {sec.body}
-                </p>
+                <h3 className="text-sm font-semibold text-[#141311]">{sec.heading}</h3>
+                <p className="text-sm text-[#141311]/70 leading-relaxed">{sec.body}</p>
               </div>
             ))}
           </div>

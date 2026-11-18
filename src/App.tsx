@@ -1,12 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { CurrencyProvider, useCurrency } from './context/CurrencyContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { PolesMatrix } from './components/PolesMatrix';
+import { BriefConfigurator } from './components/BriefConfigurator';
 import { PortfolioSection } from './components/PortfolioSection';
 import { Methodology } from './components/Methodology';
-import { BriefConfigurator } from './components/BriefConfigurator';
 import {
   AIConciergeDrawer,
   StructuredConciergeDiagnostic,
@@ -14,7 +13,6 @@ import {
 import { LegalPortal, LegalTab } from './components/LegalPortal';
 import { CookieConsentBanner } from './components/CookieConsentBanner';
 import { Footer } from './components/Footer';
-import { useLanguage } from './context/LanguageContext';
 import {
   PoleId,
   TransverseModifierId,
@@ -38,7 +36,7 @@ function PlatformShell() {
   const scrollToSection = useCallback((sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 72;
+      const top = el.getBoundingClientRect().top + window.scrollY - 56;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   }, []);
@@ -102,7 +100,7 @@ function PlatformShell() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-[#0B241D] relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#EFECE6] text-[#141311] relative overflow-x-hidden">
       <Navbar
         onNavigate={(id) => {
           if (legalView !== null) {
@@ -112,6 +110,7 @@ function PlatformShell() {
             scrollToSection(id);
           }
         }}
+        onOpenConcierge={() => setConciergeOpen(true)}
       />
 
       {legalView !== null ? (
@@ -132,16 +131,6 @@ function PlatformShell() {
             onOpenConcierge={() => setConciergeOpen(true)}
           />
 
-          <PolesMatrix
-            selectedPoles={selectedPoles}
-            onTogglePole={handleTogglePole}
-            onSeeEstimate={() => scrollToSection('estimate')}
-          />
-
-          <PortfolioSection onEstimateSimilar={handleEstimateSimilar} />
-
-          <Methodology />
-
           <BriefConfigurator
             selectedPoles={selectedPoles}
             onTogglePole={handleTogglePole}
@@ -155,18 +144,14 @@ function PlatformShell() {
             onOpenConcierge={() => setConciergeOpen(true)}
             onOpenPrivacy={() => handleOpenLegalTab('privacy')}
           />
+
+          <PortfolioSection onEstimateSimilar={handleEstimateSimilar} />
+
+          <Methodology />
         </main>
       )}
 
       <Footer
-        onNavigateSection={(id) => {
-          if (legalView !== null) {
-            setLegalView(null);
-            setTimeout(() => scrollToSection(id), 60);
-          } else {
-            scrollToSection(id);
-          }
-        }}
         onOpenLegalTab={handleOpenLegalTab}
         onOpenCookiePreferences={() => setForceCookieModal(true)}
       />

@@ -83,69 +83,69 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 z-[60] max-w-sm rounded-2xl bg-white/95 material backdrop-blur-xl border border-[#DCE4E0] p-4 text-[#0B241D] shadow-xl">
-      <p className="text-xs text-[#50645D] leading-relaxed mb-3">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 z-[60] max-w-xs bg-[#E6E1D7] p-4 text-[#141311]">
+      <p className="text-xs text-[#141311]/75 leading-relaxed mb-3">
         {t.cookies.text}{' '}
         <button
           type="button"
           onClick={onOpenLegalPrivacy}
-          className="text-[#0B241D] underline underline-offset-2 cursor-pointer"
+          className="text-[#141311] underline cursor-pointer"
         >
           {t.cookies.policy}
         </button>
       </p>
 
       {customizing && (
-        <div className="mb-3 p-3 rounded-xl bg-[#EEF3F0]/70 space-y-2 text-xs">
+        <div className="mb-3 p-3 bg-[#EFECE6] space-y-2 text-xs">
           <label className="flex items-center justify-between gap-3">
             <div>
               <span className="font-semibold block">{t.cookies.essential.label}</span>
-              <span className="text-[11px] text-[#50645D]">{t.cookies.essential.desc}</span>
+              <span className="text-[11px] text-[#141311]/60">{t.cookies.essential.desc}</span>
             </div>
-            <input type="checkbox" checked disabled className="w-4 h-4 accent-[#0E3A2F]" />
+            <input type="checkbox" checked disabled className="w-3.5 h-3.5 accent-[#141311]" />
           </label>
 
-          <label className="flex items-center justify-between gap-3 pt-2 border-t border-[#DCE4E0] cursor-pointer">
+          <label className="flex items-center justify-between gap-3 pt-2 border-t border-[#141311]/10 cursor-pointer">
             <div>
               <span className="font-semibold block">{t.cookies.analytics.label}</span>
-              <span className="text-[11px] text-[#50645D]">{t.cookies.analytics.desc}</span>
+              <span className="text-[11px] text-[#141311]/60">{t.cookies.analytics.desc}</span>
             </div>
             <input
               type="checkbox"
               checked={analytics}
               onChange={(e) => setAnalytics(e.target.checked)}
-              className="w-4 h-4 accent-[#0E3A2F] cursor-pointer"
+              className="w-3.5 h-3.5 accent-[#141311] cursor-pointer"
             />
           </label>
 
-          <label className="flex items-center justify-between gap-3 pt-2 border-t border-[#DCE4E0] cursor-pointer">
+          <label className="flex items-center justify-between gap-3 pt-2 border-t border-[#141311]/10 cursor-pointer">
             <div>
               <span className="font-semibold block">{t.cookies.marketing.label}</span>
-              <span className="text-[11px] text-[#50645D]">{t.cookies.marketing.desc}</span>
+              <span className="text-[11px] text-[#141311]/60">{t.cookies.marketing.desc}</span>
             </div>
             <input
               type="checkbox"
               checked={marketing}
               onChange={(e) => setMarketing(e.target.checked)}
-              className="w-4 h-4 accent-[#0E3A2F] cursor-pointer"
+              className="w-3.5 h-3.5 accent-[#141311] cursor-pointer"
             />
           </label>
         </div>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => persistConsent(true, true)}
-            className="px-3.5 py-1.5 rounded-full bg-[#0E3A2F] text-white text-xs font-semibold press cursor-pointer"
+            className="px-3.5 py-1.5 bg-[#141311] hover:bg-[#2C2925] text-[#EFECE6] text-[11px] font-medium press cursor-pointer"
           >
             {t.cookies.accept}
           </button>
           <button
             type="button"
             onClick={() => persistConsent(false, false)}
-            className="px-3.5 py-1.5 rounded-full border border-[#DCE4E0] text-[#0B241D] text-xs font-medium press cursor-pointer"
+            className="px-3.5 py-1.5 bg-[#EFECE6] hover:bg-[#DDD7CB] text-[#141311] text-[11px] font-medium press cursor-pointer"
           >
             {t.cookies.refuse}
           </button>
@@ -155,7 +155,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
           <button
             type="button"
             onClick={() => persistConsent(analytics, marketing)}
-            className="text-xs font-semibold text-[#0E3A2F] underline cursor-pointer"
+            className="text-[11px] font-semibold text-[#141311] underline cursor-pointer"
           >
             {t.cookies.save}
           </button>
@@ -163,7 +163,7 @@ export const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
           <button
             type="button"
             onClick={() => setCustomizing(true)}
-            className="text-xs text-[#50645D] hover:text-[#0B241D] cursor-pointer"
+            className="text-[11px] text-[#141311]/65 hover:text-[#141311] cursor-pointer"
           >
             {t.cookies.customize}
           </button>

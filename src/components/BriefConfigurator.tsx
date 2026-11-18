@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCurrency } from '../context/CurrencyContext';
 import {
@@ -25,6 +25,38 @@ interface BriefConfiguratorProps {
   onOpenPrivacy: () => void;
 }
 
+const DisciplineGlyph: React.FC<{ id: PoleId; active: boolean }> = ({ id, active }) => {
+  const stroke = active ? '#EFECE6' : '#141311';
+  return (
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      {id === 'BRANDING' && (
+        <>
+          <circle cx="18" cy="18" r="12" stroke={stroke} strokeWidth="1.1" />
+          <circle cx="18" cy="18" r="3" fill={stroke} />
+        </>
+      )}
+      {id === 'WEB' && (
+        <>
+          <rect x="6" y="8" width="24" height="20" stroke={stroke} strokeWidth="1.1" />
+          <line x1="6" y1="14" x2="30" y2="14" stroke={stroke} strokeWidth="1.1" />
+        </>
+      )}
+      {id === 'MOBILE_DESKTOP' && (
+        <>
+          <rect x="11" y="5" width="14" height="26" stroke={stroke} strokeWidth="1.1" />
+          <line x1="15" y1="27" x2="21" y2="27" stroke={stroke} strokeWidth="1.1" />
+        </>
+      )}
+      {id === 'GROWTH' && (
+        <>
+          <polyline points="6,26 14,18 20,22 30,10" stroke={stroke} strokeWidth="1.25" />
+          <polyline points="24,10 30,10 30,16" stroke={stroke} strokeWidth="1.25" />
+        </>
+      )}
+    </svg>
+  );
+};
+
 export const BriefConfigurator: React.FC<BriefConfiguratorProps> = ({
   selectedPoles,
   onTogglePole,
@@ -41,7 +73,7 @@ export const BriefConfigurator: React.FC<BriefConfiguratorProps> = ({
   const { t } = useLanguage();
   const { currency, setCurrency, formatPrice, rangeParts } = useCurrency();
 
-  const [step, setStep] = useState<'estimate' | 'contact' | 'done'>('estimate');
+  const [step, setStep] = useState<'select' | 'contact' | 'done'>('select');
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
@@ -129,409 +161,350 @@ export const BriefConfigurator: React.FC<BriefConfiguratorProps> = ({
   const resetAll = () => {
     setErrors({});
     setSubmittedRef('');
-    setStep('estimate');
+    setStep('select');
   };
 
   return (
     <section
       id="estimate"
-      className="py-20 sm:py-28 px-5 sm:px-8 bg-[#EEF3F0]/60 border-b border-[#DCE4E0]"
+      className="py-16 sm:py-24 px-5 sm:px-8 bg-[#EFECE6] border-b border-[#141311]/10"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div className="max-w-2xl space-y-3">
-            <h2 className="title text-[clamp(2rem,4vw,3.25rem)] text-[#0B241D]">
-              {t.estimate.title}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-[#141311]/10">
+          <div className="space-y-1.5">
+            <h2 className="display-section text-2xl sm:text-3xl text-[#141311]">
+              {t.services.title}
             </h2>
-            <p className="text-base sm:text-lg text-[#50645D]">{t.estimate.intro}</p>
+            <p className="text-sm text-[#141311]/60">{t.services.intro}</p>
           </div>
 
           <button
             type="button"
             onClick={onOpenConcierge}
-            className="self-start md:self-end inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#DCE4E0] hover:border-[#0B241D] text-xs font-medium text-[#0B241D] press cursor-pointer whitespace-nowrap"
+            className="self-start sm:self-end px-4 py-2 bg-[#E4DFD5] hover:bg-[#D8D1C4] text-[11px] font-medium uppercase tracking-[0.1em] text-[#141311] press cursor-pointer whitespace-nowrap"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#F77F00]" />
-            <span>{t.concierge.open}</span>
+            {t.concierge.open}
           </button>
         </div>
 
         {aiPrefilled && step !== 'done' && (
-          <div className="mb-8 px-4 py-3 rounded-xl bg-white border border-[#00875A]/40 text-xs sm:text-sm text-[#0B241D] flex items-center gap-2.5">
-            <Sparkles className="w-4 h-4 text-[#F77F00] shrink-0" />
-            <span>{t.estimate.prefilled}</span>
+          <div className="mb-6 px-4 py-3 bg-[#E4DFD5] text-xs text-[#141311]">
+            {t.estimate.prefilled}
           </div>
         )}
 
         {step === 'done' ? (
-          <div className="max-w-xl mx-auto p-8 sm:p-10 rounded-2xl bg-white border border-[#DCE4E0] space-y-6">
-            <div className="w-10 h-10 rounded-full bg-[#EEF3F0] flex items-center justify-center text-[#00875A]">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
+          <div className="max-w-lg bg-[#E4DFD5]/60 p-8 space-y-6">
             <div className="space-y-2">
-              <h3 className="title text-3xl text-[#0B241D]">
+              <h3 className="display-section text-2xl text-[#141311]">
                 {t.estimate.done.title(fullName.split(' ')[0] || '')}
               </h3>
-              <p className="text-sm sm:text-base text-[#50645D]">{t.estimate.done.text}</p>
+              <p className="text-sm text-[#141311]/70">{t.estimate.done.text}</p>
             </div>
             {submittedRef && (
-              <div className="p-4 rounded-xl bg-[#EEF3F0] flex items-center justify-between text-xs sm:text-sm">
-                <span className="text-[#50645D]">{t.estimate.done.reference}</span>
-                <span className="font-semibold text-[#0B241D] tnum">{submittedRef}</span>
+              <div className="py-3 border-y border-[#141311]/12 flex items-center justify-between text-xs uppercase">
+                <span className="text-[#141311]/60">{t.estimate.done.reference}</span>
+                <span className="font-semibold text-[#141311] tnum">{submittedRef}</span>
               </div>
             )}
             <button
               type="button"
               onClick={resetAll}
-              className="px-5 py-2.5 rounded-full bg-[#0E3A2F] hover:bg-[#082820] text-white text-xs font-semibold press cursor-pointer"
+              className="px-6 py-2.5 bg-[#141311] hover:bg-[#2C2925] text-[#EFECE6] text-xs uppercase tracking-[0.1em] press cursor-pointer"
             >
               {t.estimate.done.again}
             </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left column: Selection or Contact Form */}
-            <div className="lg:col-span-7 bg-white rounded-2xl border border-[#DCE4E0] p-6 sm:p-8">
-              {step === 'estimate' ? (
-                <div className="space-y-8">
-                  {/* Services */}
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#50645D]">
-                      {t.estimate.services}
-                    </h3>
-                    <div className="divide-y divide-[#DCE4E0] border-y border-[#DCE4E0]">
-                      {t.services.items.map((service) => {
-                        const checked = selectedPoles.includes(service.id);
-                        const spec = POLE_PRICING_CATALOG[service.id];
-                        return (
-                          <button
-                            key={service.id}
-                            type="button"
-                            onClick={() => onTogglePole(service.id)}
-                            aria-pressed={checked}
-                            className="w-full py-4 flex items-center justify-between gap-4 text-left cursor-pointer group"
-                          >
-                            <div>
-                              <div className="text-sm sm:text-base font-semibold text-[#0B241D] group-hover:text-[#0E3A2F]">
-                                {service.name}
-                              </div>
-                              <div className="text-xs text-[#50645D] tnum mt-0.5">
-                                {t.services.from(formatPrice(spec.minXof))}
-                              </div>
-                            </div>
-                            <span
-                              className={`w-5 h-5 rounded-full flex items-center justify-center border shrink-0 transition-colors ${
-                                checked
-                                  ? 'bg-[#0E3A2F] border-[#0E3A2F] text-white'
-                                  : 'border-[#DCE4E0]'
-                              }`}
-                            >
-                              {checked && <Check className="w-3 h-3 stroke-[2.5]" />}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Options */}
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-[#50645D]">
-                      {t.estimate.options}
-                    </h3>
-                    <div className="divide-y divide-[#DCE4E0] border-y border-[#DCE4E0]">
-                      {t.options.items.map((opt) => {
-                        const checked = selectedModifiers.includes(opt.id);
-                        return (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => onToggleModifier(opt.id)}
-                            aria-pressed={checked}
-                            className="w-full py-4 flex items-center justify-between gap-4 text-left cursor-pointer"
-                          >
-                            <div>
-                              <div className="text-sm font-semibold text-[#0B241D]">
-                                {opt.name}{' '}
-                                <span className="text-xs font-medium text-[#50645D] tnum">
-                                  ({opt.rate})
-                                </span>
-                              </div>
-                              <div className="text-xs text-[#50645D] mt-0.5">{opt.line}</div>
-                            </div>
-                            <span
-                              className={`w-5 h-5 rounded-full flex items-center justify-center border shrink-0 ${
-                                checked
-                                  ? 'bg-[#0E3A2F] border-[#0E3A2F] text-white'
-                                  : 'border-[#DCE4E0]'
-                              }`}
-                            >
-                              {checked && <Check className="w-3 h-3 stroke-[2.5]" />}
-                            </span>
-                          </button>
-                        );
-                      })}
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onChangeUrgency(
-                            urgency === 'FAST_TRACK_48H' ? 'STANDARD' : 'FAST_TRACK_48H'
-                          )
-                        }
-                        aria-pressed={urgency === 'FAST_TRACK_48H'}
-                        className="w-full py-4 flex items-center justify-between gap-4 text-left cursor-pointer"
-                      >
-                        <div>
-                          <div className="text-sm font-semibold text-[#0B241D]">
-                            {t.options.fastTrack.name}{' '}
-                            <span className="text-xs font-medium text-[#50645D] tnum">
-                              ({t.options.fastTrack.rate})
-                            </span>
-                          </div>
-                          <div className="text-xs text-[#50645D] mt-0.5">
-                            {t.options.fastTrack.line}
-                          </div>
-                        </div>
-                        <span
-                          className={`w-5 h-5 rounded-full flex items-center justify-center border shrink-0 ${
-                            urgency === 'FAST_TRACK_48H'
-                              ? 'bg-[#F77F00] border-[#F77F00] text-[#0B241D]'
-                              : 'border-[#DCE4E0]'
-                          }`}
-                        >
-                          {urgency === 'FAST_TRACK_48H' && (
-                            <Check className="w-3 h-3 stroke-[2.5]" />
-                          )}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
+        ) : step === 'contact' ? (
+          <div className="max-w-2xl bg-[#E4DFD5]/55 p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#141311]/12">
+                <div>
+                  <h3 className="text-base font-semibold text-[#141311]">
+                    {t.estimate.contact.title}
+                  </h3>
+                  <p className="text-xs text-[#141311]/60 mt-1">{t.estimate.contact.intro}</p>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                  <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#DCE4E0]">
-                    <div>
-                      <h3 className="text-xl font-bold text-[#0B241D]">
-                        {t.estimate.contact.title}
-                      </h3>
-                      <p className="text-xs text-[#50645D] mt-0.5">
-                        {t.estimate.contact.intro}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setStep('estimate')}
-                      className="text-xs font-medium text-[#50645D] hover:text-[#0B241D] inline-flex items-center gap-1 cursor-pointer shrink-0"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      <span>{t.estimate.contact.back}</span>
-                    </button>
-                  </div>
+                <button
+                  type="button"
+                  onClick={() => setStep('select')}
+                  className="px-3 py-1.5 bg-[#E4DFD5] hover:bg-[#D8D1C4] text-[11px] uppercase tracking-[0.08em] text-[#141311] press cursor-pointer shrink-0"
+                >
+                  {t.estimate.contact.back}
+                </button>
+              </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-[#0B241D] mb-1.5">
-                        {t.estimate.contact.name}
-                      </label>
-                      <input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        placeholder={t.estimate.contact.namePh}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#EEF3F0]/50 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none"
-                      />
-                      {errors.fullName && (
-                        <p className="mt-1 text-xs text-[#B42318]">{errors.fullName}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-medium text-[#0B241D] mb-1.5">
-                        {t.estimate.contact.company}
-                      </label>
-                      <input
-                        type="text"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder={t.estimate.contact.companyPh}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#EEF3F0]/50 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none"
-                      />
-                      {errors.companyName && (
-                        <p className="mt-1 text-xs text-[#B42318]">{errors.companyName}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-medium text-[#0B241D] mb-1.5">
-                        {t.estimate.contact.email}
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder={t.estimate.contact.emailPh}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#EEF3F0]/50 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none"
-                      />
-                      {errors.email && (
-                        <p className="mt-1 text-xs text-[#B42318]">{errors.email}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-medium text-[#0B241D] mb-1.5">
-                        {t.estimate.contact.phone}
-                      </label>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder={t.estimate.contact.phonePh}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#EEF3F0]/50 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none tnum"
-                      />
-                      <span className="block mt-1 text-[11px] text-[#50645D]">
-                        {t.estimate.contact.phoneHint}
-                      </span>
-                      {errors.phone && (
-                        <p className="mt-1 text-xs text-[#B42318]">{errors.phone}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-[#0B241D] mb-1.5">
-                      {t.estimate.contact.message}
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={projectSummary}
-                      onChange={(e) => onChangeProjectSummary(e.target.value)}
-                      placeholder={t.estimate.contact.messagePh}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#EEF3F0]/50 border border-[#DCE4E0] focus:border-[#0E3A2F] text-sm text-[#0B241D] outline-none"
-                    />
-                    {errors.summary && (
-                      <p className="mt-1 text-xs text-[#B42318]">{errors.summary}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="flex items-start gap-2.5 cursor-pointer text-xs text-[#50645D]">
-                      <input
-                        type="checkbox"
-                        checked={consent}
-                        onChange={(e) => setConsent(e.target.checked)}
-                        className="mt-0.5 w-4 h-4 accent-[#0E3A2F] cursor-pointer"
-                      />
-                      <span>
-                        {t.estimate.contact.consentBefore}
-                        <button
-                          type="button"
-                          onClick={onOpenPrivacy}
-                          className="text-[#0B241D] underline underline-offset-2 cursor-pointer"
-                        >
-                          {t.estimate.contact.consentLink}
-                        </button>
-                        {t.estimate.contact.consentAfter}
-                      </span>
-                    </label>
-                    {errors.consent && (
-                      <p className="mt-1 text-xs text-[#B42318]">{errors.consent}</p>
-                    )}
-                  </div>
-
-                  {errors.submit && (
-                    <p className="text-xs text-[#B42318]">{errors.submit}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.08em] text-[#141311]/75 mb-1.5">
+                    {t.estimate.contact.name}
+                  </label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t.estimate.contact.namePh}
+                    className="w-full px-3.5 py-2.5 bg-[#EFECE6] border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none"
+                  />
+                  {errors.fullName && (
+                    <p className="mt-1 text-xs text-red-700">{errors.fullName}</p>
                   )}
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full min-h-[48px] px-6 py-3 rounded-full bg-[#F77F00] hover:bg-[#E07100] disabled:opacity-50 text-[#0B241D] text-sm font-semibold press cursor-pointer"
-                  >
-                    {isSubmitting
-                      ? t.estimate.contact.submitting
-                      : t.estimate.contact.submit}
-                  </button>
-                </form>
-              )}
-            </div>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.08em] text-[#141311]/75 mb-1.5">
+                    {t.estimate.contact.company}
+                  </label>
+                  <input
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder={t.estimate.contact.companyPh}
+                    className="w-full px-3.5 py-2.5 bg-[#EFECE6] border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none"
+                  />
+                  {errors.companyName && (
+                    <p className="mt-1 text-xs text-red-700">{errors.companyName}</p>
+                  )}
+                </div>
 
-            {/* Right column: Sticky Live Estimate */}
-            <aside className="lg:col-span-5 lg:sticky lg:top-24 bg-[#0E3A2F] text-white on-dark rounded-2xl p-6 sm:p-8 space-y-6">
-              <div className="flex items-center justify-between gap-4 pb-4 border-b border-white/15">
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/70">
-                  {t.estimate.result}
-                </span>
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.08em] text-[#141311]/75 mb-1.5">
+                    {t.estimate.contact.email}
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t.estimate.contact.emailPh}
+                    className="w-full px-3.5 py-2.5 bg-[#EFECE6] border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none"
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-red-700">{errors.email}</p>
+                  )}
+                </div>
 
-                <div className="inline-flex items-center gap-2 text-xs font-medium">
-                  {currencies.map((curr, i) => (
-                    <React.Fragment key={curr}>
-                      {i > 0 && <span className="text-white/25">/</span>}
-                      <button
-                        type="button"
-                        onClick={() => setCurrency(curr)}
-                        className={`cursor-pointer ${
-                          currency === curr
-                            ? 'text-[#F77F00] font-semibold'
-                            : 'text-white/60 hover:text-white'
-                        }`}
-                      >
-                        {curr}
-                      </button>
-                    </React.Fragment>
-                  ))}
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.08em] text-[#141311]/75 mb-1.5">
+                    {t.estimate.contact.phone}
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t.estimate.contact.phonePh}
+                    className="w-full px-3.5 py-2.5 bg-[#EFECE6] border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none tnum"
+                  />
+                  <span className="block mt-1 text-[11px] text-[#141311]/55">
+                    {t.estimate.contact.phoneHint}
+                  </span>
+                  {errors.phone && (
+                    <p className="mt-1 text-xs text-red-700">{errors.phone}</p>
+                  )}
                 </div>
               </div>
 
-              {!hasSelection ? (
-                <p className="text-sm text-white/75 py-8">{t.estimate.empty}</p>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <div className="display text-3xl sm:text-4xl text-white tnum">
-                      {totalParts.low} – {totalParts.high}
-                      {totalParts.unit && (
-                        <span className="block text-base font-normal text-[#F77F00] mt-1">
-                          {totalParts.unit}
-                        </span>
-                      )}
+              <div>
+                <label className="block text-[11px] uppercase tracking-[0.08em] text-[#141311]/75 mb-1.5">
+                  {t.estimate.contact.message}
+                </label>
+                <textarea
+                  rows={3}
+                  value={projectSummary}
+                  onChange={(e) => onChangeProjectSummary(e.target.value)}
+                  placeholder={t.estimate.contact.messagePh}
+                  className="w-full px-3.5 py-2.5 bg-[#EFECE6] border-b border-[#141311]/25 focus:border-[#141311] text-sm text-[#141311] outline-none"
+                />
+                {errors.summary && (
+                  <p className="mt-1 text-xs text-red-700">{errors.summary}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-[#141311]/70">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="mt-0.5 w-3.5 h-3.5 accent-[#141311] cursor-pointer"
+                  />
+                  <span>
+                    {t.estimate.contact.consentBefore}
+                    <button
+                      type="button"
+                      onClick={onOpenPrivacy}
+                      className="text-[#141311] underline cursor-pointer"
+                    >
+                      {t.estimate.contact.consentLink}
+                    </button>
+                    {t.estimate.contact.consentAfter}
+                  </span>
+                </label>
+                {errors.consent && (
+                  <p className="mt-1 text-xs text-red-700">{errors.consent}</p>
+                )}
+              </div>
+
+              {errors.submit && <p className="text-xs text-red-700">{errors.submit}</p>}
+
+              <div className="pt-3 flex flex-wrap items-center justify-between gap-4 border-t border-[#141311]/12">
+                <div className="text-xs text-[#141311]/70 tnum uppercase">
+                  {totalParts.low} – {totalParts.high} {totalParts.unit}
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="min-h-[44px] px-7 py-2.5 bg-[#141311] hover:bg-[#2C2925] disabled:opacity-40 text-[#EFECE6] text-xs uppercase tracking-[0.12em] press cursor-pointer"
+                >
+                  {isSubmitting
+                    ? t.estimate.contact.submitting
+                    : t.estimate.contact.submit}
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {/* 4-Column Flat Beige Grid (borderless buttons with subtle fill contrast) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {t.services.items.map((service, idx) => {
+                const spec = POLE_PRICING_CATALOG[service.id];
+                const active = selectedPoles.includes(service.id);
+
+                return (
+                  <button
+                    key={service.id}
+                    type="button"
+                    onClick={() => onTogglePole(service.id)}
+                    aria-pressed={active}
+                    className={`text-left p-6 transition-all press cursor-pointer flex flex-col justify-between gap-8 ${
+                      active
+                        ? 'bg-[#141311] text-[#EFECE6]'
+                        : 'bg-[#E6E1D7] hover:bg-[#DDD7CB] text-[#141311]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.1em]">
+                      <span className="tnum opacity-60">0{idx + 1}</span>
+                      <span className="font-medium">{active ? 'Active' : 'Select'}</span>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/75 tnum">
-                      {t.estimate.duration(pricing.estimatedMinDays, pricing.estimatedMaxDays)}
-                    </p>
-                    {pricing.multiPoleDiscountApplied && (
-                      <p className="text-xs text-[#F77F00] font-medium">
-                        {t.estimate.discount}
+
+                    <div className="py-3 flex justify-center">
+                      <DisciplineGlyph id={service.id} active={active} />
+                    </div>
+
+                    <div className="space-y-2">
+                      <h3 className="font-semibold text-sm tracking-[-0.01em]">
+                        {service.name}
+                      </h3>
+                      <p
+                        className={`text-xs leading-relaxed ${
+                          active ? 'text-[#EFECE6]/75' : 'text-[#141311]/65'
+                        }`}
+                      >
+                        {service.line}
                       </p>
+                      <div className="pt-2 text-xs font-medium tnum">
+                        {t.services.from(formatPrice(spec.minXof))}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Borderless Option Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              {t.options.items.map((opt) => {
+                const checked = selectedModifiers.includes(opt.id);
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => onToggleModifier(opt.id)}
+                    aria-pressed={checked}
+                    className={`px-4 py-2 text-xs font-medium transition-colors press cursor-pointer ${
+                      checked
+                        ? 'bg-[#141311] text-[#EFECE6]'
+                        : 'bg-[#E4DFD5] hover:bg-[#D8D1C4] text-[#141311]'
+                    }`}
+                  >
+                    {opt.name} ({opt.rate})
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() =>
+                  onChangeUrgency(
+                    urgency === 'FAST_TRACK_48H' ? 'STANDARD' : 'FAST_TRACK_48H'
+                  )
+                }
+                aria-pressed={urgency === 'FAST_TRACK_48H'}
+                className={`px-4 py-2 text-xs font-medium transition-colors press cursor-pointer ${
+                  urgency === 'FAST_TRACK_48H'
+                    ? 'bg-[#141311] text-[#EFECE6]'
+                    : 'bg-[#E4DFD5] hover:bg-[#D8D1C4] text-[#141311]'
+                }`}
+              >
+                {t.options.fastTrack.name} ({t.options.fastTrack.rate})
+              </button>
+            </div>
+
+            {/* Estimate Summary Row */}
+            <div className="bg-[#E6E1D7]/70 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              {!hasSelection ? (
+                <p className="text-sm text-[#141311]/60">{t.estimate.empty}</p>
+              ) : (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-4 text-[11px] uppercase tracking-[0.1em] text-[#141311]/60">
+                    <span>{t.estimate.result}</span>
+                    <div className="inline-flex items-center gap-1.5">
+                      {currencies.map((curr, i) => (
+                        <React.Fragment key={curr}>
+                          {i > 0 && <span className="text-[#141311]/20">/</span>}
+                          <button
+                            type="button"
+                            onClick={() => setCurrency(curr)}
+                            className={`cursor-pointer ${
+                              currency === curr ? 'text-[#141311] font-semibold underline' : ''
+                            }`}
+                          >
+                            {curr}
+                          </button>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="display-section text-3xl sm:text-4xl text-[#141311] tnum">
+                    {totalParts.low} – {totalParts.high}{' '}
+                    {totalParts.unit && (
+                      <span className="text-base font-normal text-[#141311]/65">
+                        {totalParts.unit}
+                      </span>
                     )}
                   </div>
 
-                  <div className="pt-4 border-t border-white/15 space-y-2">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-white/60">
-                      {t.estimate.schedule}
-                    </div>
-                    <ul className="space-y-1.5 text-xs sm:text-sm text-white/85">
-                      {t.estimate.milestones.map((m, idx) => (
-                        <li key={idx}>· {m}</li>
-                      ))}
-                    </ul>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#141311]/65 tnum">
+                    <span>{t.estimate.duration(pricing.estimatedMinDays, pricing.estimatedMaxDays)}</span>
+                    <span>{t.estimate.schedule}</span>
+                    {pricing.multiPoleDiscountApplied && (
+                      <span className="text-[#141311] font-semibold">{t.estimate.discount}</span>
+                    )}
                   </div>
-
-                  <p className="text-xs text-white/60 leading-relaxed">{t.estimate.note}</p>
-
-                  {step === 'estimate' && (
-                    <button
-                      type="button"
-                      onClick={() => setStep('contact')}
-                      className="w-full min-h-[48px] px-6 py-3 rounded-full bg-[#F77F00] hover:bg-[#E07100] text-[#0B241D] text-sm font-semibold inline-flex items-center justify-center gap-2 press cursor-pointer"
-                    >
-                      <span>{t.estimate.next}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </>
+                </div>
               )}
-            </aside>
+
+              <button
+                type="button"
+                disabled={!hasSelection}
+                onClick={() => setStep('contact')}
+                className="min-h-[46px] px-7 py-3 bg-[#141311] hover:bg-[#2C2925] disabled:opacity-35 text-[#EFECE6] text-xs font-medium uppercase tracking-[0.12em] inline-flex items-center justify-center gap-2 group press cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <span>{t.estimate.next}</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </button>
+            </div>
           </div>
         )}
       </div>
